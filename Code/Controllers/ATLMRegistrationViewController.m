@@ -15,6 +15,8 @@
 #import "ATLMUtilities.h"
 #import "SVProgressHUD.h"
 
+#define SV_APP_EXTENSIONS
+
 @interface ATLMRegistrationViewController () <UITextFieldDelegate>
 
 @property (nonatomic) ATLLogoView *logoView;

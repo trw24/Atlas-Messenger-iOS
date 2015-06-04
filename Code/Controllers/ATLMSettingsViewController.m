@@ -18,6 +18,8 @@
 //  limitations under the License.
 //
 
+#define SV_APP_EXTENSIONS
+
 #import "ATLMSettingsViewController.h"
 #import <Atlas/Atlas.h>
 #import "SVProgressHUD.h"

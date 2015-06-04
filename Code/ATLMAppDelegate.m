@@ -18,6 +18,8 @@
 //  limitations under the License.
 //
 
+#define SV_APP_EXTENSIONS
+
 #import <LayerKit/LayerKit.h>
 #import <Atlas/Atlas.h>
 #import <MessageUI/MessageUI.h>

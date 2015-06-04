@@ -37,9 +37,9 @@
 
 - (void)conversationListInterfaceController:(ATLConversationListInterfaceController *)conversationListInterfaceController didSelectConversation:(LYRConversation *)conversation
 {
-    [self pushControllerWithName:@"conversationController" context:@{ ATLMApplicationControllerKey: self.applicationController, ATLLayerClientKey : self.layerClient, ATLLayerConversationKey : conversation }];
+    NSDictionary *context = @{ ATLMApplicationControllerKey: self.applicationController, ATLLayerClientKey : self.layerClient, ATLLayerConversationKey : conversation };
+    [self pushControllerWithName:@"conversationController" context:context];
 }
-
 
 - (NSString *)conversationListInterfaceController:(ATLConversationListInterfaceController *)conversationListInterfaceController titleForConversation:(LYRConversation *)conversation
 {

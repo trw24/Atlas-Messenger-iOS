@@ -18,6 +18,8 @@
 //  limitations under the License.
 //
 
+#define SV_APP_EXTENSIONS
+
 #import "ATLMConversationListViewController.h"
 #import "ATLMUser.h"
 #import "ATLMConversationViewController.h"
