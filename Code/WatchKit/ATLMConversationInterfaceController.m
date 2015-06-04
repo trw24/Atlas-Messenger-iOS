@@ -30,24 +30,24 @@
     ATLMApplicationController *applicationController = context[ATLMApplicationControllerKey];
     self.messagingDataSource = [ATLMMessagingDataSource dataSourceWithPersistenceManager:applicationController.persistenceManager];
     
-    [self configureConversationViewController];
+    [self configureConversationController];
 }
 
 #pragma mark - Conversation Interface Controller Delegate
 
 - (void)conversationInterfaceController:(ATLConversationInterfaceController *)viewController didSendMessage:(LYRMessage *)message
 {
-    
+    NSLog(@"Message sent: %@", message);
 }
 
 - (void)conversationInterfaceController:(ATLConversationInterfaceController *)viewController didFailSendingMessage:(LYRMessage *)message error:(NSError *)error
 {
-    
+    NSLog(@"Failed to send message with error: %@", error);
 }
 
 - (void)conversationInterfaceController:(ATLConversationInterfaceController *)viewController didSelectMessage:(LYRMessage *)message
 {
-    
+    NSLog(@"Message selected %@", message);
 }
 
 - (NSOrderedSet *)conversationInterfaceController:(ATLConversationInterfaceController *)viewController messagesForMediaAttachments:(NSArray *)mediaAttachments
