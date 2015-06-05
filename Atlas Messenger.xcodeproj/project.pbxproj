@@ -23,7 +23,6 @@
 		0AADB5D01947C8800083732B /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AADB5CF1947C8800083732B /* Security.framework */; };
 		0AADB5D41947C88B0083732B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AADB5D31947C88B0083732B /* SystemConfiguration.framework */; };
 		0ABEFFAF196B7686006FFFF3 /* logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABEFFAE196B7686006FFFF3 /* logo@2x.png */; };
-		0AFE3FE419B0E19C00FCA264 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 259A57311950EB76000E27B0 /* main.m */; };
 		251D8DC01A9688C50000BFA2 /* ATLMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D851A9688C40000BFA2 /* ATLMAppDelegate.m */; };
 		251D8DC11A9688C50000BFA2 /* ATLMAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D881A9688C40000BFA2 /* ATLMAPIManager.m */; };
 		251D8DC21A9688C50000BFA2 /* ATLMApplicationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D8A1A9688C40000BFA2 /* ATLMApplicationController.m */; };
@@ -43,7 +42,6 @@
 		251D8DD01A9688C50000BFA2 /* ATLMErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA81A9688C40000BFA2 /* ATLMErrors.m */; };
 		251D8DD11A9688C50000BFA2 /* ATLMHTTPResponseSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DAA1A9688C40000BFA2 /* ATLMHTTPResponseSerializer.m */; };
 		251D8DD21A9688C50000BFA2 /* ATLMLayerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DAC1A9688C40000BFA2 /* ATLMLayerClient.m */; };
-		251D8DD31A9688C50000BFA2 /* ATLMParticipantDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DAE1A9688C40000BFA2 /* ATLMParticipantDataSource.m */; };
 		251D8DD41A9688C50000BFA2 /* ATLMUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DB01A9688C40000BFA2 /* ATLMUtilities.m */; };
 		251D8DD51A9688C50000BFA2 /* ATLLogoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DB31A9688C40000BFA2 /* ATLLogoView.m */; };
 		251D8DD61A9688C50000BFA2 /* ATLMCenterTextTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DB51A9688C40000BFA2 /* ATLMCenterTextTableViewCell.m */; };
@@ -76,6 +74,9 @@
 		D633684F1A9D614900FBFCD3 /* atlas-splashscreen-1334.png in Resources */ = {isa = PBXBuildFile; fileRef = D633684B1A9D614900FBFCD3 /* atlas-splashscreen-1334.png */; };
 		D63368501A9D614900FBFCD3 /* atlas-splashscreen-1336.png in Resources */ = {isa = PBXBuildFile; fileRef = D633684C1A9D614900FBFCD3 /* atlas-splashscreen-1336.png */; };
 		D63368511A9D614900FBFCD3 /* atlas-splashscreen-2208.png in Resources */ = {isa = PBXBuildFile; fileRef = D633684D1A9D614900FBFCD3 /* atlas-splashscreen-2208.png */; };
+		D6D464FE1B221576004EACC2 /* ATLMMessagingDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D464FB1B221576004EACC2 /* ATLMMessagingDataSource.m */; };
+		D6D464FF1B221576004EACC2 /* ATLMParticipantDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D464FD1B221576004EACC2 /* ATLMParticipantDataSource.m */; };
+		D6D465011B22168A004EACC2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6D465001B22168A004EACC2 /* main.m */; };
 		DE783CF95B3E136B03F3119D /* libPods-Atlas MessengerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B7FC39CB90F93655911C192 /* libPods-Atlas MessengerTests.a */; };
 		E60CDAC28046CC178C349414 /* libPods-Atlas Messenger.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E94B1E63D24BDBDE121BB97C /* libPods-Atlas Messenger.a */; };
 /* End PBXBuildFile section */
@@ -146,8 +147,6 @@
 		251D8DAA1A9688C40000BFA2 /* ATLMHTTPResponseSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMHTTPResponseSerializer.m; sourceTree = "<group>"; };
 		251D8DAB1A9688C40000BFA2 /* ATLMLayerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMLayerClient.h; sourceTree = "<group>"; };
 		251D8DAC1A9688C40000BFA2 /* ATLMLayerClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMLayerClient.m; sourceTree = "<group>"; };
-		251D8DAD1A9688C40000BFA2 /* ATLMParticipantDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMParticipantDataSource.h; sourceTree = "<group>"; };
-		251D8DAE1A9688C40000BFA2 /* ATLMParticipantDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMParticipantDataSource.m; sourceTree = "<group>"; };
 		251D8DAF1A9688C40000BFA2 /* ATLMUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMUtilities.h; sourceTree = "<group>"; };
 		251D8DB01A9688C40000BFA2 /* ATLMUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMUtilities.m; sourceTree = "<group>"; };
 		251D8DB21A9688C40000BFA2 /* ATLLogoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLLogoView.h; sourceTree = "<group>"; };
@@ -164,7 +163,6 @@
 		251D8DBD1A9688C40000BFA2 /* ATLMStyleValue1TableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMStyleValue1TableViewCell.m; sourceTree = "<group>"; };
 		251D8DBE1A9688C40000BFA2 /* ATLMOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMOverlayView.h; sourceTree = "<group>"; };
 		251D8DBF1A9688C40000BFA2 /* ATLMOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMOverlayView.m; sourceTree = "<group>"; };
-		259A57311950EB76000E27B0 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		259A576F1950EB83000E27B0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		259A577B1950EB92000E27B0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7B7FC39CB90F93655911C192 /* libPods-Atlas MessengerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Atlas MessengerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -204,6 +202,11 @@
 		D633684B1A9D614900FBFCD3 /* atlas-splashscreen-1334.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "atlas-splashscreen-1334.png"; sourceTree = "<group>"; };
 		D633684C1A9D614900FBFCD3 /* atlas-splashscreen-1336.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "atlas-splashscreen-1336.png"; sourceTree = "<group>"; };
 		D633684D1A9D614900FBFCD3 /* atlas-splashscreen-2208.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "atlas-splashscreen-2208.png"; sourceTree = "<group>"; };
+		D6D464FA1B221576004EACC2 /* ATLMMessagingDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMMessagingDataSource.h; sourceTree = "<group>"; };
+		D6D464FB1B221576004EACC2 /* ATLMMessagingDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMMessagingDataSource.m; sourceTree = "<group>"; };
+		D6D464FC1B221576004EACC2 /* ATLMParticipantDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMParticipantDataSource.h; sourceTree = "<group>"; };
+		D6D464FD1B221576004EACC2 /* ATLMParticipantDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMParticipantDataSource.m; sourceTree = "<group>"; };
+		D6D465001B22168A004EACC2 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		E94B1E63D24BDBDE121BB97C /* libPods-Atlas Messenger.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Atlas Messenger.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA8D4F84D7ED9670A81B8293 /* Pods-Atlas Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas Messenger.release.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger.release.xcconfig"; sourceTree = "<group>"; };
 		F096675816A616DEE38AFF08 /* Pods-LayerSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LayerSample.release.xcconfig"; path = "Pods/Target Support Files/Pods-LayerSample/Pods-LayerSample.release.xcconfig"; sourceTree = "<group>"; };
@@ -250,6 +253,7 @@
 			children = (
 				259A57111950EB76000E27B0 /* Code */,
 				0A0C242419477D8F00401B74 /* Products */,
+				D6D465001B22168A004EACC2 /* main.m */,
 				259A576B1950EB83000E27B0 /* Resources */,
 				259A57781950EB92000E27B0 /* Tests */,
 				1237757015DB99EEB628CAE9 /* Pods */,
@@ -367,8 +371,6 @@
 				251D8DAA1A9688C40000BFA2 /* ATLMHTTPResponseSerializer.m */,
 				251D8DAB1A9688C40000BFA2 /* ATLMLayerClient.h */,
 				251D8DAC1A9688C40000BFA2 /* ATLMLayerClient.m */,
-				251D8DAD1A9688C40000BFA2 /* ATLMParticipantDataSource.h */,
-				251D8DAE1A9688C40000BFA2 /* ATLMParticipantDataSource.m */,
 				251D8DAF1A9688C40000BFA2 /* ATLMUtilities.h */,
 				251D8DB01A9688C40000BFA2 /* ATLMUtilities.m */,
 			);
@@ -399,13 +401,13 @@
 		259A57111950EB76000E27B0 /* Code */ = {
 			isa = PBXGroup;
 			children = (
+				D6D464F91B221576004EACC2 /* DataSource */,
 				251D8D841A9688C40000BFA2 /* ATLMAppDelegate.h */,
 				251D8D851A9688C40000BFA2 /* ATLMAppDelegate.m */,
 				251D8D861A9688C40000BFA2 /* Controllers */,
 				251D8D9F1A9688C40000BFA2 /* Models */,
 				251D8DA41A9688C40000BFA2 /* Utilities */,
 				251D8DB11A9688C40000BFA2 /* Views */,
-				259A57311950EB76000E27B0 /* main.m */,
 				0A0C242519477D8F00401B74 /* Frameworks */,
 			);
 			path = Code;
@@ -487,6 +489,17 @@
 				D61B108A1A6F2D99009BFA9C /* ATLMTestUser.m */,
 			);
 			name = Utilities;
+			sourceTree = "<group>";
+		};
+		D6D464F91B221576004EACC2 /* DataSource */ = {
+			isa = PBXGroup;
+			children = (
+				D6D464FA1B221576004EACC2 /* ATLMMessagingDataSource.h */,
+				D6D464FB1B221576004EACC2 /* ATLMMessagingDataSource.m */,
+				D6D464FC1B221576004EACC2 /* ATLMParticipantDataSource.h */,
+				D6D464FD1B221576004EACC2 /* ATLMParticipantDataSource.m */,
+			);
+			path = DataSource;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -688,8 +701,9 @@
 				251D8DC51A9688C50000BFA2 /* ATLMConversationViewController.m in Sources */,
 				251D8DD91A9688C50000BFA2 /* ATLMSplashView.m in Sources */,
 				251D8DC01A9688C50000BFA2 /* ATLMAppDelegate.m in Sources */,
+				D6D465011B22168A004EACC2 /* main.m in Sources */,
 				251D8DC61A9688C50000BFA2 /* ATLMImageViewController.m in Sources */,
-				251D8DD31A9688C50000BFA2 /* ATLMParticipantDataSource.m in Sources */,
+				D6D464FF1B221576004EACC2 /* ATLMParticipantDataSource.m in Sources */,
 				251D8DCF1A9688C50000BFA2 /* ATLMConstants.m in Sources */,
 				251D8DDA1A9688C50000BFA2 /* ATLMStyleValue1TableViewCell.m in Sources */,
 				251D8DC81A9688C50000BFA2 /* ATLMParticipantTableViewController.m in Sources */,
@@ -699,8 +713,8 @@
 				251D8DD01A9688C50000BFA2 /* ATLMErrors.m in Sources */,
 				251D8DCB1A9688C50000BFA2 /* ATLMQRScannerController.m in Sources */,
 				251D8DC91A9688C50000BFA2 /* ATLMPersistenceManager.m in Sources */,
-				0AFE3FE419B0E19C00FCA264 /* main.m in Sources */,
 				251D8DD11A9688C50000BFA2 /* ATLMHTTPResponseSerializer.m in Sources */,
+				D6D464FE1B221576004EACC2 /* ATLMMessagingDataSource.m in Sources */,
 				251D8DD71A9688C50000BFA2 /* ATLMInputTableViewCell.m in Sources */,
 				251D8DDB1A9688C50000BFA2 /* ATLMOverlayView.m in Sources */,
 				251D8DD51A9688C50000BFA2 /* ATLLogoView.m in Sources */,
