@@ -158,7 +158,10 @@ static NSString *const ATLMLayerAppID = nil;
         [application registerUserNotificationSettings:notificationSettings];
         [application registerForRemoteNotifications];
     } else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeBadge];
+#pragma GCC diagnostic pop
     }
 }
 
