@@ -155,7 +155,7 @@ NSString *const ATLMConnecting = @"Connecting";
                     
                 case ATLMInfoTableRowAppIDRow:
                     cell.textLabel.text = @"App ID";
-                    cell.detailTextLabel.text = [self.applicationController.layerClient.appID UUIDString];
+                    cell.detailTextLabel.text = [self.applicationController.layerClient.appID absoluteString];
                     cell.detailTextLabel.font = [UIFont systemFontOfSize:10];
                     break;
                     
