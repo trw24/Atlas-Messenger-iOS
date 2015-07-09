@@ -127,7 +127,7 @@ NSString *const ATLMDidReceiveLayerAppID = @"ATLMDidRecieveLayerAppID";
 
 - (void)setupLayerWithAppID:(NSString *)appID
 {
-    NSUUID *applicationID = [[NSUUID alloc] initWithUUIDString:appID];
+    NSURL *applicationID = [NSURL URLWithString:appID];
     if (applicationID) {
         [[NSUserDefaults standardUserDefaults] setValue:appID forKey:ATLMLayerApplicationID];
         [[NSUserDefaults standardUserDefaults] synchronize];

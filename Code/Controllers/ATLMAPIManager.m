@@ -94,7 +94,8 @@ NSString *const ATLMAtlasUserNameKey = @"name";
     NSParameterAssert(nonce);
     NSParameterAssert(completion);
     
-    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", [self.layerClient.appID absoluteString]];
+    NSString *appUUID = [[self.layerClient.appID pathComponents] lastObject];
+    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
     NSURL *URL = [NSURL URLWithString:urlString relativeToURL:self.baseURL];
     NSDictionary *parameters = @{ @"name": name, @"nonce" : nonce };
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
@@ -143,7 +144,8 @@ NSString *const ATLMAtlasUserNameKey = @"name";
 
 - (void)loadContacts
 {
-    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", [self.layerClient.appID absoluteString]];
+    NSString *appUUID = [[self.layerClient.appID pathComponents] lastObject];
+    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
     NSURL *URL = [NSURL URLWithString:urlString relativeToURL:self.baseURL];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     request.HTTPMethod = @"GET";

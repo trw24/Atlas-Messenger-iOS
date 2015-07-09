@@ -41,11 +41,11 @@
     if (self) {
         _applicationController = applicationController;
        
-        NSUUID *appID = [[NSUUID alloc] initWithUUIDString:@"0cbf780a-ba39-11e4-b645-4382000002fe"];
+        NSURL*appID = [[NSURL alloc] initWithString:@"0cbf780a-ba39-11e4-b645-4382000002fe"];
         ATLMLayerClient *client = [ATLMLayerClient clientWithAppID:appID];
         _applicationController.layerClient = client;
         
-        ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL() layerClient:client];
+        ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerClient:client];
         _applicationController.APIManager = manager;
         
         _contentFactory = [ATLMLayerContentFactory layerContentFactoryWithLayerClient:applicationController.layerClient];
