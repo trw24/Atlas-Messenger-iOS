@@ -1,5 +1,11 @@
 # Atlas Messenger Changelog
 
+## 0.9.0
+
+### Enhancements
+
+1. Added support for new Layer App ID URL format. 
+
 ## 0.8.8
 
 ### Enhancements
