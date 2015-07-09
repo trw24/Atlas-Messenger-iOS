@@ -102,7 +102,7 @@ static NSString *const ATLMLayerAppID = nil;
             self.layerClient = [ATLMLayerClient clientWithAppID:[NSURL URLWithString:appID]];
             self.layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
         }
-        ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentStaging) layerClient:self.layerClient];
+        ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerClient:self.layerClient];
         self.applicationController.layerClient = self.layerClient;
         self.applicationController.APIManager = manager;
         [self connectLayerIfNeeded];
