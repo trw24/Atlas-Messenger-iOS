@@ -41,7 +41,7 @@
     if (self) {
         _applicationController = applicationController;
        
-        NSURL*appID = [[NSURL alloc] initWithString:@"0cbf780a-ba39-11e4-b645-4382000002fe"];
+        NSURL*appID = [NSURL URLWithString:@"0cbf780a-ba39-11e4-b645-4382000002fe"];
         ATLMLayerClient *client = [ATLMLayerClient clientWithAppID:appID];
         _applicationController.layerClient = client;
         

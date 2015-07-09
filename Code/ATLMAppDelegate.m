@@ -105,7 +105,7 @@ static NSString *const ATLMLayerAppID = nil;
         ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentStaging) layerClient:self.layerClient];
         self.applicationController.layerClient = self.layerClient;
         self.applicationController.APIManager = manager;
-        [self connectLayerIfNeeded]; 
+        [self connectLayerIfNeeded];
         if (![self resumeSession]) {
             [self.scannerController presentRegistrationViewController];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
