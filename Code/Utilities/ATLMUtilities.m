@@ -26,12 +26,21 @@ BOOL ATLMIsRunningTests(void)
     return NSClassFromString(@"XCTestCase") != Nil;
 }
 
-NSURL *ATLMRailsBaseURL(void)
+NSURL *ATLMRailsBaseURL(ATLMEnvironment environment)
 {
     if (ATLMIsRunningTests()){
         return [NSURL URLWithString:@"http://layer-test-identity-provider.herokuapp.com"];
     } else {
-        return [NSURL URLWithString:@"https://layer-identity-provider.herokuapp.com"];
+        switch (environment) {
+            case ATLMEnvironmentProduction:
+                return [NSURL URLWithString:@"https://layer-identity-provider.herokuapp.com"];
+                break;
+            case ATLMEnvironmentStaging:
+                return [NSURL URLWithString:@"http://layer-test-identity-provider.herokuapp.com"];
+                break;
+            default:
+                break;
+        }
     }
 }
 

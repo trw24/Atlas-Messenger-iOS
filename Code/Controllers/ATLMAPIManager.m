@@ -65,7 +65,7 @@ NSString *const ATLMAtlasUserNameKey = @"name";
 - (NSURLSession *)defaultURLSession
 {
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    configuration.HTTPAdditionalHeaders = @{ @"Accept": @"application/json", @"X_LAYER_APP_ID": self.layerClient.appID.UUIDString };
+    configuration.HTTPAdditionalHeaders = @{ @"Accept": @"application/json", @"X_LAYER_APP_ID": self.layerClient.appID.absoluteString };
     return [NSURLSession sessionWithConfiguration:configuration];
 }
 
@@ -94,7 +94,8 @@ NSString *const ATLMAtlasUserNameKey = @"name";
     NSParameterAssert(nonce);
     NSParameterAssert(completion);
     
-    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", [self.layerClient.appID UUIDString]];
+    NSString *appUUID = [[self.layerClient.appID pathComponents] lastObject];
+    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
     NSURL *URL = [NSURL URLWithString:urlString relativeToURL:self.baseURL];
     NSDictionary *parameters = @{ @"name": name, @"nonce" : nonce };
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
@@ -143,7 +144,8 @@ NSString *const ATLMAtlasUserNameKey = @"name";
 
 - (void)loadContacts
 {
-    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", [self.layerClient.appID UUIDString]];
+    NSString *appUUID = [[self.layerClient.appID pathComponents] lastObject];
+    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
     NSURL *URL = [NSURL URLWithString:urlString relativeToURL:self.baseURL];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     request.HTTPMethod = @"GET";

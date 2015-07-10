@@ -99,10 +99,10 @@ static NSString *const ATLMLayerAppID = nil;
     if (appID) {
         // Only instantiate one instance of `LYRClient`
         if (!self.layerClient) {
-            self.layerClient = [ATLMLayerClient clientWithAppID:[[NSUUID alloc] initWithUUIDString:appID]];
+            self.layerClient = [ATLMLayerClient clientWithAppID:[NSURL URLWithString:appID]];
             self.layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
         }
-        ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL() layerClient:self.layerClient];
+        ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerClient:self.layerClient];
         self.applicationController.layerClient = self.layerClient;
         self.applicationController.APIManager = manager;
         [self connectLayerIfNeeded];
