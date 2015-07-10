@@ -88,7 +88,10 @@ static ATLMDateProximity ATLMProximityToDate(NSDate *date)
 {
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *now = [NSDate date];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     NSCalendarUnit calendarUnits = NSEraCalendarUnit | NSYearCalendarUnit | NSWeekOfMonthCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
+#pragma GCC diagnostic pop
     NSDateComponents *dateComponents = [calendar components:calendarUnits fromDate:date];
     NSDateComponents *todayComponents = [calendar components:calendarUnits fromDate:now];
     if (dateComponents.day == todayComponents.day &&

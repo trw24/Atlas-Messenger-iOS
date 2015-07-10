@@ -22,9 +22,14 @@
 #import <LayerKit/LayerKit.h>
 #import "ATLMPersistenceManager.h"
 
+typedef NS_ENUM(NSInteger, ATLMEnvironment) {
+    ATLMEnvironmentProduction = 0,
+    ATLMEnvironmentStaging = 1
+};
+
 BOOL ATLMIsRunningTests();
 
-NSURL *ATLMRailsBaseURL();
+NSURL *ATLMRailsBaseURL(ATLMEnvironment environment);
 
 NSString *ATLMApplicationDataDirectory();
 

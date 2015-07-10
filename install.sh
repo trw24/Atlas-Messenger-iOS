@@ -51,7 +51,7 @@ current_time=$(date "+%Y.%m.%d-%H.%M.%S")
 INSTALL_DIR="$HOME/Downloads/Atlas-Messenger-iOS".$current_time		
 mkdir -p "$INSTALL_DIR"
 cd $INSTALL_DIR
-# Download the latest Atlas Messneger project from Github
+# Download the latest Atlas Messenger project from Github
 echo "##########################################"		
 echo "1. Downloading Latest Atlas Messenger code (This may take a few minutes)."		
 git clone https://github.com/layerhq/Atlas-Messenger-iOS.git $INSTALL_DIR
@@ -60,7 +60,7 @@ echo "Atlas Messenger has been installed in your Downloads directory ($INSTALL_D
 # Update the generic XCode project with your App ID
 if [[ "$1" =~ [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12} ]]; then
 	echo "2. Injecting App ID: $1 in the project"	
-	sed -i '' -e "s/ATLMLayerAppID \= nil/ATLMLayerAppID = \@\"$1\"/" $INSTALL_DIR/Code/ATLMAppDelegate.m
+	sed -i '' -e "s#ATLMLayerAppID \= nil#ATLMLayerAppID = \@\"$1\"#" $INSTALL_DIR/Code/ATLMAppDelegate.m	
 else
 	echo "2: Skipping Step - No Valid App ID provided."	
 fi
