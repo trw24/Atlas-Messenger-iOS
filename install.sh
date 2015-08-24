@@ -35,9 +35,9 @@ hash pod >/dev/null  || {
 echo "Welcome to the Layer Atlas Messenger install script for iOS"
 echo "This script will:"
 echo "1. Download the latest Atlas Messenger project from Github"
-echo "2. Inject your app id"
-echo "3. Grab the latest LayerKit and Atlas SDK's (via cocoapods)"
-echo "4. Launch XCode"
+echo "2. Inject your app id (if provided)"
+echo "3. Grab the latest LayerKit and Atlas SDKs (via cocoapods)"
+echo "4. Launch Xcode"
 
 # Check to see if the script is running on OS X
 
@@ -71,7 +71,7 @@ pod install
 
 # Launch XCode
 
-echo "4. Congrats, you're finished! Now opening XCode. Press CMD-R to run the Project"
+echo "4. Congrats, you're finished! Now opening Xcode. Press CMD-R to run the Project"
 open $INSTALL_DIR/Atlas\ Messenger.xcworkspace
 
 echo "Opening Atlas Messenger homepage on Github"
