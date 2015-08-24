@@ -54,6 +54,7 @@ You can now proceed with building and running Atlas Messenger. Select **Run** fr
 #### For Demo Purposes only
 
 Atlas Messenger is an example application built by [Layer](https://layer.com/) to showcase the capabilities of [Atlas](https://github.com/layerhq/Atlas-iOS). You may be tempted to directly integrate Atlas Messenger code straight into your app as a shortcut, but this is not recommended. Developers that have tried to directly integrate Atlas Messenger code into existing apps without fully understanding how Layer concepts like User Authentication work end up frustrated and confused. 3 important things to note about the Atlas Messenger project:
+
 1. Atlas Messenger uses an Layer identity server and token provider designed to only be used with this project. You must use your own identity server and token provider. For more information, check out our [Authentication Guide](https://developer.layer.com/docs/ios/guides).
 1. Atlas Messenger has a cap of only 20 users.
 1. The Layer identity server does not work with production app id's.
