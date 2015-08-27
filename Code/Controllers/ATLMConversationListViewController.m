@@ -195,7 +195,8 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 
 - (void)logoutTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController
 {
-    [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeBlack];
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeBlack];
+    [SVProgressHUD show];
     if (self.applicationController.layerClient.isConnected) {
         [self.applicationController.layerClient deauthenticateWithCompletion:^(BOOL success, NSError *error) {
             [SVProgressHUD dismiss];
