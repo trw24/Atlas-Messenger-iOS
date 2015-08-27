@@ -395,30 +395,34 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
         if (!self.moviePlayerController) {
             self.moviePlayerController = [[MPMoviePlayerController alloc] initWithContentURL:fullResVideoPart.fileURL];
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moviePlayerStateDidChange:) name:MPMoviePlayerLoadStateDidChangeNotification object:nil];
-            [self.moviePlayerController setMovieSourceType:MPMovieSourceTypeFile];
+            [self.view addSubview:self.moviePlayerController.view];
             [self.moviePlayerController prepareToPlay];
-            [self.scrollView addSubview:self.moviePlayerController.view];
         } else {
             return;
         }
-        self.moviePlayerController.view.alpha = 1.0f;
+        CGFloat yOffset = self.navigationController.navigationBar.frame.size.height + self.navigationController.navigationBar.frame.origin.y;
+        self.moviePlayerController.view.frame = CGRectMake(0, yOffset, self.view.frame.size.width, self.view.frame.size.height - yOffset);
+        self.moviePlayerController.view.alpha = 0.0f;
+        self.moviePlayerController.backgroundView.backgroundColor = [UIColor whiteColor];
         self.moviePlayerController.controlStyle = MPMovieControlStyleEmbedded;
     }
     if (!self.moviePlayerController) {
         return;
     }
-    self.moviePlayerController.view.frame = self.mediaViewFrame;
-    [UIView animateWithDuration:ATLMMediaViewControllerAnimationDuration animations:^{
-//        self.moviePlayerController.view.alpha = 1.0f; // make the full res image appear.
-        self.navigationItem.rightBarButtonItem.enabled = YES;
-    }];
+
     [self viewDidLayoutSubviews];
 }
 
 - (void)moviePlayerStateDidChange:(NSNotification *)notification
 {
     MPMovieLoadState loadState = self.moviePlayerController.loadState;
-    NSLog(@"movie player loadstate: %d", loadState);
+    if (loadState & MPMovieLoadStatePlayable) {
+        [UIView animateWithDuration:ATLMMediaViewControllerAnimationDuration animations:^{
+            self.progressView.alpha = 0.0;
+            self.moviePlayerController.view.alpha = 1.0f; // make the full res image appear.
+            self.navigationItem.rightBarButtonItem.enabled = YES;
+        }];
+    }
 }
 
 - (void)downloadFullResMediaForMIMEType:(NSString *)MIMEType
@@ -509,7 +513,6 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
     self.mediaViewFrame = imageViewFrame;
     self.lowResImageView.frame = imageViewFrame;
     self.fullResImageView.frame = imageViewFrame;
-    self.moviePlayerController.view.frame = imageViewFrame;
 }
 
 #pragma mark - LYRProgress Delegate Implementation
@@ -526,6 +529,7 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
         if (progressCompleted) {
             progress.delegate = nil;
             [self loadFullResMedia];
+            self.title = @"Downloaded";
         }
     });
 }
