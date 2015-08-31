@@ -42,6 +42,7 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
 @property (nonatomic) UIProgressView *progressView;
 @property (nonatomic) BOOL zoomingEnabled;
 @property (nonatomic) BOOL viewControllerConfigured;
+@property (nonatomic) LYRMessagePart *observedMessagePart;
 
 @end
 
@@ -60,6 +61,9 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
 {
     self.scrollView.delegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerLoadStateDidChangeNotification object:nil];
+    if (self.observedMessagePart) {
+        [self.observedMessagePart removeObserver:self forKeyPath:@"transferStatus"];
+    }
 }
 
 - (void)viewDidLoad
@@ -427,16 +431,18 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
 
 - (void)downloadFullResMediaForMIMEType:(NSString *)MIMEType
 {
-    LYRMessagePart *fullResImagePart = ATLMessagePartForMIMEType(self.message, MIMEType);
+    LYRMessagePart *fullResMedia = ATLMessagePartForMIMEType(self.message, MIMEType);
     
-    if (fullResImagePart && (fullResImagePart.transferStatus == LYRContentTransferReadyForDownload || fullResImagePart.transferStatus == LYRContentTransferDownloading)) {
+    if (fullResMedia && (fullResMedia.transferStatus == LYRContentTransferReadyForDownload || fullResMedia.transferStatus == LYRContentTransferDownloading)) {
         NSError *error;
-        LYRProgress *downloadProgress = [fullResImagePart downloadContent:&error];
+        LYRProgress *downloadProgress = [fullResMedia downloadContent:&error];
         if (!downloadProgress) {
             NSLog(@"problem downloading full resolution photo with %@", error);
             return;
         }
         downloadProgress.delegate = self;
+        [fullResMedia addObserver:self forKeyPath:@"transferStatus" options:NSKeyValueObservingOptionNew context:nil];
+        self.observedMessagePart = fullResMedia;
         if ([@[ATLMIMETypeImageJPEG, ATLMIMETypeImagePNG, ATLMIMETypeImageGIF] containsObject:MIMEType]) {
             self.title = @"Downloading Image...";
         } else if ([@[ATLMIMETypeVideoMP4] containsObject:MIMEType]) {
@@ -522,16 +528,22 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
     // Queue UI updates onto the main thread, since LYRProgress performs
     // delegate callbacks from a background thread.
     dispatch_async(dispatch_get_main_queue(), ^{
-        BOOL progressCompleted = progress.fractionCompleted == 1.0f;
-        [self.progressView setProgress:progress.fractionCompleted animated:YES];
-        // After transfer completes, remove self for delegation.
-        NSLog(@"progress: %.2f", progress.fractionCompleted);
-        if (progressCompleted) {
-            progress.delegate = nil;
-            [self loadFullResMedia];
-            self.title = @"Downloaded";
-        }
+        [self.progressView setProgress:progress.fractionCompleted animated:NO];
     });
 }
+
+#pragma mark - LYRMessagePart.transferStatus KVO notifications
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(LYRMessagePart *)messagePart change:(NSDictionary *)change context:(void *)context
+{
+    NSLog(@"message part: %@", messagePart);
+    if (messagePart.transferStatus == LYRContentTransferComplete) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.title = @"Downloaded";
+            [self loadFullResMedia];
+        });
+    }
+}
+
 
 @end
