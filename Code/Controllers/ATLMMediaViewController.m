@@ -528,7 +528,7 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
     // Queue UI updates onto the main thread, since LYRProgress performs
     // delegate callbacks from a background thread.
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.progressView setProgress:progress.fractionCompleted animated:NO];
+        [self.progressView setProgress:progress.fractionCompleted animated:YES];
     });
 }
 
