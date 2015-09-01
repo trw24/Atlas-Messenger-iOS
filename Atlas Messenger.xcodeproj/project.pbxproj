@@ -30,7 +30,7 @@
 		251D8DC31A9688C50000BFA2 /* ATLMConversationDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D8C1A9688C40000BFA2 /* ATLMConversationDetailViewController.m */; };
 		251D8DC41A9688C50000BFA2 /* ATLMConversationListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D8E1A9688C40000BFA2 /* ATLMConversationListViewController.m */; };
 		251D8DC51A9688C50000BFA2 /* ATLMConversationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D901A9688C40000BFA2 /* ATLMConversationViewController.m */; };
-		251D8DC61A9688C50000BFA2 /* ATLMImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D921A9688C40000BFA2 /* ATLMImageViewController.m */; };
+		251D8DC61A9688C50000BFA2 /* ATLMMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D921A9688C40000BFA2 /* ATLMMediaViewController.m */; };
 		251D8DC71A9688C50000BFA2 /* ATLMNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D941A9688C40000BFA2 /* ATLMNavigationController.m */; };
 		251D8DC81A9688C50000BFA2 /* ATLMParticipantTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D961A9688C40000BFA2 /* ATLMParticipantTableViewController.m */; };
 		251D8DC91A9688C50000BFA2 /* ATLMPersistenceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D981A9688C40000BFA2 /* ATLMPersistenceManager.m */; };
@@ -121,8 +121,8 @@
 		251D8D8E1A9688C40000BFA2 /* ATLMConversationListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMConversationListViewController.m; sourceTree = "<group>"; };
 		251D8D8F1A9688C40000BFA2 /* ATLMConversationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMConversationViewController.h; sourceTree = "<group>"; };
 		251D8D901A9688C40000BFA2 /* ATLMConversationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMConversationViewController.m; sourceTree = "<group>"; };
-		251D8D911A9688C40000BFA2 /* ATLMImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMImageViewController.h; sourceTree = "<group>"; };
-		251D8D921A9688C40000BFA2 /* ATLMImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMImageViewController.m; sourceTree = "<group>"; };
+		251D8D911A9688C40000BFA2 /* ATLMMediaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMMediaViewController.h; sourceTree = "<group>"; };
+		251D8D921A9688C40000BFA2 /* ATLMMediaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMMediaViewController.m; sourceTree = "<group>"; };
 		251D8D931A9688C40000BFA2 /* ATLMNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMNavigationController.h; sourceTree = "<group>"; };
 		251D8D941A9688C40000BFA2 /* ATLMNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMNavigationController.m; sourceTree = "<group>"; };
 		251D8D951A9688C40000BFA2 /* ATLMParticipantTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMParticipantTableViewController.h; sourceTree = "<group>"; };
@@ -330,8 +330,8 @@
 				251D8D8E1A9688C40000BFA2 /* ATLMConversationListViewController.m */,
 				251D8D8F1A9688C40000BFA2 /* ATLMConversationViewController.h */,
 				251D8D901A9688C40000BFA2 /* ATLMConversationViewController.m */,
-				251D8D911A9688C40000BFA2 /* ATLMImageViewController.h */,
-				251D8D921A9688C40000BFA2 /* ATLMImageViewController.m */,
+				251D8D911A9688C40000BFA2 /* ATLMMediaViewController.h */,
+				251D8D921A9688C40000BFA2 /* ATLMMediaViewController.m */,
 				251D8D931A9688C40000BFA2 /* ATLMNavigationController.h */,
 				251D8D941A9688C40000BFA2 /* ATLMNavigationController.m */,
 				251D8D951A9688C40000BFA2 /* ATLMParticipantTableViewController.h */,
@@ -694,7 +694,7 @@
 				251D8DC51A9688C50000BFA2 /* ATLMConversationViewController.m in Sources */,
 				251D8DD91A9688C50000BFA2 /* ATLMSplashView.m in Sources */,
 				251D8DC01A9688C50000BFA2 /* ATLMAppDelegate.m in Sources */,
-				251D8DC61A9688C50000BFA2 /* ATLMImageViewController.m in Sources */,
+				251D8DC61A9688C50000BFA2 /* ATLMMediaViewController.m in Sources */,
 				251D8DD31A9688C50000BFA2 /* ATLMParticipantDataSource.m in Sources */,
 				251D8DCF1A9688C50000BFA2 /* ATLMConstants.m in Sources */,
 				251D8DDA1A9688C50000BFA2 /* ATLMStyleValue1TableViewCell.m in Sources */,
