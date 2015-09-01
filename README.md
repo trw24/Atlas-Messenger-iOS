@@ -4,6 +4,16 @@
 
 This repository contains the source code of Atlas Messenger, an example application built by [Layer](https://layer.com/) to showcase the capabilities of [Atlas](https://github.com/layerhq/Atlas-iOS), a library of robust communications user interface components integrated with the Layer platform.
 
+#### For Demo Purposes only
+
+You may be tempted to directly integrate Atlas Messenger code straight into your app as a shortcut, but this is not recommended. Developers that have tried to directly integrate Atlas Messenger code into existing apps without fully understanding how Layer concepts like User Authentication work end up frustrated and confused. Three important things to note about Atlas Messenger:
+
+1. Atlas Messenger uses an Layer identity server and token provider designed to only be used with this project. You must use your own identity server and token provider. For more information, check out our [Authentication Guide](https://developer.layer.com/docs/ios/guides).
+1. Atlas Messenger has a cap of only 20 users.
+1. The Layer identity server does not work with production app id's.
+
+If you're interested in learning more about how Atlas works and how best to incorporate it into your application then please read the [Atlas Documentation](https://developer.layer.com/docs/ios/atlas).
+
 ## Getting Started
 
 Building Atlas Messenger requires that you obtain a Layer App ID. You can obtain an App ID by registering for a Layer account on the [Experience Atlas](https://developer.layer.com/dashboard/signup/atlas) page. Alternately, a pre-built version is available for immediate testing [at the same location](https://developer.layer.com/dashboard/signup/atlas).
@@ -50,21 +60,6 @@ static NSString *const ATLMLayerAppID = @"035c3b96-ecb5-4642-b6b1-ff49ea2dd5db";
 Note: The current Atlas Messenger project is designed to only work with a special `Atlas Messenger` project.  To create this special App ID you must go to the [Atlas build](https://developer.layer.com/dashboard/atlas/build)  page. If you use a different App ID you will see a "Request failed: forbidden" error when you launch the app.
 
 You can now proceed with building and running Atlas Messenger. Select **Run** from the **Product** menu (or type `⌘R`). After the build completes, Atlas Messenger will launch launch in your iOS Simulator.
-
-#### For Demo Purposes only
-
-Atlas Messenger is an example application built by [Layer](https://layer.com/) to showcase the capabilities of [Atlas](https://github.com/layerhq/Atlas-iOS). You may be tempted to directly integrate Atlas Messenger code straight into your app as a shortcut, but this is not recommended. Developers that have tried to directly integrate Atlas Messenger code into existing apps without fully understanding how Layer concepts like User Authentication work end up frustrated and confused. Three important things to note about Atlas Messenger:
-
-1. Atlas Messenger uses an Layer identity server and token provider designed to only be used with this project. You must use your own identity server and token provider. For more information, check out our [Authentication Guide](https://developer.layer.com/docs/ios/guides).
-1. Atlas Messenger has a cap of only 20 users.
-1. The Layer identity server does not work with production app id's.
-
-The most basic integration of Atlas involves implementing the following protocols:
-* `ATLConversationListViewController` (the conversation list) 
-* `ATLConversationViewController` (the conversation view)
-* `ATLParticipantTableViewController` (the participant picker)
-
-Your user model will also need to implement the `ATLParticipant` protocol to work with Atlas. We recommend reading through the [Atlas documentation](https://developer.layer.com/docs/atlas) before you get started.
 
 ## Getting Oriented
 
