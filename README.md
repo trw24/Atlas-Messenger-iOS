@@ -8,7 +8,7 @@ This repository contains the source code of Atlas Messenger, an example applicat
 
 You may be tempted to directly integrate Atlas Messenger code straight into your app as a shortcut, but this is not recommended. Developers that have tried to directly integrate Atlas Messenger code into existing apps without fully understanding how Layer concepts work end up frustrated and confused. Three important things to note about Atlas Messenger:
 
-1. Atlas Messenger uses an Layer identity server and token provider designed to only be used with this project. You must use your own identity server and token provider when building your own integration with Atlas. For more information, check out our [Authentication Guide](https://developer.layer.com/docs/ios/guides).
+1. Atlas Messenger uses an Layer identity server and token provider designed to only be used with this project. You must use your own identity server and token provider when integrating Atlas into your application. For more information, check out our [Authentication Guide](https://developer.layer.com/docs/ios/guides).
 1. Atlas Messenger has a cap of only 20 users.
 1. The Layer identity server does not work with production app ids.
 
