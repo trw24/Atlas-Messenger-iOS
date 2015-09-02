@@ -4,6 +4,16 @@
 
 This repository contains the source code of Atlas Messenger, an example application built by [Layer](https://layer.com/) to showcase the capabilities of [Atlas](https://github.com/layerhq/Atlas-iOS), a library of robust communications user interface components integrated with the Layer platform.
 
+#### For Demo Purposes Only
+
+You may be tempted to directly integrate Atlas Messenger code straight into your app as a shortcut, but this is not recommended. Developers that have tried to directly integrate Atlas Messenger code into existing apps without fully understanding how Layer concepts work end up frustrated and confused. Three important things to note about Atlas Messenger:
+
+1. Atlas Messenger uses an Layer identity server and token provider designed to only be used with this project. You must use your own identity server and token provider when integrating Atlas into your application. For more information, check out our [Authentication Guide](https://developer.layer.com/docs/ios/guides).
+1. Atlas Messenger has a cap of only 20 users.
+1. The Layer identity server does not work with production app ids.
+
+If you're interested in learning more about how Atlas works and how best to incorporate it into your application then please read the [Atlas Documentation](https://developer.layer.com/docs/ios/atlas).
+
 ## Getting Started
 
 Building Atlas Messenger requires that you obtain a Layer App ID. You can obtain an App ID by registering for a Layer account on the [Experience Atlas](https://developer.layer.com/dashboard/signup/atlas) page. Alternately, a pre-built version is available for immediate testing [at the same location](https://developer.layer.com/dashboard/signup/atlas).
