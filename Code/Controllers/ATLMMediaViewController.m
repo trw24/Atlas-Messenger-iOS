@@ -21,6 +21,7 @@
 #import "ATLMMediaViewController.h"
 #import <MediaPlayer/MediaPlayer.h>
 #import <Atlas/Atlas.h>
+#import <AVFoundation/AVFoundation.h>
 #import "ATLUIImageHelper.h"
 
 static NSTimeInterval const ATLMMediaViewControllerAnimationDuration = 0.75f;
@@ -203,10 +204,18 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
 
 - (void)share:(id)sender
 {
-    if (self.fullResImage) {
-        UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[self.fullResImage] applicationActivities:nil];
-        [self presentViewController:activityViewController animated:YES completion:nil];
+    LYRMessagePart *fullResMediaMessagePart;
+    if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF)) {
+        fullResMediaMessagePart = ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF);
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImagePNG)) {
+        fullResMediaMessagePart = ATLMessagePartForMIMEType(self.message, ATLMIMETypeImagePNG);
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeVideoMP4)) {
+        fullResMediaMessagePart = ATLMessagePartForMIMEType(self.message, ATLMIMETypeVideoMP4);
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEG)) {
+        fullResMediaMessagePart = ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEG);
     }
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[fullResMediaMessagePart.fileURL] applicationActivities:nil];
+    [self presentViewController:activityViewController animated:YES completion:nil];
 }
 
 - (void)done:(id)sender
@@ -218,6 +227,9 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
     [self.fullResImageView removeFromSuperview];
     self.fullResImageView = nil;
     self.fullResImage = nil;
+    if (self.moviePlayerController) {
+        [self.moviePlayerController pause];
+    }
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -399,6 +411,8 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
         if (!self.moviePlayerController) {
             self.moviePlayerController = [[MPMoviePlayerController alloc] initWithContentURL:fullResVideoPart.fileURL];
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moviePlayerStateDidChange:) name:MPMoviePlayerLoadStateDidChangeNotification object:nil];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moviePlayerWillChangeFullScreenAppearance:) name:MPMoviePlayerWillEnterFullscreenNotification object:nil];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moviePlayerWillChangeFullScreenAppearance:) name:MPMoviePlayerWillExitFullscreenNotification object:nil];
             [self.view addSubview:self.moviePlayerController.view];
             [self.moviePlayerController prepareToPlay];
         } else {
@@ -427,6 +441,20 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
             self.navigationItem.rightBarButtonItem.enabled = YES;
         }];
     }
+}
+
+- (void)moviePlayerWillChangeFullScreenAppearance:(NSNotification *)notification
+{
+    NSTimeInterval transitionDuration = [notification.userInfo[MPMoviePlayerFullscreenAnimationDurationUserInfoKey] floatValue];
+    UIColor *moviePlayerBackgroundColorBackground;
+    if ([notification.name isEqualToString:MPMoviePlayerWillEnterFullscreenNotification]) {
+        moviePlayerBackgroundColorBackground = [UIColor blackColor];
+    } else {
+        moviePlayerBackgroundColorBackground = [UIColor whiteColor];
+    }
+    [UIView animateWithDuration:transitionDuration animations:^{
+        self.moviePlayerController.backgroundView.backgroundColor = moviePlayerBackgroundColorBackground;
+    }];
 }
 
 - (void)downloadFullResMediaForMIMEType:(NSString *)MIMEType
@@ -536,14 +564,20 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(LYRMessagePart *)messagePart change:(NSDictionary *)change context:(void *)context
 {
-    NSLog(@"message part: %@", messagePart);
     if (messagePart.transferStatus == LYRContentTransferComplete) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.title = @"Downloaded";
+            if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF)) {
+                self.title = @"GIF Downloaded";
+            } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeVideoMP4)) {
+                self.title = @"Video Downloaded";
+            } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEG) || ATLMessagePartForMIMEType(self.message, ATLMIMETypeImagePNG)) {
+                self.title = @"Image Downloaded";
+            } else {
+                self.title = @"Downloaded";
+            }
             [self loadFullResMedia];
         });
     }
 }
-
 
 @end
