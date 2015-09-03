@@ -1,5 +1,12 @@
 # Atlas Messenger Changelog
 
+## 0.9.1
+
+### Enchancements
+
+* Added support for video attachments.
+* Added support for video playback (renamed `ATLImageViewController` to `ATLMediaViewController`).
+
 ## 0.9.0
 
 ### Enhancements
