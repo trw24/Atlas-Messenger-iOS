@@ -1,7 +1,7 @@
 PODS:
   - Atlas (1.0.11):
     - LayerKit (>= 0.16.0)
-  - ClusterPrePermissions (0.6.0)
+  - ClusterPrePermissions (0.7.0)
   - Expecta (0.3.2)
   - KIF (3.0.8):
     - KIF/XCTest (= 3.0.8)
@@ -39,7 +39,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Atlas: 9bb6dccf270236d591b36882288ecf185b464f82
-  ClusterPrePermissions: c08f4d9276a409a1907a7ebc3c82a533c0855589
+  ClusterPrePermissions: 26a8e92ea4629b116954b3a38d48599aaf1bb32a
   Expecta: 8c507baf13211207b1e9d0a741480600e6b4ed15
   KIF: 3c2cb8e66fb216f9c3abcd714699411f0256f767
   KIFViewControllerActions: 73085acd975ebbfc954f7895ca1aaa9faa36b3c6
