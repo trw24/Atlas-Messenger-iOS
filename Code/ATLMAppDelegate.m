@@ -289,7 +289,6 @@ static NSString *const ATLMLayerAppID = @"layer:///apps/staging/d3687d60-c20b-11
         }];
     }];
 
-    
     [self unregisterForRemoteNotifications:[UIApplication sharedApplication]];
 }
 
@@ -303,17 +302,14 @@ static NSString *const ATLMLayerAppID = @"layer:///apps/staging/d3687d60-c20b-11
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.scannerController];
     self.navigationController.navigationBarHidden = YES;
     
-    if (!withAuthenticationController) {
-        [self.splitViewController presentViewController:self.navigationController animated:animated completion:^{
+    [self.splitViewController presentViewController:self.navigationController animated:animated completion:^{
+        if (!withAuthenticationController) {
             [self removeSplashView];
-        }];
-    } else {
-        [self.splitViewController presentViewController:self.navigationController animated:animated completion:^{
+        } else {
             [self.scannerController presentRegistrationViewController];
             [self performSelector:@selector(removeSplashView) withObject:nil afterDelay:1.0f];
-        }];
-    }
-
+        }
+    }];
 }
 
 #pragma mark - Conversations

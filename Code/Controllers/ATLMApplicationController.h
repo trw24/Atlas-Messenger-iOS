@@ -48,6 +48,9 @@ extern NSString *const ATLMConversationDeletedNotification;
 /// @name Global Resources
 ///--------------------------------
 
+/**
+ @abstract The `ATLMSplitViewController` controller which is the application's root controller.
+ */
 @property (weak, nonatomic) ATLMSplitViewController *splitViewController;
 
 /**

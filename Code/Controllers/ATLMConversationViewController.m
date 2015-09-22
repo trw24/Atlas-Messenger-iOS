@@ -463,7 +463,6 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     ATLMConversationDetailViewController *detailViewController = [ATLMConversationDetailViewController conversationDetailViewControllerWithConversation:self.conversation];
     detailViewController.detailDelegate = self;
     detailViewController.applicationController = self.applicationController;
-    //[self.applicationController.splitViewController setDetailViewController:detailViewController];
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
 
