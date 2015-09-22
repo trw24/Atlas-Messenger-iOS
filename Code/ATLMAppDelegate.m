@@ -27,13 +27,14 @@
 #import "ATLMAppDelegate.h"
 #import "ATLMNavigationController.h"
 #import "ATLMConversationListViewController.h"
+#import "ATLMSplitViewController.h"
 #import "ATLMSplashView.h"
 #import "SVProgressHUD.h"
 #import "ATLMQRScannerController.h"
 #import "ATLMUtilities.h"
 
 // TODO: Configure a Layer appID from https://developer.layer.com/dashboard/atlas/build
-static NSString *const ATLMLayerAppID = nil;
+static NSString *const ATLMLayerAppID = @"layer:///apps/staging/d3687d60-c20b-11e4-a237-d66a000006ca";
 
 @interface ATLMAppDelegate () <MFMailComposeViewControllerDelegate>
 
@@ -42,6 +43,7 @@ static NSString *const ATLMLayerAppID = nil;
 @property (nonatomic) ATLMConversationListViewController *conversationListViewController;
 @property (nonatomic) ATLMSplashView *splashView;
 @property (nonatomic) ATLMLayerClient *layerClient;
+@property (nonatomic) ATLMSplitViewController *splitViewController;
 
 @end
 
@@ -80,14 +82,11 @@ static NSString *const ATLMLayerAppID = nil;
 
 - (void)configureWindow
 {
-    self.scannerController = [ATLMQRScannerController new];
-    self.scannerController.applicationController = self.applicationController;
-    
-    self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.scannerController];
-    self.navigationController.navigationBarHidden = YES;
+    self.splitViewController = [[ATLMSplitViewController alloc] init];
+    self.applicationController.splitViewController = self.splitViewController;
     
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.window.rootViewController = self.navigationController;
+    self.window.rootViewController = self.splitViewController;
     [self.window makeKeyAndVisible];
     
     [self addSplashView];
@@ -107,13 +106,12 @@ static NSString *const ATLMLayerAppID = nil;
         self.applicationController.APIManager = manager;
         [self connectLayerIfNeeded];
         if (![self resumeSession]) {
-            [self.scannerController presentRegistrationViewController];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self removeSplashView];
-            });
+            [self presentScannerViewController:YES withAuthenticationController:YES];
+        } else {
+            [self removeSplashView];
         }
     } else {
-        [self removeSplashView];
+        [self presentScannerViewController:YES withAuthenticationController:NO];
     }
 }
 
@@ -132,7 +130,7 @@ static NSString *const ATLMLayerAppID = nil;
     if (self.applicationController.layerClient.authenticatedUserID) {
         ATLMSession *session = [self.applicationController.persistenceManager persistedSessionWithError:nil];
         if ([self.applicationController.APIManager resumeSession:session error:nil]) {
-            [self presentConversationsListViewController:YES];
+            [self presentAuthenticatedLayerSession];
             return YES;
         }
     }
@@ -251,7 +249,7 @@ static NSString *const ATLMLayerAppID = nil;
         });
         return;
     }
-    [self presentConversationsListViewController:YES];
+    [self presentAuthenticatedLayerSession];
 }
 
 - (void)userDidAuthenticate:(NSNotification *)notification
@@ -277,26 +275,62 @@ static NSString *const ATLMLayerAppID = nil;
         NSLog(@"Failed clearing persistent user session: %@", error);
         //TODO - Handle Error
     }
-    [self.navigationController dismissViewControllerAnimated:YES completion:^{
-        self.conversationListViewController = nil;
-        [self setupLayer];
+    [self addSplashView];
+    self.splashView.alpha = 0.0f;
+    
+    [UIView animateWithDuration:0.3f animations:^{
+        self.splashView.alpha = 1.0f;
+    } completion:^(BOOL finished) {
+        [self.splitViewController dismissViewControllerAnimated:YES completion:^{
+            self.conversationListViewController = nil;
+            [self.splitViewController resignFirstResponder];
+            [self.splitViewController setDetailViewController:[UIViewController new]];
+            [self setupLayer];
+        }];
     }];
+
     
     [self unregisterForRemoteNotifications:[UIApplication sharedApplication]];
 }
 
+#pragma mark - ScannerView
+
+- (void)presentScannerViewController:(BOOL)animated withAuthenticationController:(BOOL)withAuthenticationController
+{
+    self.scannerController = [ATLMQRScannerController new];
+    self.scannerController.applicationController = self.applicationController;
+    
+    self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.scannerController];
+    self.navigationController.navigationBarHidden = YES;
+    
+    if (!withAuthenticationController) {
+        [self.splitViewController presentViewController:self.navigationController animated:animated completion:^{
+            [self removeSplashView];
+        }];
+    } else {
+        [self.splitViewController presentViewController:self.navigationController animated:animated completion:^{
+            [self.scannerController presentRegistrationViewController];
+            [self performSelector:@selector(removeSplashView) withObject:nil afterDelay:1.0f];
+        }];
+    }
+
+}
+
 #pragma mark - Conversations
 
-- (void)presentConversationsListViewController:(BOOL)animated
+- (void)presentAuthenticatedLayerSession
 {
+    if (self.navigationController) {
+        [self.splitViewController dismissViewControllerAnimated:YES completion:nil];
+    }
     if (self.conversationListViewController) return;
     self.conversationListViewController = [ATLMConversationListViewController conversationListViewControllerWithLayerClient:self.applicationController.layerClient];
     self.conversationListViewController.applicationController = self.applicationController;
     
-    ATLMNavigationController *authenticatedNavigationController = [[ATLMNavigationController alloc] initWithRootViewController:self.conversationListViewController];
-    [self.navigationController presentViewController:authenticatedNavigationController animated:YES completion:^{
-        [self removeSplashView];
-    }];
+    ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.applicationController.layerClient];
+    
+    [self.splitViewController setMainViewController:self.conversationListViewController];
+    [self.splitViewController setDetailViewController:conversationViewController];
 }
 
 #pragma mark - Splash View

@@ -24,6 +24,7 @@
 #import "ATLMImageViewController.h"
 #import "ATLMUtilities.h"
 #import "ATLMParticipantTableViewController.h"
+#import "ATLMSplitViewController.h"
 
 static NSDateFormatter *ATLMShortTimeFormatter()
 {
@@ -154,13 +155,29 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     [self registerNotificationObservers];
     
     self.participantDataSource = [ATLMParticipantDataSource participantDataSourceWithPersistenceManager:self.applicationController.persistenceManager];
-    self.participantDataSource.excludedIdentifiers = [NSSet setWithObject:self.layerClient.authenticatedUserID];
+    self.participantDataSource.excludedIdentifiers = [NSSet setWithObject:self.layerClient.authenticatedUserID];    
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     [self configureTitle];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    if (!self.view.isFirstResponder) {
+        [self.view becomeFirstResponder];
+    }
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    if (![self isMovingFromParentViewController]) {
+        [self.view resignFirstResponder];
+    }
 }
 
 - (void)dealloc
@@ -446,6 +463,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     ATLMConversationDetailViewController *detailViewController = [ATLMConversationDetailViewController conversationDetailViewControllerWithConversation:self.conversation];
     detailViewController.detailDelegate = self;
     detailViewController.applicationController = self.applicationController;
+    //[self.applicationController.splitViewController setDetailViewController:detailViewController];
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
 

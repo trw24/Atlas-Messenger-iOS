@@ -23,6 +23,7 @@
 #import <LayerKit/LayerKit.h>
 #import "ATLMAPIManager.h"
 #import "ATLMLayerClient.h"
+@class ATLMSplitViewController;
 
 extern NSString *const ATLMLayerApplicationID;
 
@@ -46,6 +47,8 @@ extern NSString *const ATLMConversationDeletedNotification;
 ///--------------------------------
 /// @name Global Resources
 ///--------------------------------
+
+@property (weak, nonatomic) ATLMSplitViewController *splitViewController;
 
 /**
  @abstract The `LYRClient` object for the application.
