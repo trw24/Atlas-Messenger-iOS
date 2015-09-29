@@ -547,6 +547,10 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
     self.mediaViewFrame = imageViewFrame;
     self.lowResImageView.frame = imageViewFrame;
     self.fullResImageView.frame = imageViewFrame;
+    if (self.moviePlayerController) {
+        CGFloat yOffset = self.navigationController.navigationBar.frame.size.height + self.navigationController.navigationBar.frame.origin.y;
+        self.moviePlayerController.view.frame = CGRectMake(0, yOffset, self.view.frame.size.width, self.view.frame.size.height - yOffset);
+    }
 }
 
 #pragma mark - LYRProgress Delegate Implementation
