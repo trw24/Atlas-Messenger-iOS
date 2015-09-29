@@ -25,6 +25,7 @@
 #import "ATLMConversationDetailViewController.h"
 #import "ATLMNavigationController.h"
 #import "ATLMParticipantDataSource.h"
+#import "ATLMSplitViewController.h"
 
 @interface ATLMConversationListViewController () <ATLConversationListViewControllerDelegate, ATLConversationListViewControllerDataSource, ATLMSettingsViewControllerDelegate, UIActionSheetDelegate>
 
@@ -161,15 +162,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     conversationViewController.displaysAddressBar = shouldShowAddressBar;
     conversationViewController.conversation = conversation;
     
-    if (self.navigationController.topViewController == self) {
-        [self.navigationController pushViewController:conversationViewController animated:YES];
-    } else {
-        NSMutableArray *viewControllers = [self.navigationController.viewControllers mutableCopy];
-        NSUInteger listViewControllerIndex = [self.navigationController.viewControllers indexOfObject:self];
-        NSRange replacementRange = NSMakeRange(listViewControllerIndex + 1, viewControllers.count - listViewControllerIndex - 1);
-        [viewControllers replaceObjectsInRange:replacementRange withObjectsFromArray:@[conversationViewController]];
-        [self.navigationController setViewControllers:viewControllers animated:YES];
-    }
+    [self.applicationController.splitViewController setDetailViewController:conversationViewController];
 }
 
 #pragma mark - Actions
@@ -198,7 +191,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     }
 }
 
-#pragma mark - LSSettingsViewControllerDelegate
+#pragma mark - ATLMSettingsViewControllerDelegate
 
 - (void)logoutTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController
 {

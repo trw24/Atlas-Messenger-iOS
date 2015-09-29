@@ -3,7 +3,8 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 target 'Atlas Messenger' do
   pod 'SVProgressHUD', :head
-  pod 'Atlas', '~> 1.0.10'
+  pod 'Atlas', '~> 1.0.11'
+
   pod 'ClusterPrePermissions', '~> 0.1'
 end
 
