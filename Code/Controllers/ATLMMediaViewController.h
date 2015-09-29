@@ -1,5 +1,5 @@
 //
-//  ATLMImageViewController.h
+//  ATLMMediaViewController.h
 //  Atlas Messenger
 //
 //  Created by Ben Blakley on 1/16/15.
@@ -24,7 +24,7 @@
 /**
  @abstract The `ATLMImageViewController` downloads and displays a high quality version of an image.
  */
-@interface ATLMImageViewController : UIViewController
+@interface ATLMMediaViewController : UIViewController
 
 /** 
  @abstact Initializes the controller with a message object. 

@@ -21,7 +21,7 @@
 #import "ATLMConversationViewController.h"
 #import "ATLMParticipantDataSource.h"
 #import "ATLMConversationDetailViewController.h"
-#import "ATLMImageViewController.h"
+#import "ATLMMediaViewController.h"
 #import "ATLMUtilities.h"
 #import "ATLMParticipantTableViewController.h"
 #import "ATLMSplitViewController.h"
@@ -222,25 +222,31 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
  */
 - (void)conversationViewController:(ATLConversationViewController *)viewController didSelectMessage:(LYRMessage *)message
 {
-    LYRMessagePart *JPEGMessagePart = ATLMessagePartForMIMEType(message, ATLMIMETypeImageJPEG);
-    if (JPEGMessagePart) {
-        [self presentImageViewControllerWithMessage:message];
+    LYRMessagePart *messagePart = ATLMessagePartForMIMEType(message, ATLMIMETypeImageJPEG);
+    if (messagePart) {
+        [self presentMediaViewControllerWithMessage:message];
         return;
     }
-    LYRMessagePart *PNGMessagePart = ATLMessagePartForMIMEType(message, ATLMIMETypeImagePNG);
-    if (PNGMessagePart) {
-        [self presentImageViewControllerWithMessage:message];
+    messagePart = ATLMessagePartForMIMEType(message, ATLMIMETypeImagePNG);
+    if (messagePart) {
+        [self presentMediaViewControllerWithMessage:message];
         return;
     }
-    LYRMessagePart *GIFMessagePart = ATLMessagePartForMIMEType(message, ATLMIMETypeImageGIF);
-    if (GIFMessagePart) {
-        [self presentImageViewControllerWithMessage:message];
+    messagePart = ATLMessagePartForMIMEType(message, ATLMIMETypeImageGIF);
+    if (messagePart) {
+        [self presentMediaViewControllerWithMessage:message];
+        return;
+    }
+    messagePart = ATLMessagePartForMIMEType(message, ATLMIMETypeVideoMP4);
+    if (messagePart) {
+        [self presentMediaViewControllerWithMessage:message];
+        return;
     }
 }
 
-- (void)presentImageViewControllerWithMessage:(LYRMessage *)message
+- (void)presentMediaViewControllerWithMessage:(LYRMessage *)message
 {
-    ATLMImageViewController *imageViewController = [[ATLMImageViewController alloc] initWithMessage:message];
+    ATLMMediaViewController *imageViewController = [[ATLMMediaViewController alloc] initWithMessage:message];
     UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:imageViewController];
     [self.navigationController presentViewController:controller animated:YES completion:nil];
 }

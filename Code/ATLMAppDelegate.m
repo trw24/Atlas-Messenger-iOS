@@ -192,7 +192,7 @@ static NSString *const ATLMLayerAppID = @"layer:///apps/staging/d3687d60-c20b-11
     if (userTappedRemoteNotification && conversation) {
         [self navigateToViewForConversation:conversation];
     } else if (userTappedRemoteNotification) {
-        [SVProgressHUD showWithStatus:@"Loading Conversation" maskType:SVProgressHUDMaskTypeBlack];
+        [SVProgressHUD showWithStatus:@"Loading Conversation"];
     }
     
     BOOL success = [self.applicationController.layerClient synchronizeWithRemoteNotification:userInfo completion:^(NSArray *changes, NSError *error) {

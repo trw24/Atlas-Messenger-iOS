@@ -1,5 +1,5 @@
 //
-//  ATLMImageViewController.m
+//  ATLMMediaViewController.m
 //  Atlas Messenger
 //
 //  Created by Ben Blakley on 1/16/15.
@@ -18,28 +18,36 @@
 //  limitations under the License.
 //
 
-#import "ATLMImageViewController.h"
+#import "ATLMMediaViewController.h"
+#import <MediaPlayer/MediaPlayer.h>
 #import <Atlas/Atlas.h>
+#import <AVFoundation/AVFoundation.h>
 #import "ATLUIImageHelper.h"
 
-static NSTimeInterval const ATLMImageViewControllerAnimationDuration = 0.75f;
-static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
+static NSTimeInterval const ATLMMediaViewControllerAnimationDuration = 0.75f;
+static NSTimeInterval const ATLMMediaViewControllerProgressBarHeight = 2.00f;
+static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atlas/media/";
 
-@interface ATLMImageViewController () <UIScrollViewDelegate, LYRProgressDelegate>
+@interface ATLMMediaViewController () <UIScrollViewDelegate, LYRProgressDelegate>
 
 @property (nonatomic) LYRMessage *message;
 @property (nonatomic) UIImage *lowResImage;
 @property (nonatomic) UIImage *fullResImage;
+@property (nonatomic) NSURL *mediaBaseURL;
+@property (nonatomic) MPMoviePlayerController *moviePlayerController;
 @property (nonatomic) CGSize fullResImageSize;
-@property (nonatomic) CGRect imageViewFrame;
+@property (nonatomic) CGRect mediaViewFrame;
 @property (nonatomic) UIScrollView *scrollView;
 @property (nonatomic) UIImageView *lowResImageView;
 @property (nonatomic) UIImageView *fullResImageView;
 @property (nonatomic) UIProgressView *progressView;
+@property (nonatomic) BOOL zoomingEnabled;
+@property (nonatomic) BOOL viewControllerConfigured;
+@property (nonatomic) LYRMessagePart *observedMessagePart;
 
 @end
 
-@implementation ATLMImageViewController
+@implementation ATLMMediaViewController
 
 - (instancetype)initWithMessage:(LYRMessage *)message
 {
@@ -53,6 +61,10 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
 - (void)dealloc
 {
     self.scrollView.delegate = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerLoadStateDidChangeNotification object:nil];
+    if (self.observedMessagePart) {
+        [self.observedMessagePart removeObserver:self forKeyPath:@"transferStatus"];
+    }
 }
 
 - (void)viewDidLoad
@@ -91,29 +103,44 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
     UIBarButtonItem *doneButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)];
     self.navigationItem.leftBarButtonItem = doneButtonItem;
     
-    self.title = @"Image";
+    if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEG) || ATLMessagePartForMIMEType(self.message, ATLMIMETypeImagePNG) || ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF)) {
+        self.title = @"Image";
+        self.zoomingEnabled = YES;
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeVideoMP4)) {
+        self.title = @"Video";
+        self.zoomingEnabled = NO;
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+        NSURL *symLinkedMediaBaseURL = [NSURL fileURLWithPath:basePath isDirectory:YES];
+        self.mediaBaseURL = [symLinkedMediaBaseURL URLByAppendingPathComponent:ATLMMediaViewControllerSymLinkedMediaTempPath].absoluteURL;
+        if ([[NSFileManager defaultManager] fileExistsAtPath:symLinkedMediaBaseURL.path isDirectory:nil]) {
+            [[NSFileManager defaultManager] removeItemAtURL:self.mediaBaseURL error:nil];
+        }
+        [[NSFileManager defaultManager] createDirectoryAtURL:self.mediaBaseURL withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    self.scrollView.pinchGestureRecognizer.enabled = self.zoomingEnabled;
+    self.scrollView.panGestureRecognizer.enabled = self.zoomingEnabled;
+    
+    self.viewControllerConfigured = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIFPreview) || ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF)) {
-        [self loadLowResGIFs];
-    } else {
-        [self loadLowResImages];
+    if (self.viewControllerConfigured) {
+        return;
     }
+    [self loadLowResMedia];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF)) {
-        [self downloadFullResImageForMIMEType:ATLMIMETypeImageGIF];
-    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImagePNG)) {
-        [self downloadFullResImageForMIMEType:ATLMIMETypeImagePNG];
-    } else {
-        [self downloadFullResImageForMIMEType:ATLMIMETypeImageJPEG];
+    if (self.viewControllerConfigured) {
+        return;
     }
+    [self loadFullResMedia];
+    self.viewControllerConfigured = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -131,7 +158,7 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    self.progressView.frame = CGRectMake(0, self.navigationController.navigationBar.frame.size.height - ATLMImageViewControllerProgressBarHeight, self.view.frame.size.width, ATLMImageViewControllerProgressBarHeight);
+    self.progressView.frame = CGRectMake(0, self.navigationController.navigationBar.frame.size.height - ATLMMediaViewControllerProgressBarHeight, self.view.frame.size.width, ATLMMediaViewControllerProgressBarHeight);
 }
 
 #pragma mark - UIScrollViewDelegate
@@ -143,19 +170,23 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    [self configureForAvailableSpace];
+    if (self.zoomingEnabled) {
+        [self configureForAvailableSpace];
+    }
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
-    [self configureForAvailableSpace];
+    if (self.zoomingEnabled) {
+        [self configureForAvailableSpace];
+    }
 }
 
 #pragma mark - Gesture Recognizer Handler
 
 - (void)doubleTapRecognized:(UIGestureRecognizer *)gestureRecognizer
 {
-    if (self.scrollView.minimumZoomScale == self.scrollView.maximumZoomScale) {
+    if (self.scrollView.minimumZoomScale == self.scrollView.maximumZoomScale || !self.zoomingEnabled) {
         return;
     }
     
@@ -173,10 +204,18 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
 
 - (void)share:(id)sender
 {
-    if (self.fullResImage) {
-        UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[self.fullResImage] applicationActivities:nil];
-        [self presentViewController:activityViewController animated:YES completion:nil];
+    LYRMessagePart *fullResMediaMessagePart;
+    if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF)) {
+        fullResMediaMessagePart = ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF);
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImagePNG)) {
+        fullResMediaMessagePart = ATLMessagePartForMIMEType(self.message, ATLMIMETypeImagePNG);
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeVideoMP4)) {
+        fullResMediaMessagePart = ATLMessagePartForMIMEType(self.message, ATLMIMETypeVideoMP4);
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEG)) {
+        fullResMediaMessagePart = ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEG);
     }
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[fullResMediaMessagePart.fileURL] applicationActivities:nil];
+    [self presentViewController:activityViewController animated:YES completion:nil];
 }
 
 - (void)done:(id)sender
@@ -188,10 +227,37 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
     [self.fullResImageView removeFromSuperview];
     self.fullResImageView = nil;
     self.fullResImage = nil;
+    if (self.moviePlayerController) {
+        [self.moviePlayerController pause];
+    }
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - Helpers
+
+- (void)loadLowResMedia
+{
+    if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIFPreview) || ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF)) {
+        [self loadLowResGIFs];
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEGPreview) && !ATLMessagePartForMIMEType(self.message, ATLMIMETypeVideoMP4)) {
+        [self loadLowResImages];
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEGPreview) && ATLMessagePartForMIMEType(self.message, ATLMIMETypeVideoMP4)) {
+        [self loadLowResImages];
+    }
+}
+
+- (void)loadFullResMedia
+{
+    if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF)) {
+        [self downloadFullResMediaForMIMEType:ATLMIMETypeImageGIF];
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImagePNG)) {
+        [self downloadFullResMediaForMIMEType:ATLMIMETypeImagePNG];
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeVideoMP4)) {
+        [self downloadFullResMediaForMIMEType:ATLMIMETypeVideoMP4];
+    } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEG)) {
+        [self downloadFullResMediaForMIMEType:ATLMIMETypeImageJPEG];
+    }
+}
 
 - (void)loadLowResImages
 {
@@ -224,8 +290,8 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
     }
     
     self.scrollView.contentSize = self.fullResImageSize;
-    self.imageViewFrame = CGRectMake(0, 0, self.fullResImageSize.width, self.fullResImageSize.height);
-    self.lowResImageView.frame = self.imageViewFrame;
+    self.mediaViewFrame = CGRectMake(0, 0, self.fullResImageSize.width, self.fullResImageSize.height);
+    self.lowResImageView.frame = self.mediaViewFrame;
     [self viewDidLayoutSubviews];
 }
 
@@ -260,12 +326,12 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
     }
     
     self.scrollView.contentSize = self.fullResImageSize;
-    self.imageViewFrame = CGRectMake(0, 0, self.fullResImageSize.width, self.fullResImageSize.height);
-    self.lowResImageView.frame = self.imageViewFrame;
+    self.mediaViewFrame = CGRectMake(0, 0, self.fullResImageSize.width, self.fullResImageSize.height);
+    self.lowResImageView.frame = self.mediaViewFrame;
     [self viewDidLayoutSubviews];
 }
 
-- (void)loadFullResImages
+- (void)loadFullResImage
 {
     LYRMessagePart *fullResImagePart = ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEG);
     if (!fullResImagePart) {
@@ -286,15 +352,15 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
         if (CGSizeEqualToSize(self.fullResImageSize, CGSizeZero)) {
             self.fullResImageSize = self.fullResImage.size;
             self.scrollView.contentSize = self.fullResImageSize;
-            self.imageViewFrame = CGRectMake(0, 0, self.fullResImageSize.width, self.fullResImageSize.height);
-            self.lowResImageView.frame = self.imageViewFrame;
+            self.mediaViewFrame = CGRectMake(0, 0, self.fullResImageSize.width, self.fullResImageSize.height);
+            self.lowResImageView.frame = self.mediaViewFrame;
         }
     }
     if (!self.fullResImage) {
         return;
     }
-    self.fullResImageView.frame = self.imageViewFrame;
-    [UIView animateWithDuration:ATLMImageViewControllerAnimationDuration animations:^{
+    self.fullResImageView.frame = self.mediaViewFrame;
+    [UIView animateWithDuration:ATLMMediaViewControllerAnimationDuration animations:^{
         self.fullResImageView.alpha = 1.0f; // make the full res image appear.
         self.progressView.alpha = 0.0;
         self.navigationItem.rightBarButtonItem.enabled = YES;
@@ -320,15 +386,15 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
         if (CGSizeEqualToSize(self.fullResImageSize, CGSizeZero)) {
             self.fullResImageSize = self.fullResImage.size;
             self.scrollView.contentSize = self.fullResImageSize;
-            self.imageViewFrame = CGRectMake(0, 0, self.fullResImageSize.width, self.fullResImageSize.height);
-            self.lowResImageView.frame = self.imageViewFrame;
+            self.mediaViewFrame = CGRectMake(0, 0, self.fullResImageSize.width, self.fullResImageSize.height);
+            self.lowResImageView.frame = self.mediaViewFrame;
         }
     }
     if (!self.fullResImage) {
         return;
     }
-    self.fullResImageView.frame = self.imageViewFrame;
-    [UIView animateWithDuration:ATLMImageViewControllerAnimationDuration animations:^{
+    self.fullResImageView.frame = self.mediaViewFrame;
+    [UIView animateWithDuration:ATLMMediaViewControllerAnimationDuration animations:^{
         self.fullResImageView.alpha = 1.0f; // make the full res image appear.
         self.progressView.alpha = 0.0;
         self.navigationItem.rightBarButtonItem.enabled = YES;
@@ -336,27 +402,90 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
     [self viewDidLayoutSubviews];
 }
 
-- (void)downloadFullResImageForMIMEType:(NSString *)MIMEType
+- (void)loadFullResVideo
 {
-    LYRMessagePart *fullResImagePart = ATLMessagePartForMIMEType(self.message, MIMEType);
+    LYRMessagePart *fullResVideoPart = ATLMessagePartForMIMEType(self.message, ATLMIMETypeVideoMP4);
     
-    if (fullResImagePart && (fullResImagePart.transferStatus == LYRContentTransferReadyForDownload || fullResImagePart.transferStatus == LYRContentTransferDownloading)) {
+    // Retrieve hi-res image from message part
+    if (!(fullResVideoPart.transferStatus == LYRContentTransferReadyForDownload || fullResVideoPart.transferStatus == LYRContentTransferDownloading)) {
+        if (!self.moviePlayerController) {
+            self.moviePlayerController = [[MPMoviePlayerController alloc] initWithContentURL:fullResVideoPart.fileURL];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moviePlayerStateDidChange:) name:MPMoviePlayerLoadStateDidChangeNotification object:nil];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moviePlayerWillChangeFullScreenAppearance:) name:MPMoviePlayerWillEnterFullscreenNotification object:nil];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moviePlayerWillChangeFullScreenAppearance:) name:MPMoviePlayerWillExitFullscreenNotification object:nil];
+            [self.view addSubview:self.moviePlayerController.view];
+            [self.moviePlayerController prepareToPlay];
+        } else {
+            return;
+        }
+        CGFloat yOffset = self.navigationController.navigationBar.frame.size.height + self.navigationController.navigationBar.frame.origin.y;
+        self.moviePlayerController.view.frame = CGRectMake(0, yOffset, self.view.frame.size.width, self.view.frame.size.height - yOffset);
+        self.moviePlayerController.view.alpha = 0.0f;
+        self.moviePlayerController.backgroundView.backgroundColor = [UIColor whiteColor];
+        self.moviePlayerController.controlStyle = MPMovieControlStyleEmbedded;
+    }
+    if (!self.moviePlayerController) {
+        return;
+    }
+
+    [self viewDidLayoutSubviews];
+}
+
+- (void)moviePlayerStateDidChange:(NSNotification *)notification
+{
+    MPMovieLoadState loadState = self.moviePlayerController.loadState;
+    if (loadState & MPMovieLoadStatePlayable) {
+        [UIView animateWithDuration:ATLMMediaViewControllerAnimationDuration animations:^{
+            self.progressView.alpha = 0.0;
+            self.moviePlayerController.view.alpha = 1.0f; // make the full res image appear.
+            self.navigationItem.rightBarButtonItem.enabled = YES;
+        }];
+    }
+}
+
+- (void)moviePlayerWillChangeFullScreenAppearance:(NSNotification *)notification
+{
+    NSTimeInterval transitionDuration = [notification.userInfo[MPMoviePlayerFullscreenAnimationDurationUserInfoKey] floatValue];
+    UIColor *moviePlayerBackgroundColorBackground;
+    if ([notification.name isEqualToString:MPMoviePlayerWillEnterFullscreenNotification]) {
+        moviePlayerBackgroundColorBackground = [UIColor blackColor];
+    } else {
+        moviePlayerBackgroundColorBackground = [UIColor whiteColor];
+    }
+    [UIView animateWithDuration:transitionDuration animations:^{
+        self.moviePlayerController.backgroundView.backgroundColor = moviePlayerBackgroundColorBackground;
+    }];
+}
+
+- (void)downloadFullResMediaForMIMEType:(NSString *)MIMEType
+{
+    LYRMessagePart *fullResMedia = ATLMessagePartForMIMEType(self.message, MIMEType);
+    
+    if (fullResMedia && (fullResMedia.transferStatus == LYRContentTransferReadyForDownload || fullResMedia.transferStatus == LYRContentTransferDownloading)) {
         NSError *error;
-        LYRProgress *downloadProgress = [fullResImagePart downloadContent:&error];
+        LYRProgress *downloadProgress = [fullResMedia downloadContent:&error];
         if (!downloadProgress) {
             NSLog(@"problem downloading full resolution photo with %@", error);
             return;
         }
         downloadProgress.delegate = self;
-        self.title = @"Downloading Image...";
-        [UIView animateWithDuration:ATLMImageViewControllerAnimationDuration animations:^{
+        [fullResMedia addObserver:self forKeyPath:@"transferStatus" options:NSKeyValueObservingOptionNew context:nil];
+        self.observedMessagePart = fullResMedia;
+        if ([@[ATLMIMETypeImageJPEG, ATLMIMETypeImagePNG, ATLMIMETypeImageGIF] containsObject:MIMEType]) {
+            self.title = @"Downloading Image...";
+        } else if ([@[ATLMIMETypeVideoMP4] containsObject:MIMEType]) {
+            self.title = @"Downloading Video...";
+        }
+        [UIView animateWithDuration:ATLMMediaViewControllerAnimationDuration animations:^{
             self.progressView.alpha = 1.0f;
         }];
     } else {
         if ([MIMEType isEqualToString:ATLMIMETypeImageGIF]) {
             [self loadFullResGIFs];
-        } else {
-            [self loadFullResImages];
+        } else if ([@[ATLMIMETypeImageJPEG, ATLMIMETypeImagePNG] containsObject:MIMEType]) {
+            [self loadFullResImage];
+        } else if ([@[ATLMIMETypeVideoMP4] containsObject:MIMEType]) {
+            [self loadFullResVideo];
         }
     }
 }
@@ -415,9 +544,13 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
         imageViewFrame.origin.y = 0;
     }
     
-    self.imageViewFrame = imageViewFrame;
+    self.mediaViewFrame = imageViewFrame;
     self.lowResImageView.frame = imageViewFrame;
     self.fullResImageView.frame = imageViewFrame;
+    if (self.moviePlayerController) {
+        CGFloat yOffset = self.navigationController.navigationBar.frame.size.height + self.navigationController.navigationBar.frame.origin.y;
+        self.moviePlayerController.view.frame = CGRectMake(0, yOffset, self.view.frame.size.width, self.view.frame.size.height - yOffset);
+    }
 }
 
 #pragma mark - LYRProgress Delegate Implementation
@@ -427,15 +560,28 @@ static NSTimeInterval const ATLMImageViewControllerProgressBarHeight = 2.00f;
     // Queue UI updates onto the main thread, since LYRProgress performs
     // delegate callbacks from a background thread.
     dispatch_async(dispatch_get_main_queue(), ^{
-        BOOL progressCompleted = progress.fractionCompleted == 1.0f;
         [self.progressView setProgress:progress.fractionCompleted animated:YES];
-        // After transfer completes, remove self for delegation.
-        if (progressCompleted) {
-            progress.delegate = nil;
-            self.title = @"Image Downloaded";
-            [self loadFullResImages];
-        }
     });
+}
+
+#pragma mark - LYRMessagePart.transferStatus KVO notifications
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(LYRMessagePart *)messagePart change:(NSDictionary *)change context:(void *)context
+{
+    if (messagePart.transferStatus == LYRContentTransferComplete) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF)) {
+                self.title = @"GIF Downloaded";
+            } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeVideoMP4)) {
+                self.title = @"Video Downloaded";
+            } else if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEG) || ATLMessagePartForMIMEType(self.message, ATLMIMETypeImagePNG)) {
+                self.title = @"Image Downloaded";
+            } else {
+                self.title = @"Downloaded";
+            }
+            [self loadFullResMedia];
+        });
+    }
 }
 
 @end
