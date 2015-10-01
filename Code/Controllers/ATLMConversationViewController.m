@@ -155,7 +155,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     [self registerNotificationObservers];
     
     self.participantDataSource = [ATLMParticipantDataSource participantDataSourceWithPersistenceManager:self.applicationController.persistenceManager];
-    self.participantDataSource.excludedIdentifiers = [NSSet setWithObject:self.layerClient.authenticatedUserID];    
+    self.participantDataSource.excludedIdentifiers = [NSSet setWithObject:self.layerClient.authenticatedUserID];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -554,6 +554,14 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidTapLink:) name:ATLUserDidTapLinkNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(conversationMetadataDidChange:) name:ATLMConversationMetadataDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+}
+
+#pragma mark - Device Orientation
+
+- (void)deviceOrientationDidChange:(NSNotification *)notification
+{
+    [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
 @end

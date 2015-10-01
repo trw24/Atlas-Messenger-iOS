@@ -39,11 +39,13 @@
 - (void)setDetailViewController:(ATLMConversationViewController *)detailViewController
 {
     BOOL shouldDisplayDetailViewController = !([self.detailNavigationController.viewControllers[0] isMemberOfClass:[UIViewController class]]);
-    self.detailNavigationController.viewControllers = @[detailViewController];
     
     if (shouldDisplayDetailViewController) {
+        self.detailNavigationController = [[ATLMNavigationController alloc] initWithRootViewController:detailViewController];
         [self showDetailViewController:self.detailNavigationController sender:self];
-     }
+    } else {
+        self.detailNavigationController.viewControllers = @[ detailViewController ];
+    }
 }
 
 @end
