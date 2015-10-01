@@ -85,10 +85,11 @@ static NSString *const ATLMLayerAppID = @"layer:///apps/staging/d3687d60-c20b-11
     self.splitViewController = [[ATLMSplitViewController alloc] init];
     self.applicationController.splitViewController = self.splitViewController;
     
-    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.window.rootViewController = self.splitViewController;
+    self.window = [UIWindow new];
     [self.window makeKeyAndVisible];
-    
+    self.window.frame = [[UIScreen mainScreen] bounds];
+    self.window.rootViewController = self.splitViewController;
+
     [self addSplashView];
 }
 
@@ -324,6 +325,8 @@ static NSString *const ATLMLayerAppID = @"layer:///apps/staging/d3687d60-c20b-11
     self.conversationListViewController.applicationController = self.applicationController;
     
     ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.applicationController.layerClient];
+    conversationViewController.applicationController = self.applicationController;
+    conversationViewController.displaysAddressBar = YES;
     
     [self.splitViewController setMainViewController:self.conversationListViewController];
     [self.splitViewController setDetailViewController:conversationViewController];

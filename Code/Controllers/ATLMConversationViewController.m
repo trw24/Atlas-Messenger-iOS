@@ -155,7 +155,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     [self registerNotificationObservers];
     
     self.participantDataSource = [ATLMParticipantDataSource participantDataSourceWithPersistenceManager:self.applicationController.persistenceManager];
-    self.participantDataSource.excludedIdentifiers = [NSSet setWithObject:self.layerClient.authenticatedUserID];    
+    self.participantDataSource.excludedIdentifiers = [NSSet setWithObject:self.layerClient.authenticatedUserID];
 }
 
 - (void)viewWillAppear:(BOOL)animated
