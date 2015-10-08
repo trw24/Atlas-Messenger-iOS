@@ -328,7 +328,6 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
                     delivered = YES;
                     break;
                 case LYRRecipientStatusRead:
-                    NSLog(@"Read");
                     readCount += 1;
                     break;
             }

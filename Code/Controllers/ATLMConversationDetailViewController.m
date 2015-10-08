@@ -19,7 +19,6 @@
 //
 
 #import "ATLMConversationDetailViewController.h"
-#import <Atlas/Atlas.h>
 #import "ATLMParticipantDataSource.h"
 #import "ATLMUtilities.h"
 #import "ATLMCenterTextTableViewCell.h"
