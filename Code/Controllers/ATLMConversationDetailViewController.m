@@ -23,7 +23,7 @@
 #import "ATLMUtilities.h"
 #import "ATLMCenterTextTableViewCell.h"
 #import "ATLMInputTableViewCell.h"
-#import "SVProgressHUD.h"
+#import <SVProgressHUD/SVProgressHUD.h>
 #import "ATLMParticipantTableViewController.h"
 
 typedef NS_ENUM(NSInteger, ATLMConversationDetailTableSection) {
