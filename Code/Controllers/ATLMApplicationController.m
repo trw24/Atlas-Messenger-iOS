@@ -19,7 +19,6 @@
 //
 
 #import "ATLMApplicationController.h"
-//#import "ATLMUtilities.h"
 #import <SVProgressHUD/SVProgressHUD.h>
 
 NSString *const ATLMLayerApplicationID = @"LAYER_APP_ID";

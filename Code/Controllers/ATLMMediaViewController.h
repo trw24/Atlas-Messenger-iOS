@@ -19,7 +19,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <LayerKit/LayerKit.h>
+#import <Atlas/Atlas.h>
 
 /**
  @abstract The `ATLMImageViewController` downloads and displays a high quality version of an image.

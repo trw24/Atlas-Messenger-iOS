@@ -13,7 +13,7 @@
 #import "ATLMAPIManager.h"
 #import "ATLMConstants.h"
 #import "ATLMUtilities.h"
-#import "SVProgressHUD.h"
+#import <SVProgressHUD/SVProgressHUD.h>
 
 @interface ATLMRegistrationViewController () <UITextFieldDelegate>
 

@@ -19,7 +19,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <LayerKit/LayerKit.h>
+#import <Atlas/Atlas.h>
 #import "ATLMUser.h"
 #import "ATLMPersistenceManager.h"
 #import "ATLMUser.h"

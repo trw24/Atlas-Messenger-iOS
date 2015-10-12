@@ -20,7 +20,7 @@
 
 #import <Atlas/Atlas.h>
 #import "ATLMApplicationController.h"
-#import "SVProgressHUD.h"
+#import <SVProgressHUD/SVProgressHUD.h>
 
 /**
  @abstract Subclass of the `ATLMConversationListViewController`. Presents a list of conversations.

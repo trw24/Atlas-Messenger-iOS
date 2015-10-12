@@ -20,7 +20,6 @@
 
 
 #import <Foundation/Foundation.h>
-#import <LayerKit/LayerKit.h>
 #import "ATLMAPIManager.h"
 #import "ATLMLayerClient.h"
 @class ATLMSplitViewController;

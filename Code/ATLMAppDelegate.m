@@ -29,7 +29,7 @@
 #import "ATLMConversationListViewController.h"
 #import "ATLMSplitViewController.h"
 #import "ATLMSplashView.h"
-#import "SVProgressHUD.h"
+#import <SVProgressHUD/SVProgressHUD.h>
 #import "ATLMQRScannerController.h"
 #import "ATLMUtilities.h"
 

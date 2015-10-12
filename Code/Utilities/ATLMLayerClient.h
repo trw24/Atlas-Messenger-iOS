@@ -19,7 +19,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <LayerKit/LayerKit.h>
+#import <Atlas/Atlas.h>
 
 /**
  @abstract The `ATLMLayerClient` is a subclass of `LYRClient` which provides an interface for performing routine queries against Layer messaging content.
