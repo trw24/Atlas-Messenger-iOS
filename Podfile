@@ -6,4 +6,3 @@ use_frameworks!
 pod 'Atlas'
 pod 'SVProgressHUD'
 pod 'ClusterPrePermissions', '~> 0.1'
-
