@@ -18,10 +18,9 @@
 //  limitations under the License.
 //
 
-#import "KIFTestCase.h"
-#import <KIF/KIF.h>
-#import "KIFSystemTestActor+ViewControllerActions.h"
 #import <XCTest/XCTest.h>
+#import <KIF/KIF.h>
+#import <KIFViewControllerActions/KIFSystemTestActor+ViewControllerActions.h>
 
 #import "ATLMTestInterface.h"
 #import "ATLMTestUser.h"

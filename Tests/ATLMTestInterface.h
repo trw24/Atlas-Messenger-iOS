@@ -29,10 +29,9 @@
 #import <OCMock/OCMock.h>
 #define EXP_SHORTHAND
 #import <Expecta/Expecta.h>
-#import "LYRCountDownLatch.h"
-#import "KIFTestCase.h"
+#import <LYRCountDownLatch/LYRCountDownLatch.h>
 #import <KIF/KIF.h>
-#import "KIFSystemTestActor+ViewControllerActions.h"
+#import <KIFViewControllerActions/KIFViewControllerActions.h>
 #import "ATLMUtilities.h"
 
 @interface ATLMTestInterface : NSObject

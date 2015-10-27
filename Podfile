@@ -3,6 +3,16 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 use_frameworks!
 
-pod 'Atlas'
-pod 'SVProgressHUD'
-pod 'ClusterPrePermissions', '~> 0.1'
+target 'Atlas Messenger' do
+  pod 'Atlas'
+  pod 'SVProgressHUD'
+  pod 'ClusterPrePermissions', '~> 0.1'
+end
+
+target 'Atlas MessengerTests' do
+  pod 'OCMock'
+  pod 'Expecta'
+  pod 'KIF'
+  pod 'KIFViewControllerActions'
+  pod 'LYRCountDownLatch'
+end
