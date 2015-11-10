@@ -24,7 +24,6 @@
 		0AADB5D41947C88B0083732B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AADB5D31947C88B0083732B /* SystemConfiguration.framework */; };
 		0ABEFFAF196B7686006FFFF3 /* logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABEFFAE196B7686006FFFF3 /* logo@2x.png */; };
 		0AFE3FE419B0E19C00FCA264 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 259A57311950EB76000E27B0 /* main.m */; };
-		19E4912D728DFE7543131077 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA1D93E68E9105BA0139B1C2 /* Pods.framework */; };
 		251D8DC01A9688C50000BFA2 /* ATLMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D851A9688C40000BFA2 /* ATLMAppDelegate.m */; };
 		251D8DC11A9688C50000BFA2 /* ATLMAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D881A9688C40000BFA2 /* ATLMAPIManager.m */; };
 		251D8DC21A9688C50000BFA2 /* ATLMApplicationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D8A1A9688C40000BFA2 /* ATLMApplicationController.m */; };
@@ -227,7 +226,6 @@
 				0AADB5C41947C85A0083732B /* AudioToolbox.framework in Frameworks */,
 				0A0C242B19477D8F00401B74 /* UIKit.framework in Frameworks */,
 				0A0C242719477D8F00401B74 /* Foundation.framework in Frameworks */,
-				19E4912D728DFE7543131077 /* Pods.framework in Frameworks */,
 				61A8AB01CA6A7BC376EB8D7E /* Pods_Atlas_Messenger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
