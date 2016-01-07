@@ -22,7 +22,7 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import <Atlas/Atlas.h>
 #import <AVFoundation/AVFoundation.h>
-#import "ATLUIImageHelper.h"
+#import <Atlas/ATLUIImageHelper.h>
 
 static NSTimeInterval const ATLMMediaViewControllerAnimationDuration = 0.75f;
 static NSTimeInterval const ATLMMediaViewControllerProgressBarHeight = 2.00f;

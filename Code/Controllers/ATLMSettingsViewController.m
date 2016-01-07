@@ -20,7 +20,7 @@
 
 #import "ATLMSettingsViewController.h"
 #import <Atlas/Atlas.h>
-#import "SVProgressHUD.h"
+#import <SVProgressHUD/SVProgressHUD.h>
 #import "ATLMSettingsHeaderView.h"
 #import "ATLMCenterTextTableViewCell.h"
 #import "ATLMStyleValue1TableViewCell.h"

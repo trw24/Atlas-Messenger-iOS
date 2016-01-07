@@ -19,7 +19,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <LayerKit/LayerKit.h>
 #import "ATLMPersistenceManager.h"
 
 typedef NS_ENUM(NSInteger, ATLMEnvironment) {
