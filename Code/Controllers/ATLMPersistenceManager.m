@@ -212,6 +212,11 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
     NSString *path = [self usersPath];
     if (![NSKeyedArchiver archiveRootObject:users toFile:path]) return NO;
     self.users = users;
+    NSError *fileAttributeError;
+    BOOL success = [[NSFileManager defaultManager] setAttributes:@{ NSFileProtectionKey : NSFileProtectionCompleteUntilFirstUserAuthentication } ofItemAtPath:path error:&fileAttributeError];
+    if (!success) {
+        NSLog(@"Failed setting the file protection attribute to the file at path '%@' with error=%@", path, fileAttributeError);
+    }
     return YES;
 }
 
@@ -242,7 +247,15 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
 {
     NSString *path = [self sessionPath];
     self.session = session;
-    return [NSKeyedArchiver archiveRootObject:session toFile:path];
+    if (![NSKeyedArchiver archiveRootObject:session toFile:path]) {
+        return NO;
+    }
+    NSError *fileAttributeError;
+    BOOL success = [[NSFileManager defaultManager] setAttributes:@{ NSFileProtectionKey : NSFileProtectionCompleteUntilFirstUserAuthentication } ofItemAtPath:path error:&fileAttributeError];
+    if (!success) {
+        NSLog(@"Failed setting the file protection attribute to the file at path '%@' with error=%@", path, fileAttributeError);
+    }
+    return YES;
 }
 
 - (ATLMSession *)persistedSessionWithError:(NSError **)error
