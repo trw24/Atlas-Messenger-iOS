@@ -2,6 +2,7 @@ Pods
 .DS_Store
 *.bundle
 xcuserdata
+*.xcworkspace/xcuserdata/*.xcscmblueprint
 *.xcworkspace/xcuserdata/*.xcuserdatad
 *.xcworkspace/xcshareddata/xcschemes/*.xcscheme
 *.xcworkspace/xcshareddata/*.xccheckout
