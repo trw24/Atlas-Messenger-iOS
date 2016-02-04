@@ -196,17 +196,16 @@ static NSString *const ATLMLayerAppID = nil;
         [SVProgressHUD showWithStatus:@"Loading Conversation"];
     }
     
-    BOOL success = [self.applicationController.layerClient synchronizeWithRemoteNotification:userInfo completion:^(NSArray *changes, NSError *error) {
-        if (changes.count) {
+    BOOL success = [self.applicationController.layerClient synchronizeWithRemoteNotification:userInfo completion:^(LYRConversation * _Nullable conversation, LYRMessage * _Nullable message, NSError * _Nullable error) {
+        if (conversation || message) {
             completionHandler(UIBackgroundFetchResultNewData);
         } else {
             completionHandler(error ? UIBackgroundFetchResultFailed : UIBackgroundFetchResultNoData);
         }
         
         // Try navigating once the synchronization completed
-        if (userTappedRemoteNotification && !conversation) {
+        if (userTappedRemoteNotification && conversation) {
             [SVProgressHUD dismiss];
-            conversation = [self conversationFromRemoteNotification:userInfo];
             [self navigateToViewForConversation:conversation];
         }
     }];
