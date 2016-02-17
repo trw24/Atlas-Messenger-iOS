@@ -4,7 +4,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
 target 'Atlas Messenger' do
-  pod 'Atlas'
+  pod 'Atlas', path: "Libraries/Atlas"
   pod 'SVProgressHUD'
   pod 'ClusterPrePermissions', '~> 0.1'
 end
