@@ -35,6 +35,7 @@
 
 // TODO: Configure a Layer appID from https://developer.layer.com/dashboard/atlas/build
 static NSString *const ATLMLayerAppID = nil;
+static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 @interface ATLMAppDelegate () <MFMailComposeViewControllerDelegate>
 
@@ -247,7 +248,9 @@ static NSString *const ATLMLayerAppID = nil;
             LYRConversation *conversation = [self conversationFromRemoteNotification:userInfo];
             if (conversation) {
                 LYRMessagePart *messagePart = [LYRMessagePart messagePartWithText:responseText];
-                LYRMessage *message = ATLMessageForParts(self.applicationController.layerClient, @[ messagePart ], responseText, nil);
+                NSString *fullName = [[self.applicationController.persistenceManager userForIdentifier:self.applicationController.layerClient.authenticatedUserID] fullName];
+                NSString *pushText = [NSString stringWithFormat:@"%@: %@", fullName, responseText];
+                LYRMessage *message = ATLMessageForParts(self.applicationController.layerClient, @[ messagePart ], pushText, ATLMPushNotificationSoundName);
                 if (message) {
                     NSError *error = nil;
                     BOOL success = [conversation sendMessage:message error:&error];
