@@ -35,6 +35,7 @@
 
 // TODO: Configure a Layer appID from https://developer.layer.com/dashboard/atlas/build
 static NSString *const ATLMLayerAppID = nil;
+static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 @interface ATLMAppDelegate () <MFMailComposeViewControllerDelegate>
 
@@ -153,7 +154,12 @@ static NSString *const ATLMLayerAppID = nil;
 {
     // Registers for push on iOS 7 and iOS 8
     if ([application respondsToSelector:@selector(registerForRemoteNotifications)]) {
-        UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
+        NSSet *categories = nil;
+        if ([UIMutableUserNotificationAction instancesRespondToSelector:@selector(behavior)]) {
+            categories = [NSSet setWithObject:ATLDefaultUserNotificationCategory()];
+        }
+        
+        UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:categories];
         [application registerUserNotificationSettings:notificationSettings];
         [application registerForRemoteNotifications];
     } else {
@@ -232,6 +238,32 @@ static NSString *const ATLMLayerAppID = nil;
         @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Attempted to navigate UI from non-main thread" userInfo:nil];
     }
     [self.conversationListViewController selectConversation:conversation];
+}
+
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(nullable NSString *)identifier forRemoteNotification:(nonnull NSDictionary *)userInfo withResponseInfo:(nonnull NSDictionary *)responseInfo completionHandler:(nonnull void (^)())completionHandler
+{
+    if ([identifier isEqualToString:ATLUserNotificationInlineReplyActionIdentifier]) {
+        NSString *responseText = responseInfo[UIUserNotificationActionResponseTypedTextKey];
+        if ([responseText length]) {
+            LYRConversation *conversation = [self conversationFromRemoteNotification:userInfo];
+            if (conversation) {
+                LYRMessagePart *messagePart = [LYRMessagePart messagePartWithText:responseText];
+                NSString *fullName = [[self.applicationController.persistenceManager userForIdentifier:self.applicationController.layerClient.authenticatedUserID] fullName];
+                NSString *pushText = [NSString stringWithFormat:@"%@: %@", fullName, responseText];
+                LYRMessage *message = ATLMessageForParts(self.applicationController.layerClient, @[ messagePart ], pushText, ATLMPushNotificationSoundName);
+                if (message) {
+                    NSError *error = nil;
+                    BOOL success = [conversation sendMessage:message error:&error];
+                    if (!success) {
+                        NSLog(@"Failed to send inline reply: %@", [error localizedDescription]);
+                    }
+                }
+            } else {
+                NSLog(@"Failed to complete inline reply: unable to find Conversation referenced by remote notification.");
+            }
+        }
+    }
+    completionHandler();
 }
 
 #pragma mark - Authentication Notification Handlers

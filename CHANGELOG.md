@@ -1,5 +1,11 @@
 # Atlas Messenger Changelog
 
+## 0.9.2-pre1
+
+### Enchancements
+
+* Added support for inliner replies to push notifications.
+
 ## 0.9.1
 
 ### Enchancements
