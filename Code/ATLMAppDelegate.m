@@ -155,18 +155,7 @@ static NSString *const ATLMLayerAppID = nil;
     if ([application respondsToSelector:@selector(registerForRemoteNotifications)]) {
         NSSet *categories = nil;
         if ([UIMutableUserNotificationAction instancesRespondToSelector:@selector(behavior)]) {
-            UIMutableUserNotificationAction *replyAction = [UIMutableUserNotificationAction new];
-            replyAction.identifier = ATLUserNotificationInlineReplyActionIdentifier;
-            replyAction.title = @"Reply";
-            replyAction.activationMode = UIUserNotificationActivationModeBackground;
-            replyAction.authenticationRequired = NO;
-            replyAction.behavior = UIUserNotificationActionBehaviorTextInput;
-            
-            UIMutableUserNotificationCategory *category = [UIMutableUserNotificationCategory new];
-            category.identifier = ATLUserNotificationDefaultActionsCategoryIdentifier;
-            [category setActions:@[ replyAction ] forContext:UIUserNotificationActionContextDefault];
-            
-            categories = [NSSet setWithObject:category];
+            categories = [NSSet setWithObject:ATLDefaultUserNotificationCategory()];
         }
         
         UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:categories];
