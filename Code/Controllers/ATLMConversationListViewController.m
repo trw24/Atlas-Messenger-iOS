@@ -230,12 +230,19 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     
     [self.navigationController popToViewController:self animated:YES];
     
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Conversation Deleted"
-                                                        message:@"The conversation has been deleted."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-    [alertView show];
+    if ([UIAlertController class]) {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Conversation Deleted" message:@"The conversation has been deleted." preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+        [alert addAction:action];
+        [self presentViewController:alert animated:YES completion:nil];
+    } else {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Conversation Deleted"
+                                                            message:@"The conversation has been deleted."
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+        [alertView show];
+    }
 }
 
 - (void)conversationParticipantsDidChange:(NSNotification *)notification
@@ -279,7 +286,15 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     if (nextViewControllerIndex >= self.navigationController.viewControllers.count) return nil;
     
     id nextViewController = [self.navigationController.viewControllers objectAtIndex:nextViewControllerIndex];
-    if (![nextViewController isKindOfClass:[ATLMConversationViewController class]]) return nil;
+    if ([self.applicationController respondsToSelector:@selector(splitViewController)] && [nextViewController isKindOfClass:[UINavigationController class]]) {
+        if ([[nextViewController viewControllers][0] isKindOfClass:[ATLMConversationViewController class]]) {
+            nextViewController = [nextViewController viewControllers][0];
+        } else {
+            return nil;
+        }
+    } else {
+        if (![nextViewController isKindOfClass:[ATLMConversationViewController class]]) return nil;
+    }
     
     return nextViewController;
 }
