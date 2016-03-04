@@ -287,8 +287,8 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     
     id nextViewController = [self.navigationController.viewControllers objectAtIndex:nextViewControllerIndex];
     if ([self.applicationController respondsToSelector:@selector(splitViewController)] && [nextViewController isKindOfClass:[UINavigationController class]]) {
-        if ([[nextViewController viewControllers][0] isKindOfClass:[ATLMConversationViewController class]]) {
-            nextViewController = [nextViewController viewControllers][0];
+        if ([[nextViewController viewControllers].firstObject isKindOfClass:[ATLMConversationViewController class]] && [nextViewController viewControllers].count) {
+            nextViewController = [nextViewController viewControllers].firstObject;
         } else {
             return nil;
         }
