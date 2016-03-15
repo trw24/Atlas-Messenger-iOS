@@ -30,7 +30,7 @@ To build Atlas Messenger, you need a few a few standard iOS Development Tools:
 Once you have installed the prerequisites, you can proceed with cloning and configuring the project by executing the following commands in your terminal:
 
 ```sh
-$ git clone https://github.com/layerhq/Atlas-Messenger-iOS.git
+$ git clone --recursive https://github.com/layerhq/Atlas-Messenger-iOS.git
 $ cd Atlas-Messenger-iOS
 $ pod install
 ```
