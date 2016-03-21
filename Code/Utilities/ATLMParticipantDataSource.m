@@ -60,7 +60,7 @@
 - (void)participantsMatchingSearchText:(NSString *)searchText completion:(void (^)(NSSet *))completion
 {
     [self.persistenceManager performUserSearchWithString:searchText completion:^(NSArray *users, NSError *error) {
-        NSPredicate *exclusionPredicate = [NSPredicate predicateWithFormat:@"NOT participantIdentifier IN %@", self.excludedIdentifiers];
+        NSPredicate *exclusionPredicate = [NSPredicate predicateWithFormat:@"NOT userID IN %@", self.excludedIdentifiers];
         NSArray *availableParticipants = [users filteredArrayUsingPredicate:exclusionPredicate];
         completion([NSSet setWithArray:availableParticipants]);
     }];

@@ -85,8 +85,8 @@ CGFloat const ATLMregistrationTextFieldBottomPadding = 20;
 {
     [self.view endEditing:YES];
     
-    if (self.applicationController.layerClient.authenticatedUserID) {
-        NSLog(@"Layer already authenticated as: %@", self.applicationController.layerClient.authenticatedUserID);
+    if (self.applicationController.layerClient.authenticatedUser) {
+        NSLog(@"Layer already authenticated as: %@", self.applicationController.layerClient.authenticatedUser);
         return;
     }
     
@@ -111,12 +111,12 @@ CGFloat const ATLMregistrationTextFieldBottomPadding = 20;
                 ATLMAlertWithError(error);
                 return;
             }
-            [self.applicationController.layerClient authenticateWithIdentityToken:identityToken completion:^(NSString *authenticatedUserID, NSError *error) {
+            [self.applicationController.layerClient authenticateWithIdentityToken:identityToken completion:^(LYRIdentity *authenticatedUser, NSError *error) {
                 if (error) {
                     ATLMAlertWithError(error);
                     return;
                 }
-                NSLog(@"Layer authenticated as: %@", authenticatedUserID);
+                NSLog(@"Layer authenticated as: %@", authenticatedUser);
                 [SVProgressHUD showSuccessWithStatus:@"Authenticated!"];
             }];
         }];

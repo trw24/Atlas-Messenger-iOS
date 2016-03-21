@@ -120,12 +120,12 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     }
     
     NSMutableSet *participants = [conversation.participants mutableCopy];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userID != %@", self.layerClient.authenticatedUserID];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userID != %@", self.layerClient.authenticatedUser.userID];
     [participants filterUsingPredicate:predicate];
     
     if (participants.count == 0) return @"Personal Conversation";
     
-    participants = [[self.applicationController.persistenceManager usersForIdentifiers:[participants valueForKeyPath:@"userID"]] mutableCopy];
+    participants = [[self.applicationController.persistenceManager usersForIdentifiers:[participants valueForKey:@"userID"]] mutableCopy];
     if (participants.count == 0) return @"No Matching Participants";
     if (participants.count == 1) return [[participants allObjects][0] displayName];
     
@@ -248,7 +248,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
         return;
     }
     
-    NSString *authenticatedUserID = self.applicationController.layerClient.authenticatedUserID;
+    NSString *authenticatedUserID = self.applicationController.layerClient.authenticatedUser.userID;
     if (!authenticatedUserID) return;
     LYRConversation *conversation = notification.object;
     if ([[conversation.participants valueForKeyPath:@"userID"] containsObject:authenticatedUserID]) return;

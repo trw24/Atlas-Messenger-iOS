@@ -384,7 +384,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 - (void)leaveConversation
 {
-    NSSet *participants = [NSSet setWithObject:self.applicationController.layerClient.authenticatedUserID];
+    NSSet *participants = [NSSet setWithObject:self.applicationController.layerClient.authenticatedUser.userID];
     NSError *error;
     [self.conversation removeParticipants:participants error:&error];
     if (error) {
@@ -524,8 +524,8 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     [self.tableView deleteRowsAtIndexPaths:deletedIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
     
     NSMutableArray *insertedIndexPaths = [NSMutableArray new];
-    NSMutableSet *insertedIdentifiers = [self.conversation.participants mutableCopy];
-    NSString *authenticatedUserID = self.applicationController.layerClient.authenticatedUserID;
+    NSMutableSet *insertedIdentifiers = [[self.conversation.participants valueForKey:@"userID"] mutableCopy];
+    NSString *authenticatedUserID = self.applicationController.layerClient.authenticatedUser.userID;
     if (authenticatedUserID) [insertedIdentifiers removeObject:authenticatedUserID];
     [insertedIdentifiers minusSet:existingIdentifiers];
     for (NSString *identifier in insertedIdentifiers) {
@@ -543,10 +543,10 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 - (NSMutableArray *)filteredParticipantIdentifiers
 {
-    NSMutableSet *participantIdentifiers = [self.conversation.participants.allObjects mutableCopy];
-    [participantIdentifiers removeObject:self.applicationController.layerClient.authenticatedUserID];
+    NSMutableSet *participantIdentifiers = [[self.conversation.participants.allObjects valueForKey:@"userID"] mutableCopy];
+    [participantIdentifiers removeObject:self.applicationController.layerClient.authenticatedUser.userID];
     NSMutableSet *knownParticipants = [[self.applicationController.persistenceManager usersForIdentifiers:participantIdentifiers] mutableCopy];
-    NSSet *knownParticipantIdentifiers = [knownParticipants valueForKey:@"participantIdentifier"];
+    NSSet *knownParticipantIdentifiers = [knownParticipants valueForKey:@"userID"];
     return [[knownParticipantIdentifiers allObjects] mutableCopy];
 }
 

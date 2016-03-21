@@ -155,7 +155,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     [self registerNotificationObservers];
     
     self.participantDataSource = [ATLMParticipantDataSource participantDataSourceWithPersistenceManager:self.applicationController.persistenceManager];
-    self.participantDataSource.excludedIdentifiers = [NSSet setWithObject:self.layerClient.authenticatedUserID];
+    self.participantDataSource.excludedIdentifiers = [NSSet setWithObject:self.layerClient.authenticatedUser.userID];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -303,8 +303,8 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 - (NSAttributedString *)conversationViewController:(ATLConversationViewController *)conversationViewController attributedStringForDisplayOfRecipientStatus:(NSDictionary *)recipientStatus
 {
     NSMutableDictionary *mutableRecipientStatus = [recipientStatus mutableCopy];
-    if ([mutableRecipientStatus valueForKey:self.applicationController.layerClient.authenticatedUserID]) {
-        [mutableRecipientStatus removeObjectForKey:self.applicationController.layerClient.authenticatedUserID];
+    if ([mutableRecipientStatus valueForKey:self.applicationController.layerClient.authenticatedUser.userID]) {
+        [mutableRecipientStatus removeObjectForKey:self.applicationController.layerClient.authenticatedUser.userID];
     }
     
     NSString *statusString = [NSString new];
@@ -345,7 +345,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     } else {
         __block NSString *blockStatusString = [NSString new];
         [mutableRecipientStatus enumerateKeysAndObjectsUsingBlock:^(NSString *userID, NSNumber *statusNumber, BOOL *stop) {
-            if ([userID isEqualToString:self.applicationController.layerClient.authenticatedUserID]) return;
+            if ([userID isEqualToString:self.applicationController.layerClient.authenticatedUser.userID]) return;
             LYRRecipientStatus status = statusNumber.integerValue;
             switch (status) {
                 case LYRRecipientStatusInvalid:
@@ -504,7 +504,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     }
     
     NSMutableSet *otherParticipants = [self.conversation.participants mutableCopy];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userID != %@", self.layerClient.authenticatedUserID];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userID != %@", self.layerClient.authenticatedUser.userID];
     [otherParticipants filterUsingPredicate:predicate];
     
     if (otherParticipants.count == 0) {
