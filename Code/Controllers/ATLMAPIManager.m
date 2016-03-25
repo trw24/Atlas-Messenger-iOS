@@ -88,16 +88,17 @@ NSString *const ATLMAtlasUserNameKey = @"name";
 
 #pragma mark - Registration
 
-- (void)registerUserWithName:(NSString*)name nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
+- (void)registerUserWithFirstName:(NSString*)firstName lastName:(NSString *)lastName nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
 {
-    NSParameterAssert(name);
+    NSParameterAssert(firstName);
+    NSParameterAssert(lastName);
     NSParameterAssert(nonce);
     NSParameterAssert(completion);
-    
+    NSString *displayName = [NSString stringWithFormat:@"%@ %@", firstName, lastName];
     NSString *appUUID = [[self.layerClient.appID pathComponents] lastObject];
     NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
     NSURL *URL = [NSURL URLWithString:urlString relativeToURL:self.baseURL];
-    NSDictionary *parameters = @{ @"name": name, @"nonce" : nonce };
+    NSDictionary *parameters = @{ @"atlas_identity" : @{ @"first_name": firstName, @"last_name": lastName, @"avatar_url": @"" }, @"name": displayName, @"nonce" : nonce };
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     request.HTTPMethod = @"POST";
     request.HTTPBody = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:nil];

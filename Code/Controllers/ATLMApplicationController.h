@@ -21,7 +21,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ATLMAPIManager.h"
-#import "ATLMLayerClient.h"
+
 @class ATLMSplitViewController;
 
 extern NSString *const ATLMLayerApplicationID;

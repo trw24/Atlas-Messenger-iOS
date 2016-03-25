@@ -18,7 +18,6 @@
 //  limitations under the License.
 //
 
-#import <Atlas/Atlas.h>
 #import "ATLMApplicationController.h"
 
 /**
