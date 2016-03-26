@@ -79,7 +79,7 @@ CGFloat const ATLMfirstNameTextFieldBottomPadding = 20;
 - (void)keyboardWillShow:(NSNotification *)notification
 {
     CGRect rect = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    self.firstNameTextFieldBottomConstraint.constant = -rect.size.height - ATLMfirstNameTextFieldBottomPadding;
+    self.lastNameTextFieldBottomConstraint.constant = -rect.size.height - ATLMfirstNameTextFieldBottomPadding;
     
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:[notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];

@@ -369,15 +369,17 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
  */
 - (void)addressBarViewController:(ATLAddressBarViewController *)addressBarViewController didTapAddContactsButton:(UIButton *)addContactsButton
 {
-    NSOrderedSet *identities = [NSOrderedSet new];
-    if (addressBarViewController.selectedParticipants) {
-        LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
-        query.predicate = [LYRPredicate predicateWithProperty:@"userID" predicateOperator:LYRPredicateOperatorIsNotIn value:[addressBarViewController.selectedParticipants valueForKey:@"userID"]];
-        NSError *error;
-        identities = [self.layerClient executeQuery:query error:&error];
-        if (error) {
+    NSSet *selectedParticipantIDs = [addressBarViewController.selectedParticipants valueForKey:@"userID"];
+    if (!selectedParticipantIDs) {
+        selectedParticipantIDs = [NSSet new];
+    }
+    
+    LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
+    query.predicate = [LYRPredicate predicateWithProperty:@"userID" predicateOperator:LYRPredicateOperatorIsNotIn value:selectedParticipantIDs];
+    NSError *error;
+    NSOrderedSet *identities = [self.layerClient executeQuery:query error:&error];
+    if (error) {
             ATLMAlertWithError(error);
-        }
     }
     
     ATLMParticipantTableViewController  *controller = [ATLMParticipantTableViewController participantTableViewControllerWithParticipants:identities.set sortType:ATLParticipantPickerSortTypeFirstName];
