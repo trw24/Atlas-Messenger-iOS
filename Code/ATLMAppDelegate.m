@@ -129,7 +129,7 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (BOOL)resumeSession
 {
-    if (self.applicationController.layerClient.authenticatedUserID) {
+    if (self.applicationController.layerClient.authenticatedUser) {
         ATLMSession *session = [self.applicationController.persistenceManager persistedSessionWithError:nil];
         if ([self.applicationController.APIManager resumeSession:session error:nil]) {
             [self presentAuthenticatedLayerSession];

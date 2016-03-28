@@ -58,7 +58,7 @@ static CGFloat const ATLMAvatarDiameter = 72;
         
         _nameLabel = [[UILabel alloc] init];
         _nameLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        _nameLabel.text = user.fullName;
+        _nameLabel.text = user.displayName;
         _nameLabel.font = [UIFont systemFontOfSize:16];
         _nameLabel.textColor = ATLGrayColor();
         _nameLabel.textAlignment = NSTextAlignmentCenter;

@@ -43,14 +43,6 @@
 ///---------------------------------------
 
 /**
- @abstract Persists an `NSSet` of `ATLMUser` objects to the specified path.
- @param users The `NSSet` of `ATLMUser` objects to be persisted.
- @param error A reference to an `NSError` object that will contain error information in case the action was not successful.
- @return A boolean value indicating if the operation was successful.
- */
-- (BOOL)persistUsers:(NSSet *)users error:(NSError **)error;
-
-/**
  @abstract Persists an `ATLMSession` object for the currently authenticated user.
  @param session The `ATLMSession` object to be persisted.
  @param error A reference to an `NSError` object that will contain error information in case the action was not successful.
@@ -63,37 +55,10 @@
 ///---------------------------------------
 
 /**
- @abstract Returns the persisted `NSSet` of all `ATLMUser` objects.
- @param error A reference to an `NSError` object that will contain error information in case the action was not successful.
- */
-- (NSSet *)persistedUsersWithError:(NSError **)error;
-
-/**
  @abstract Returns the persisted `ATLMSession` object.
  @param error A reference to an `NSError` object that will contain error information in case the action was not successful.
  */
 - (ATLMSession *)persistedSessionWithError:(NSError **)error;
-
-/**
- @abstract Returns an `NSSet` of `ATLMUser` objects whose `userID` properties match those supplied in an `NSSet` of identifiers.
- @param identifiers An `NSSet` of `NSString` objects representing user identifiers.
- @return An `NSSet` of `ATLMUser` objects.
- */
-- (NSSet *)usersForIdentifiers:(NSSet *)identifiers;
-
-/**
- @abstract Returns a `ATLMUser` object whose `userID` property matches the supplied identifier.
- @param identifier An `NSString` representing a user identifier.
- @return A `ATLMUser` object or nil if a user was not found with the supplied identifier.
- */
-- (ATLMUser *)userForIdentifier:(NSString *)identifier;
-
-/**
- @abstract Performs a search across the `fullName` property on all persisted `ATLMUser` objects for the supplied string.
- @param searchString The string object for which the search is performed.
- @param completion The completion block called when search completes.
- */
-- (void)performUserSearchWithString:(NSString *)searchString completion:(void(^)(NSArray *users, NSError *error))completion;
 
 ///---------------------------------------
 /// @name Deletion

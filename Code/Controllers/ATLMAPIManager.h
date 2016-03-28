@@ -20,9 +20,9 @@
 
 #import <Foundation/Foundation.h>
 #import <Atlas/Atlas.h>
+#import "ATLMLayerClient.h"
 #import "ATLMUser.h"
 #import "ATLMPersistenceManager.h"
-#import "ATLMUser.h"
 #import "ATLMHTTPResponseSerializer.h"
 #import "ATLMErrors.h"
 
@@ -83,12 +83,7 @@ extern NSString *const ATLMApplicationDidSynchronizeParticipants;
  @param nonce A nonce value obtained via a call to `requestAuthenticationNonceWithCompletion:` on `LYRClient`.
  @param completion completion The block to execute upon completion of the asynchronous user registration operation. The block has no return value and accepts two arguments: An identity token that was obtained upon successful registration (or nil in the event of a failure) and an `NSError` object that describes why the operation failed (or nil if the operation was successful).
  */
-- (void)registerUserWithName:(NSString*)name nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion;
-
-/**
- @abstract Synchronizes the local participant store with the Layer identity provider.
- */
-- (void)loadContacts;
+- (void)registerUserWithFirstName:(NSString*)firstName lastName:(NSString *)lastName nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion;
 
 /**
  @abstract Deauthenticates the Atlas Messenger app by discarding its `ATLMSession` object.

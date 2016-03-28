@@ -88,16 +88,17 @@ NSString *const ATLMAtlasUserNameKey = @"name";
 
 #pragma mark - Registration
 
-- (void)registerUserWithName:(NSString*)name nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
+- (void)registerUserWithFirstName:(NSString*)firstName lastName:(NSString *)lastName nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
 {
-    NSParameterAssert(name);
+    NSParameterAssert(firstName);
+    NSParameterAssert(lastName);
     NSParameterAssert(nonce);
     NSParameterAssert(completion);
-    
+    NSString *displayName = [NSString stringWithFormat:@"%@ %@", firstName, lastName];
     NSString *appUUID = [[self.layerClient.appID pathComponents] lastObject];
     NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
     NSURL *URL = [NSURL URLWithString:urlString relativeToURL:self.baseURL];
-    NSDictionary *parameters = @{ @"name": name, @"nonce" : nonce };
+    NSDictionary *parameters = @{ @"user" : @{ @"first_name": firstName, @"last_name": lastName, @"name": displayName, @"avatar_url": @"" }, @"nonce" : nonce };
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     request.HTTPMethod = @"POST";
     request.HTTPBody = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:nil];
@@ -116,12 +117,6 @@ NSString *const ATLMAtlasUserNameKey = @"name";
         NSDictionary *userDetails;
         BOOL success = [ATLMHTTPResponseSerializer responseObject:&userDetails withData:data response:(NSHTTPURLResponse *)response error:&serializationError];
         if (success) {
-            NSError *error;
-            NSArray *userData = userDetails[ATLMAtlasIdentitiesKey];
-            BOOL success = [self persistUserData:userData error:&error];
-            if (!success) {
-                completion(nil, error);
-            }
             ATLMUser *user = [ATLMUser userFromDictionaryRepresentation:userDetails[ATLMAtlasIdentityKey]];
             ATLMSession *session = [ATLMSession sessionWithAuthenticationToken:@"atlas_auth_token" user:user];
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -137,41 +132,6 @@ NSString *const ATLMAtlasUserNameKey = @"name";
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completion(nil, serializationError);
-            });
-        }
-    }] resume];
-}
-
-- (void)loadContacts
-{
-    NSString *appUUID = [[self.layerClient.appID pathComponents] lastObject];
-    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
-    NSURL *URL = [NSURL URLWithString:urlString relativeToURL:self.baseURL];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    request.HTTPMethod = @"GET";
-    
-    [[self.URLSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (!response && error) {
-            NSLog(@"Failed synchronizing participants with error: %@", error);
-            return;
-        }
-        
-        NSError *serializationError;
-        NSDictionary *userDetails;
-        BOOL success = [ATLMHTTPResponseSerializer responseObject:&userDetails withData:data response:(NSHTTPURLResponse *)response error:&serializationError];
-        if (success) {
-            NSError *error;
-            NSArray *userData = (NSArray *)userDetails;
-            BOOL success = [self persistUserData:userData error:&error];
-            if (!success) {
-                NSLog(@"Failed synchronizing participants with error: %@", error);
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[NSNotificationCenter defaultCenter] postNotificationName:ATLMApplicationDidSynchronizeParticipants object:nil];
-            });
-        } else {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"Failed synchronizing participants with error: %@", serializationError);
             });
         }
     }] resume];
@@ -194,26 +154,6 @@ NSString *const ATLMAtlasUserNameKey = @"name";
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:ATLMUserDidAuthenticateNotification object:session.user];
     return YES;
-}
-
-- (BOOL)persistUserData:(NSArray *)userData error:(NSError **)error
-{
-    BOOL success = [self.persistenceManager persistUsers:[self usersFromResponseData:userData] error:error];
-    if (success) {
-        return YES;
-    } else {
-        return NO;
-    }
-}
-
-- (NSSet *)usersFromResponseData:(NSArray *)responseData
-{
-    NSMutableSet *users = [NSMutableSet new];
-    for (NSDictionary *dictionary in responseData) {
-        ATLMUser *user = [ATLMUser userFromDictionaryRepresentation:dictionary];
-        [users addObject:user];
-    }
-    return users;
 }
 
 @end

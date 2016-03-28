@@ -19,7 +19,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Atlas/Atlas.h>
 #import <CoreLocation/CoreLocation.h>
 #import "ATLMApplicationController.h"
 
