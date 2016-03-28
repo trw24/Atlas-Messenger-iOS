@@ -64,7 +64,7 @@
 
 #pragma mark - Accessors
 
-- (NSString *)fullName
+- (NSString *)displayName
 {
     if (self.firstName && self.lastName) {
         return [NSString stringWithFormat:@"%@ %@", self.firstName, self.lastName];
@@ -85,7 +85,7 @@
 - (NSString *)avatarInitials
 {
     NSMutableString *initials = [NSMutableString new];
-    NSString *nameComponents = [self.fullName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSString *nameComponents = [self.displayName stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSArray *names = [nameComponents componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (names.count > 2) {
         NSString *firstName = names.firstObject;

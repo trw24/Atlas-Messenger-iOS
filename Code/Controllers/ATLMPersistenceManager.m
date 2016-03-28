@@ -142,7 +142,7 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
 {
     NSString *escapedSearchString = [NSRegularExpression escapedPatternForString:searchString];
     NSString *searchPattern = [NSString stringWithFormat:@".*\\b%@.*", escapedSearchString];
-    NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"fullName MATCHES[cd] %@", searchPattern];
+    NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"displayName MATCHES[cd] %@", searchPattern];
     return searchPredicate;
 }
 

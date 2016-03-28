@@ -256,10 +256,10 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 /**
  Atlas - Returns an object conforming to the `ATLParticipant` protocol whose `participantIdentifier` property matches the supplied identifier.
  */
-- (id<ATLParticipant>)conversationViewController:(ATLConversationViewController *)conversationViewController participantForIdentifier:(NSString *)participantIdentifier
+- (id<ATLParticipant>)conversationViewController:(ATLConversationViewController *)conversationViewController participantForIdentity:(nonnull LYRIdentity *)identity
 {
-    if (participantIdentifier) {
-        return [self.applicationController.persistenceManager userForIdentifier:participantIdentifier];
+    if (identity) {
+        return [self.applicationController.persistenceManager userForIdentifier:identity.userID];
     }
     return nil;
 }
@@ -503,20 +503,21 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
         return @"New Message";
     }
     
-    NSMutableSet *otherParticipantIDs = [self.conversation.participants mutableCopy];
-    if (self.layerClient.authenticatedUserID) [otherParticipantIDs removeObject:self.layerClient.authenticatedUserID];
+    NSMutableSet *otherParticipants = [self.conversation.participants mutableCopy];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userID != %@", self.layerClient.authenticatedUserID];
+    [otherParticipants filterUsingPredicate:predicate];
     
-    if (otherParticipantIDs.count == 0) {
+    if (otherParticipants.count == 0) {
         return @"Personal";
-    } else if (otherParticipantIDs.count == 1) {
-        NSString *otherParticipantID = [otherParticipantIDs anyObject];
-        id<ATLParticipant> participant = [self conversationViewController:self participantForIdentifier:otherParticipantID];
+    } else if (otherParticipants.count == 1) {
+        LYRIdentity *otherIdentity = [otherParticipants anyObject];
+        id<ATLParticipant> participant = [self conversationViewController:self participantForIdentity:otherIdentity];
         return participant ? participant.firstName : @"Message";
-    } else if (otherParticipantIDs.count > 1) {
+    } else if (otherParticipants.count > 1) {
         NSUInteger participantCount = 0;
         id<ATLParticipant> knownParticipant;
-        for (NSString *participantIdentifier in otherParticipantIDs) {
-            id<ATLParticipant> participant = [self conversationViewController:self participantForIdentifier:participantIdentifier];
+        for (LYRIdentity *identity in otherParticipants) {
+            id<ATLParticipant> participant = [self conversationViewController:self participantForIdentity:identity];
             if (participant) {
                 participantCount += 1;
                 knownParticipant = participant;

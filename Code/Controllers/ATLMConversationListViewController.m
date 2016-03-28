@@ -99,7 +99,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 /**
  Atlas - Informs the delegate that a search has been performed. Atlas messenger queries for, and returns objects conforming to the `ATLParticipant` protocol whose `fullName` property contains the search text.
  */
-- (void)conversationListViewController:(ATLConversationListViewController *)conversationListViewController didSearchForText:(NSString *)searchText completion:(void (^)(NSSet *))completion
+- (void)conversationListViewController:(ATLConversationListViewController *)conversationListViewController didSearchForText:(nonnull NSString *)searchText completion:(nonnull void (^)(NSSet<id<ATLParticipant>> * _Nonnull))completion
 {
     [self.participantDataSource participantsMatchingSearchText:searchText completion:^(NSSet *participants) {
         completion(participants);
@@ -119,21 +119,22 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
         return conversationTitle;
     }
     
-    NSMutableSet *participantIdentifiers = [conversation.participants mutableCopy];
-    [participantIdentifiers minusSet:[NSSet setWithObject:self.layerClient.authenticatedUserID]];
+    NSMutableSet *participants = [conversation.participants mutableCopy];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userID != %@", self.layerClient.authenticatedUserID];
+    [participants filterUsingPredicate:predicate];
     
-    if (participantIdentifiers.count == 0) return @"Personal Conversation";
+    if (participants.count == 0) return @"Personal Conversation";
     
-    NSMutableSet *participants = [[self.applicationController.persistenceManager usersForIdentifiers:participantIdentifiers] mutableCopy];
+    participants = [[self.applicationController.persistenceManager usersForIdentifiers:[participants valueForKeyPath:@"userID"]] mutableCopy];
     if (participants.count == 0) return @"No Matching Participants";
-    if (participants.count == 1) return [[participants allObjects][0] fullName];
+    if (participants.count == 1) return [[participants allObjects][0] displayName];
     
     NSMutableArray *firstNames = [NSMutableArray new];
     [participants enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
         id<ATLParticipant> participant = obj;
         if (participant.firstName) {
             // Put the last message sender's name first
-            if ([conversation.lastMessage.sender.userID isEqualToString:participant.participantIdentifier]) {
+            if ([conversation.lastMessage.sender.userID isEqualToString:participant.userID]) {
                 [firstNames insertObject:participant.firstName atIndex:0];
             } else {
                 [firstNames addObject:participant.firstName];
@@ -227,7 +228,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     
     LYRConversation *deletedConversation = notification.object;
     if (![conversationViewController.conversation isEqual:deletedConversation]) return;
-    
+    conversationViewController = nil;
     [self.navigationController popToViewController:self animated:YES];
     
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Conversation Deleted"
@@ -250,7 +251,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     NSString *authenticatedUserID = self.applicationController.layerClient.authenticatedUserID;
     if (!authenticatedUserID) return;
     LYRConversation *conversation = notification.object;
-    if ([conversation.participants containsObject:authenticatedUserID]) return;
+    if ([[conversation.participants valueForKeyPath:@"userID"] containsObject:authenticatedUserID]) return;
     
     ATLMConversationViewController *conversationViewController = [self existingConversationViewController];
     if (!conversationViewController) return;

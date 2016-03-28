@@ -414,12 +414,12 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     self.participantDataSource.excludedIdentifiers = nil;
     
-    [self.participantIdentifiers addObject:participant.participantIdentifier];
+    [self.participantIdentifiers addObject:participant.userID];
     if (self.conversation.participants.count < 3) {
         [self switchToConversationForParticipants];
     } else {
         NSError *error;
-        BOOL success = [self.conversation addParticipants:[NSSet setWithObject:participant.participantIdentifier] error:&error];
+        BOOL success = [self.conversation addParticipants:[NSSet setWithObject:participant.userID] error:&error];
         if (!success) {
             ATLMAlertWithError(error);
             return;
