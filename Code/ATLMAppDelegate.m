@@ -100,7 +100,7 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     if (appID) {
         // Only instantiate one instance of `LYRClient`
         if (!self.layerClient) {
-            self.layerClient = [ATLMLayerClient clientWithAppID:[NSURL URLWithString:appID]];
+            self.layerClient = [ATLMLayerClient clientWithAppID:[NSURL URLWithString:appID] options:@{ LYRClientOptionSynchronizationPolicy : @(LYRClientSynchronizationPolicyMessageCount), LYRClientOptionSynchronizationMessageCount: @(10) }];
             self.layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
         }
         ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerClient:self.layerClient];
