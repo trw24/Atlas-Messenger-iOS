@@ -248,7 +248,7 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
             LYRConversation *conversation = [self conversationFromRemoteNotification:userInfo];
             if (conversation) {
                 LYRMessagePart *messagePart = [LYRMessagePart messagePartWithText:responseText];
-                NSString *fullName = [[self.applicationController.persistenceManager userForIdentifier:self.applicationController.layerClient.authenticatedUserID] fullName];
+                NSString *fullName = self.applicationController.layerClient.authenticatedUser.displayName;
                 NSString *pushText = [NSString stringWithFormat:@"%@: %@", fullName, responseText];
                 LYRMessage *message = ATLMessageForParts(self.applicationController.layerClient, @[ messagePart ], pushText, ATLMPushNotificationSoundName);
                 if (message) {
