@@ -116,12 +116,6 @@ NSString *const ATLMAtlasUserNameKey = @"name";
         NSDictionary *userDetails;
         BOOL success = [ATLMHTTPResponseSerializer responseObject:&userDetails withData:data response:(NSHTTPURLResponse *)response error:&serializationError];
         if (success) {
-            NSError *error;
-            NSArray *userData = userDetails[ATLMAtlasIdentitiesKey];
-            BOOL success = [self persistUserData:userData error:&error];
-            if (!success) {
-                completion(nil, error);
-            }
             ATLMUser *user = [ATLMUser userFromDictionaryRepresentation:userDetails[ATLMAtlasIdentityKey]];
             ATLMSession *session = [ATLMSession sessionWithAuthenticationToken:@"atlas_auth_token" user:user];
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -137,41 +131,6 @@ NSString *const ATLMAtlasUserNameKey = @"name";
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completion(nil, serializationError);
-            });
-        }
-    }] resume];
-}
-
-- (void)loadContacts
-{
-    NSString *appUUID = [[self.layerClient.appID pathComponents] lastObject];
-    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
-    NSURL *URL = [NSURL URLWithString:urlString relativeToURL:self.baseURL];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    request.HTTPMethod = @"GET";
-    
-    [[self.URLSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (!response && error) {
-            NSLog(@"Failed synchronizing participants with error: %@", error);
-            return;
-        }
-        
-        NSError *serializationError;
-        NSDictionary *userDetails;
-        BOOL success = [ATLMHTTPResponseSerializer responseObject:&userDetails withData:data response:(NSHTTPURLResponse *)response error:&serializationError];
-        if (success) {
-            NSError *error;
-            NSArray *userData = (NSArray *)userDetails;
-            BOOL success = [self persistUserData:userData error:&error];
-            if (!success) {
-                NSLog(@"Failed synchronizing participants with error: %@", error);
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[NSNotificationCenter defaultCenter] postNotificationName:ATLMApplicationDidSynchronizeParticipants object:nil];
-            });
-        } else {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"Failed synchronizing participants with error: %@", serializationError);
             });
         }
     }] resume];
@@ -194,26 +153,6 @@ NSString *const ATLMAtlasUserNameKey = @"name";
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:ATLMUserDidAuthenticateNotification object:session.user];
     return YES;
-}
-
-- (BOOL)persistUserData:(NSArray *)userData error:(NSError **)error
-{
-    BOOL success = [self.persistenceManager persistUsers:[self usersFromResponseData:userData] error:error];
-    if (success) {
-        return YES;
-    } else {
-        return NO;
-    }
-}
-
-- (NSSet *)usersFromResponseData:(NSArray *)responseData
-{
-    NSMutableSet *users = [NSMutableSet new];
-    for (NSDictionary *dictionary in responseData) {
-        ATLMUser *user = [ATLMUser userFromDictionaryRepresentation:dictionary];
-        [users addObject:user];
-    }
-    return users;
 }
 
 @end

@@ -24,12 +24,10 @@
 #import "ATLMSettingsViewController.h"
 #import "ATLMConversationDetailViewController.h"
 #import "ATLMNavigationController.h"
-#import "ATLMParticipantDataSource.h"
 #import "ATLMSplitViewController.h"
+#import "LYRIdentity+ATLParticipant.h"
 
 @interface ATLMConversationListViewController () <ATLConversationListViewControllerDelegate, ATLConversationListViewControllerDataSource, ATLMSettingsViewControllerDelegate, UIActionSheetDelegate>
-
-@property (nonatomic) ATLMParticipantDataSource *participantDataSource;
 
 @end
 
@@ -59,8 +57,6 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeButtonTapped)];
     composeButton.accessibilityLabel = ATLMComposeButtonAccessibilityLabel;
     [self.navigationItem setRightBarButtonItem:composeButton];
-    
-    self.participantDataSource = [ATLMParticipantDataSource participantDataSourceWithPersistenceManager:self.applicationController.persistenceManager];
     
     [self registerNotificationObservers];
 }
@@ -101,8 +97,14 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
  */
 - (void)conversationListViewController:(ATLConversationListViewController *)conversationListViewController didSearchForText:(nonnull NSString *)searchText completion:(nonnull void (^)(NSSet<id<ATLParticipant>> * _Nonnull))completion
 {
-    [self.participantDataSource participantsMatchingSearchText:searchText completion:^(NSSet *participants) {
-        completion(participants);
+    LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
+    query.predicate = [LYRPredicate predicateWithProperty:@"displayName" predicateOperator:LYRPredicateOperatorLike value:[searchText stringByAppendingString:@"%"]];
+    [self.layerClient executeQuery:query completion:^(NSOrderedSet<id<ATLParticipant>> * _Nullable resultSet, NSError * _Nullable error) {
+        if (resultSet) {
+            completion(resultSet.set);
+        } else {
+            completion([NSSet set]);
+        }
     }];
 }
 
@@ -124,9 +126,6 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     [participants filterUsingPredicate:predicate];
     
     if (participants.count == 0) return @"Personal Conversation";
-    
-    participants = [[self.applicationController.persistenceManager usersForIdentifiers:[participants valueForKey:@"userID"]] mutableCopy];
-    if (participants.count == 0) return @"No Matching Participants";
     if (participants.count == 1) return [[participants allObjects][0] displayName];
     
     NSMutableArray *firstNames = [NSMutableArray new];

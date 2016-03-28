@@ -28,7 +28,6 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
 
 @interface ATLMPersistenceManager ()
 
-@property (nonatomic) NSSet *users;
 @property (nonatomic) ATLMSession *session;
 
 @end
@@ -74,16 +73,6 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
     }
 }
 
-- (BOOL)persistUsers:(NSSet *)users error:(NSError **)error
-{
-    ATLMMustBeImplementedBySubclass();
-}
-
-- (NSSet *)persistedUsersWithError:(NSError **)error
-{
-    ATLMMustBeImplementedBySubclass();
-}
-
 - (BOOL)deleteAllObjects:(NSError **)error
 {
     ATLMMustBeImplementedBySubclass();
@@ -97,43 +86,6 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
 - (ATLMSession *)persistedSessionWithError:(NSError **)error
 {
     ATLMMustBeImplementedBySubclass();
-}
-
-- (void)performUserSearchWithString:(NSString *)searchString completion:(void (^)(NSArray *users, NSError *error))completion
-{
-    NSError *error;
-    NSSet *users = [self persistedUsersWithError:&error];
-    if (error) {
-        completion(nil, error);
-    } else {
-        NSPredicate *searchPredicate = [self predicateForUsersWithSearchString:searchString];
-        completion([users filteredSetUsingPredicate:searchPredicate].allObjects, nil);
-    }
-}
-
-- (NSSet *)usersForIdentifiers:(NSSet *)identifiers;
-{
-    NSError *error;
-    NSSet *allUsers = [self persistedUsersWithError:&error];
-    if (error) return nil;
-
-    NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"SELF.userID IN %@", identifiers];
-    NSSet *users = [allUsers filteredSetUsingPredicate:searchPredicate];
-    return users;
-}
-
-- (ATLMUser *)userForIdentifier:(NSString *)identifier
-{
-    NSError *error;
-    NSSet *allUsers = [self persistedUsersWithError:&error];
-    if (error) return nil;
-    
-    for (ATLMUser *user in allUsers) {
-        if ([user.userID isEqualToString:identifier]) {
-            return user;
-        }
-    }
-    return nil;
 }
 
 #pragma mark - Helpers
@@ -150,18 +102,6 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
 
 @implementation ATLMInMemoryPersistenceManager
 
-- (BOOL)persistUsers:(NSSet *)users error:(NSError **)error
-{
-    NSParameterAssert(users);
-    self.users = users;
-    return YES;
-}
-
-- (NSSet *)persistedUsersWithError:(NSError **)error
-{
-    return self.users;
-}
-
 - (BOOL)persistSession:(ATLMSession *)session error:(NSError **)error
 {
     self.session = session;
@@ -175,7 +115,6 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
 
 - (BOOL)deleteAllObjects:(NSError **)error
 {
-    self.users = nil;
     self.session = nil;
     return YES;
 }
@@ -207,35 +146,9 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
     return self;
 }
 
-- (BOOL)persistUsers:(NSSet *)users error:(NSError **)error
-{
-    NSString *path = [self usersPath];
-    if (![NSKeyedArchiver archiveRootObject:users toFile:path]) return NO;
-    self.users = users;
-    NSError *fileAttributeError;
-    BOOL success = [[NSFileManager defaultManager] setAttributes:@{ NSFileProtectionKey : NSFileProtectionCompleteUntilFirstUserAuthentication } ofItemAtPath:path error:&fileAttributeError];
-    if (!success) {
-        NSLog(@"Failed setting the file protection attribute to the file at path '%@' with error=%@", path, fileAttributeError);
-    }
-    return YES;
-}
-
-- (NSSet *)persistedUsersWithError:(NSError **)error
-{
-    if (self.users) return self.users;
-    
-    NSString *path = [self usersPath];
-    NSSet *users = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
-    self.users = users;
-    return users;
-}
-
 - (BOOL)deleteAllObjects:(NSError **)error
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-
-    if (![fileManager removeItemAtPath:[self usersPath] error:error]) return NO;
-    self.users = nil;
 
     if (![fileManager removeItemAtPath:[self sessionPath] error:error]) return NO;
     self.session = nil;
