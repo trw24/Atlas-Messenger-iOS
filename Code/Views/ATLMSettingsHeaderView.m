@@ -23,7 +23,7 @@
 
 @interface ATLMSettingsHeaderView ()
 
-@property (nonatomic) ATLMUser *user;
+@property (nonatomic) LYRIdentity *user;
 @property (nonatomic) ATLAvatarImageView *imageView;
 @property (nonatomic) UILabel *nameLabel;
 @property (nonatomic) UILabel *connectionStateLabel;
@@ -35,12 +35,12 @@
 
 static CGFloat const ATLMAvatarDiameter = 72;
 
-+ (instancetype)headerViewWithUser:(ATLMUser *)user
++ (instancetype)headerViewWithUser:(LYRIdentity *)user
 {
     return [[self alloc] initHeaderViewWithUser:user];
 }
 
-- (id)initHeaderViewWithUser:(ATLMUser *)user
+- (id)initHeaderViewWithUser:(LYRIdentity *)user
 {
     self = [super init];
     if (self) {

@@ -91,7 +91,7 @@ NSString *const ATLMConnecting = @"Connecting";
     doneButton.accessibilityLabel = @"Done";
     self.navigationItem.rightBarButtonItem = doneButton;
     
-    self.headerView = [ATLMSettingsHeaderView headerViewWithUser:self.applicationController.APIManager.authenticatedSession.user];
+    self.headerView = [ATLMSettingsHeaderView headerViewWithUser:self.applicationController.layerClient.authenticatedUser];
     self.headerView.frame = CGRectMake(0, 0, 320, 148);
     self.headerView.accessibilityLabel = ATLMSettingsHeaderAccessibilityLabel;
     if (self.applicationController.layerClient.isConnected){

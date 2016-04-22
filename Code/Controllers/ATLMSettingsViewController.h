@@ -46,6 +46,8 @@ NSString *const ATLMConnecting;
  */
 - (void)logoutTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController;
 
+- (void)switchUserTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController;
+
 /**
  @abstract Informs the receiver that the user wants to dismiss the controller.
  @param settingsViewController The controller in which the selection occurred.
