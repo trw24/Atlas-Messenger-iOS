@@ -46,6 +46,10 @@ extern NSString *const ATLMConnecting;
  */
 - (void)logoutTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController;
 
+/**
+ @abstract Informs the receiver that a switch user button has been tapped in the controller.
+ @param settingsViewController The controller in which the selection occurred.
+ */
 - (void)switchUserTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController;
 
 /**
