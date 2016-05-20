@@ -343,7 +343,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     LYRPolicy *policy =  [self blockedParticipantAtIndexPath:indexPath];
     if (policy) {
         NSError *error;
-        [self.applicationController.layerClient removePolicy:policy error:&error];
+        [self.applicationController.layerClient removePolicies:[NSSet setWithObject:policy] error:&error];
         if (error) {
             ATLMAlertWithError(error);
             return;
@@ -360,7 +360,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     blockPolicy.sentByUserID = identitifer;
     
     NSError *error;
-    [self.applicationController.layerClient addPolicy:blockPolicy error:&error];
+    [self.applicationController.layerClient addPolicies:[NSSet setWithObject:blockPolicy] error:&error];
     if (error) {
         ATLMAlertWithError(error);
         return;

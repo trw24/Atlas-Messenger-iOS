@@ -108,6 +108,13 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     }];
 }
 
+- (id<ATLAvatarItem>)conversationListViewController:(ATLConversationListViewController *)conversationListViewController avatarItemForConversation:(LYRConversation *)conversation
+{
+    NSMutableSet *participants = conversation.participants.mutableCopy;
+    [participants removeObject:self.layerClient.authenticatedUser];
+    return participants.anyObject;
+}
+
 #pragma mark - ATLConversationListViewControllerDataSource
 
 /**

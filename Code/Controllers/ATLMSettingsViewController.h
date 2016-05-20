@@ -23,17 +23,17 @@
 
 @class ATLMSettingsViewController;
 
-NSString *const ATLMSettingsViewControllerTitle;
-NSString *const ATLMSettingsTableViewAccessibilityIdentifier;
-NSString *const ATLMSettingsHeaderAccessibilityLabel;
+extern NSString *const ATLMSettingsViewControllerTitle;
+extern NSString *const ATLMSettingsTableViewAccessibilityIdentifier;
+extern NSString *const ATLMSettingsHeaderAccessibilityLabel;
 
 extern NSString *const ATLMDefaultCellIdentifier;
 extern NSString *const ATLMCenterTextCellIdentifier;
 
-NSString *const ATLMConnected;
-NSString *const ATLMDisconnected;
-NSString *const ATLMLostConnection;
-NSString *const ATLMConnecting;
+extern NSString *const ATLMConnected;
+extern NSString *const ATLMDisconnected;
+extern NSString *const ATLMLostConnection;
+extern NSString *const ATLMConnecting;
 
 /**
  @abstract The `ATLMSettingsViewControllerDelegate` protocol informs the receiver of events that have occurred within the controller.
@@ -45,6 +45,12 @@ NSString *const ATLMConnecting;
  @param settingsViewController The controller in which the selection occurred.
  */
 - (void)logoutTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController;
+
+/**
+ @abstract Informs the receiver that a switch user button has been tapped in the controller.
+ @param settingsViewController The controller in which the selection occurred.
+ */
+- (void)switchUserTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController;
 
 /**
  @abstract Informs the receiver that the user wants to dismiss the controller.

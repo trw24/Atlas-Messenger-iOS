@@ -1,17 +1,17 @@
 PODS:
-  - Atlas (1.0.20):
-    - LayerKit (>= 0.20.0)
+  - Atlas (1.0.23):
+    - LayerKit (>= 0.21.0)
   - ClusterPrePermissions (0.8.1)
   - Expecta (1.0.5)
-  - KIF (3.4.1):
-    - KIF/Core (= 3.4.1)
-  - KIF/Core (3.4.1)
+  - KIF (3.4.2):
+    - KIF/Core (= 3.4.2)
+  - KIF/Core (3.4.2)
   - KIFViewControllerActions (1.0.1):
     - KIF (>= 2.0.0)
-  - LayerKit (0.20.0)
+  - LayerKit (0.21.0)
   - LYRCountDownLatch (0.9.0)
-  - OCMock (3.2.2)
-  - SVProgressHUD (2.0)
+  - OCMock (3.3)
+  - SVProgressHUD (2.0.3)
 
 DEPENDENCIES:
   - Atlas (from `Libraries/Atlas`)
@@ -28,16 +28,16 @@ EXTERNAL SOURCES:
     :path: Libraries/Atlas
 
 SPEC CHECKSUMS:
-  Atlas: e253e4ad4d7f9917bd16a66320c792f7b9971dc3
+  Atlas: acf154ee2a10c6257a47e872366154653932302f
   ClusterPrePermissions: 168c127a658e423062550dd9c56fe26042a58bce
   Expecta: e1c022fcd33910b6be89c291d2775b3fe27a89fe
-  KIF: 2275c6d59c77e5e56f660f006b99d73780130540
+  KIF: b518c9831453abea5afdbbde3908ec47832d6d56
   KIFViewControllerActions: fc3a8e1352a6609624bda1fe6cfad410d0e88552
-  LayerKit: cbde0a98ee0cc19c2b14a512ce481ad6ff3d8e63
+  LayerKit: 1c1d3efd7dd1eb432230bd56253ab3ef36a25637
   LYRCountDownLatch: 72a444f729ca5a8c6157c0b58f335a44e6702b48
-  OCMock: 18c9b7e67d4c2770e95bb77a9cc1ae0c91fe3835
-  SVProgressHUD: e9e7c893686a20da55a28015ed384d9425e15479
+  OCMock: d68685bde31f69cb61d518dcb39269080c78b5ed
+  SVProgressHUD: b0830714205bea1317ea1a2ebc71e5633af334d4
 
-PODFILE CHECKSUM: 805f55bc7606a598eaefdb11b118afb5ecfe4e2a
+PODFILE CHECKSUM: 528043da46a346ba870322968d8be0ae0e2a40d1
 
-COCOAPODS: 1.0.0.beta.4
+COCOAPODS: 1.0.0
