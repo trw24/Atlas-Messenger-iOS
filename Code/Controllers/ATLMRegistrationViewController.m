@@ -14,6 +14,10 @@
 #import "ATLMConstants.h"
 #import "ATLMUtilities.h"
 #import <SVProgressHUD/SVProgressHUD.h>
+#import "ATLMUser.h"
+#import "ATLMUserSession.h"
+#import "ATLMConstants.h"
+#import "ATLMErrors.h"  
 
 @interface ATLMRegistrationViewController () <UITextFieldDelegate>
 
@@ -119,7 +123,7 @@ CGFloat const ATLMfirstNameTextFieldBottomPadding = 20;
             return;
         }
         NSLog(@"Registering user");
-        [self.applicationController.APIManager registerUserWithFirstName:firstName lastName:lastName nonce:nonce completion:^(NSString *identityToken, NSError *error) {
+        [self.applicationController.APIManager registerUserWithFirstName:firstName lastName:lastName nonce:nonce completion:^(NSString *identityToken, NSDictionary *userData, NSError *error) {
             NSLog(@"User registered and got identity token: %@ (error=%@)", identityToken, error);
             if (error) {
                 ATLMAlertWithError(error);
@@ -131,12 +135,16 @@ CGFloat const ATLMfirstNameTextFieldBottomPadding = 20;
                 ATLMAlertWithError(error);
                 return;
             }
+            
+            ATLMUser *user = [ATLMUser userFromDictionaryRepresentation:userData];
+            __block ATLMUserSession *session = [ATLMUserSession sessionWithAuthenticationToken:@"atlas_auth_token" user:user];
             [self.applicationController.layerClient authenticateWithIdentityToken:identityToken completion:^(LYRIdentity *authenticatedUser, NSError *error) {
                 if (error) {
                     ATLMAlertWithError(error);
                     return;
                 }
                 NSLog(@"Layer authenticated as: %@", authenticatedUser);
+                [self.applicationController resumesSession:session error:nil];
                 [SVProgressHUD showSuccessWithStatus:@"Authenticated!"];
             }];
         }];

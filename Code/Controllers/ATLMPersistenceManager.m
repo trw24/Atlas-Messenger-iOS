@@ -20,6 +20,8 @@
 
 #import "ATLMPersistenceManager.h"
 #import "ATLMUtilities.h"
+#import "ATLMUserSession.h"
+#import "ATLMUser.h"
 
 #define ATLMMustBeImplementedBySubclass() @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Must be implemented by concrete subclass." userInfo:nil]
 
@@ -28,7 +30,7 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
 
 @interface ATLMPersistenceManager ()
 
-@property (nonatomic) ATLMSession *session;
+@property (nonatomic) id <ATLMSession> session;
 
 @end
 
@@ -73,17 +75,17 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
     }
 }
 
-- (BOOL)deleteAllObjects:(NSError **)error
+- (BOOL)deleteSession:(NSError **)error
 {
     ATLMMustBeImplementedBySubclass();
 }
 
-- (BOOL)persistSession:(ATLMSession *)session error:(NSError **)error
+- (BOOL)persistSession:(id <ATLMSession>)session error:(NSError **)error
 {
     ATLMMustBeImplementedBySubclass();
 }
 
-- (ATLMSession *)persistedSessionWithError:(NSError **)error
+- (id <ATLMSession>)persistedSessionWithError:(NSError **)error
 {
     ATLMMustBeImplementedBySubclass();
 }
@@ -102,18 +104,18 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
 
 @implementation ATLMInMemoryPersistenceManager
 
-- (BOOL)persistSession:(ATLMSession *)session error:(NSError **)error
+- (BOOL)persistSession:(id <ATLMSession>)session error:(NSError **)error
 {
     self.session = session;
     return YES;
 }
 
-- (ATLMSession *)persistedSessionWithError:(NSError **)error
+- (id <ATLMSession>)persistedSessionWithError:(NSError **)error
 {
     return self.session;
 }
 
-- (BOOL)deleteAllObjects:(NSError **)error
+- (BOOL)deleteSession:(NSError **)error
 {
     self.session = nil;
     return YES;
@@ -146,7 +148,7 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
     return self;
 }
 
-- (BOOL)deleteAllObjects:(NSError **)error
+- (BOOL)deleteSession:(NSError **)error
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
@@ -156,7 +158,7 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
     return YES;
 }
 
-- (BOOL)persistSession:(ATLMSession *)session error:(NSError **)error
+- (BOOL)persistSession:(id <ATLMSession>)session error:(NSError **)error
 {
     NSString *path = [self sessionPath];
     self.session = session;
@@ -171,12 +173,12 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
     return YES;
 }
 
-- (ATLMSession *)persistedSessionWithError:(NSError **)error
+- (id <ATLMSession>)persistedSessionWithError:(NSError **)error
 {
     if (self.session) return self.session;
 
     NSString *path = [self sessionPath];
-    ATLMSession *session = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
+    ATLMUserSession *session = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
     self.session = session;
     return session;
 }

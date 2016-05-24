@@ -19,22 +19,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ATLMUser.h"
+#import "ATLMSession.h"
 
 /**
- @abstract The `ATLMSession` class models a persistent user session.
+ @abstract The `ATLMUserSession` object conforms to the `ATLMSession` protocol and models an Atlas Messenger session.
  */
-@interface ATLMSession : NSObject <NSCoding>
-
-/**
- @abstract Returns an `ATLMSession` object containing information about the current session. 
- @param authenticationToken A token required for communication with the Layer Identity provider. 
- @param user a `ATLMuser` object modeling the currently authenticated user.
- */
-+ (instancetype)sessionWithAuthenticationToken:(NSString *)authenticationToken user:(ATLMUser *)user;
-
-@property (nonatomic, readonly) NSString *authenticationToken;
-
-@property (nonatomic, readonly) ATLMUser *user;
+@interface ATLMUserSession : NSObject <ATLMSession>
 
 @end

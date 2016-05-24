@@ -21,11 +21,11 @@
 
 #import <Foundation/Foundation.h>
 #import "ATLMAPIManager.h"
+#import "ATLMLayerClient.h"
 
 @class ATLMSplitViewController;
 
 extern NSString *const ATLMLayerApplicationID;
-
 extern NSString *const ATLMConversationMetadataDidChangeNotification;
 extern NSString *const ATLMConversationParticipantsDidChangeNotification;
 extern NSString *const ATLMConversationDeletedNotification;
@@ -41,16 +41,23 @@ extern NSString *const ATLMConversationDeletedNotification;
 /// @name Initializing a Controller
 ///--------------------------------
 
-+ (instancetype)controllerWithPersistenceManager:(ATLMPersistenceManager *)persistenceManager;
++ (instancetype)controllerWithAPIManager:(id <ATLMAPIManaging>)APIManager persistenceManager:(id <ATLMPersistenceManaging>)persistenceManager;
+
+- (BOOL)resumesSession:(id<ATLMSession>)session error:(NSError **)error;
 
 ///--------------------------------
 /// @name Global Resources
 ///--------------------------------
 
 /**
- @abstract The `ATLMSplitViewController` controller which is the application's root controller.
+ @abstract The `LSAPIManager` object for the application.
  */
-@property (weak, nonatomic) ATLMSplitViewController *splitViewController;
+@property (nonatomic, readonly) id <ATLMAPIManaging> APIManager;
+
+/**
+ @abstract The `LSPersistenceManager` object for the application.
+ */
+@property (nonatomic, readonly) id <ATLMPersistenceManaging> persistenceManager;
 
 /**
  @abstract The `LYRClient` object for the application.
@@ -58,13 +65,8 @@ extern NSString *const ATLMConversationDeletedNotification;
 @property (nonatomic) ATLMLayerClient *layerClient;
 
 /**
- @abstract The `LSAPIManager` object for the application.
+ @abstract The `ATLMSplitViewController` controller which is the application's root controller.
  */
-@property (nonatomic) ATLMAPIManager *APIManager;
-
-/**
- @abstract The `LSPersistenceManager` object for the application.
- */
-@property (nonatomic) ATLMPersistenceManager *persistenceManager;
+@property (weak, nonatomic) ATLMSplitViewController *splitViewController;
 
 @end

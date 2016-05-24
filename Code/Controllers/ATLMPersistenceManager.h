@@ -19,56 +19,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ATLMSession.h"
-#import "ATLMUser.h"
+#import "ATLMPersistenceManaging.h"
 
 /**
- @abstract The `ATLMPersistenceManager` provides an interface for persisting and querying, session and user
- data related to the Atlas Messenger application.
+ @abstract The `ATLMPersistenceManager` object conforms to the `ATLPersistence` protocol and provides for persisting and query user sessions.
  */
-@interface ATLMPersistenceManager : NSObject
-
-///---------------------------------------
-/// @name Initializing a Manager
-///---------------------------------------
-
-/**
- @abstract Returns the default persistence manager for the application.
- @discussion When running within XCTest, returns a transient in-memory persistence manager. When running in a normal application environment, returns a persistence manager that persists objects to disk.
- */
-+ (instancetype)defaultManager;
-
-///---------------------------------------
-/// @name Persisting
-///---------------------------------------
-
-/**
- @abstract Persists an `ATLMSession` object for the currently authenticated user.
- @param session The `ATLMSession` object to be persisted.
- @param error A reference to an `NSError` object that will contain error information in case the action was not successful.
- @return A boolean value indicating if the operation was successful.
- */
-- (BOOL)persistSession:(ATLMSession *)session error:(NSError **)error;
-
-///---------------------------------------
-/// @name Fetching
-///---------------------------------------
-
-/**
- @abstract Returns the persisted `ATLMSession` object.
- @param error A reference to an `NSError` object that will contain error information in case the action was not successful.
- */
-- (ATLMSession *)persistedSessionWithError:(NSError **)error;
-
-///---------------------------------------
-/// @name Deletion
-///---------------------------------------
-
-/**
- @abstract Deletes all objects currently persisted in the persistence manager.
- @param error A reference to an `NSError` object that will contain error information in case the action was not successful.
- @return A boolean value indicating if the operation was successful.
- */
-- (BOOL)deleteAllObjects:(NSError **)error;
+@interface ATLMPersistenceManager : NSObject <ATLMPersistenceManaging>
 
 @end

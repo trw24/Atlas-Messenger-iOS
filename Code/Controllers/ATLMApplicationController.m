@@ -20,9 +20,11 @@
 
 #import "ATLMApplicationController.h"
 #import <SVProgressHUD/SVProgressHUD.h>
+#import "ATLMErrors.h"
+#import "ATLMUser.h"
+#import "ATLMConstants.h"
 
 NSString *const ATLMLayerApplicationID = @"LAYER_APP_ID";
-
 NSString *const ATLMConversationMetadataDidChangeNotification = @"LSConversationMetadataDidChangeNotification";
 NSString *const ATLMConversationParticipantsDidChangeNotification = @"LSConversationParticipantsDidChangeNotification";
 NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNotification";
@@ -33,17 +35,22 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
 
 @implementation ATLMApplicationController
 
-+ (instancetype)controllerWithPersistenceManager:(ATLMPersistenceManager *)persistenceManager
++ (instancetype)controllerWithAPIManager:(id <ATLMAPIManaging>)APIManager persistenceManager:(id <ATLMPersistenceManaging>)persistenceManager;
 {
     NSParameterAssert(persistenceManager);
-    return [[self alloc] initWithPersistenceManager:persistenceManager];
+    NSParameterAssert(APIManager);
+    return [[self alloc] initWithAPIManager:APIManager persistenceManager:persistenceManager];
 }
 
-- (id)initWithPersistenceManager:(ATLMPersistenceManager *)persistenceManager
+- (id)initWithAPIManager:(id <ATLMAPIManaging>)APIManager  persistenceManager:(id <ATLMPersistenceManaging>)persistenceManager
 {
     self = [super init];
     if (self) {
         _persistenceManager = persistenceManager;
+        
+        APIManager.delegate = self;
+        _APIManager = APIManager;
+        
     }
     return self;
 }
@@ -61,10 +68,33 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLayerClientDidFinishSynchronizationNotification:) name:LYRClientDidFinishSynchronizationNotification object:layerClient];
 }
 
-- (void)setAPIManager:(ATLMAPIManager *)APIManager
+- (BOOL)resumesSession:(id<ATLMSession>)session error:(NSError *__autoreleasing *)error
 {
-    _APIManager = APIManager;
-    _APIManager.persistenceManager = self.persistenceManager;
+    NSError *resumeError;
+    BOOL success = [self.APIManager resumeSession:session error:&resumeError];
+    if (!success) {
+        if (error) {
+            *error = resumeError;
+        }
+        return NO;
+        
+    }
+    success = [self.persistenceManager persistSession:session error:&resumeError];
+    if (!success) {
+        if (error) {
+            *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMNoAuthenticatedSession userInfo:@{NSLocalizedDescriptionKey: @"There was an error persisting the session."}];
+        }
+        return NO;
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:ATLMUserDidAuthenticateNotification object:session.user];
+    return YES;
+}
+
+#pragma mark - ATLAPIManagerDelegate
+
+- (void)APIManager:(id<ATLMAPIManaging>)APIManager didAuthenticateWithSession:(id<ATLMSession>)sessison
+{
+    [self.persistenceManager persistSession:sessison error:nil];
 }
 
 #pragma mark - LYRClientDelegate

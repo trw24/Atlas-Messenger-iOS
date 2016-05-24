@@ -14,7 +14,7 @@ PODS:
   - SVProgressHUD (2.0.3)
 
 DEPENDENCIES:
-  - Atlas (from `Libraries/Atlas`)
+  - Atlas (~> 1.0.23)
   - ClusterPrePermissions (~> 0.1)
   - Expecta
   - KIF
@@ -22,10 +22,6 @@ DEPENDENCIES:
   - LYRCountDownLatch
   - OCMock
   - SVProgressHUD
-
-EXTERNAL SOURCES:
-  Atlas:
-    :path: Libraries/Atlas
 
 SPEC CHECKSUMS:
   Atlas: acf154ee2a10c6257a47e872366154653932302f
@@ -38,6 +34,6 @@ SPEC CHECKSUMS:
   OCMock: d68685bde31f69cb61d518dcb39269080c78b5ed
   SVProgressHUD: b0830714205bea1317ea1a2ebc71e5633af334d4
 
-PODFILE CHECKSUM: 528043da46a346ba870322968d8be0ae0e2a40d1
+PODFILE CHECKSUM: a12a2681daddae4e6d81dc5dabdaaeeb80e3fa2a
 
 COCOAPODS: 1.0.0

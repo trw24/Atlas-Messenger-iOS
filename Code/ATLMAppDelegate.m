@@ -23,17 +23,18 @@
 #import <MessageUI/MessageUI.h>
 #import <sys/sysctl.h>
 #import <asl.h>
+#import <SVProgressHUD/SVProgressHUD.h>
 
 #import "ATLMAppDelegate.h"
 #import "ATLMNavigationController.h"
 #import "ATLMConversationListViewController.h"
 #import "ATLMSplitViewController.h"
 #import "ATLMSplashView.h"
-#import <SVProgressHUD/SVProgressHUD.h>
 #import "ATLMQRScannerController.h"
 #import "ATLMUtilities.h"
+#import "ATLMUserSession.h"
+#import "ATLMConstants.h"
 
-// TODO: Configure a Layer appID from https://developer.layer.com/dashboard/atlas/build
 static NSString *const ATLMLayerAppID = nil;
 static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
@@ -52,16 +53,20 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.applicationController = [ATLMApplicationController controllerWithPersistenceManager:[ATLMPersistenceManager defaultManager]];
+    // Setup Layer
+    [self setupLayerClient];
+    
+    // Setup the application controller.
+    [self setupApplicationController];
     
     // Set up window
     [self configureWindow];
     
+    // Setup Session
+    [self configureSesion];
+    
     // Setup notifications
     [self registerNotificationObservers];
-    
-    // Setup Layer
-    [self setupLayer];
     
     // Configure Atlas Messenger UI appearance
     [self configureGlobalUserInterfaceAttributes];
@@ -81,6 +86,30 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 #pragma mark - Setup
 
+- (void)setupLayerClient
+{
+    NSString *appID = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
+    if (appID) {
+        if (!self.layerClient) {
+            NSDictionary *options = @{LYRClientOptionSynchronizationPolicy : @(LYRClientSynchronizationPolicyMessageCount), LYRClientOptionSynchronizationMessageCount: @(10)};
+            self.layerClient = [ATLMLayerClient clientWithAppID:[NSURL URLWithString:appID] options:options];
+            self.layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
+            if (self.applicationController) {
+                self.applicationController.layerClient = self.layerClient;
+            }
+        }
+        [self connectLayerIfNeeded];
+    }
+}
+
+- (void)setupApplicationController
+{
+    ATLMAPIManager *APIManager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerClient:self.layerClient];
+    ATLMPersistenceManager *persistenceManager = [ATLMPersistenceManager defaultManager];
+    self.applicationController = [ATLMApplicationController controllerWithAPIManager:APIManager persistenceManager:persistenceManager];
+    self.applicationController.layerClient = self.layerClient;
+}
+
 - (void)configureWindow
 {
     self.splitViewController = [[ATLMSplitViewController alloc] init];
@@ -94,24 +123,11 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     [self addSplashView];
 }
 
-- (void)setupLayer
+- (void)configureSesion
 {
-    NSString *appID = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
-    if (appID) {
-        // Only instantiate one instance of `LYRClient`
-        if (!self.layerClient) {
-            self.layerClient = [ATLMLayerClient clientWithAppID:[NSURL URLWithString:appID] options:@{ LYRClientOptionSynchronizationPolicy : @(LYRClientSynchronizationPolicyMessageCount), LYRClientOptionSynchronizationMessageCount: @(10) }];
-            self.layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
-        }
-        ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerClient:self.layerClient];
-        self.applicationController.layerClient = self.layerClient;
-        self.applicationController.APIManager = manager;
-        [self connectLayerIfNeeded];
-        if (![self resumeSession]) {
-            [self presentScannerViewController:YES withAuthenticationController:YES];
-        } else {
-            [self removeSplashView];
-        }
+    // Attempt to resume an existing session.
+    if ([self resumeSession]) {
+        [self removeSplashView];
     } else {
         [self presentScannerViewController:YES withAuthenticationController:NO];
     }
@@ -129,9 +145,11 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (BOOL)resumeSession
 {
+    NSError *error;
     if (self.applicationController.layerClient.authenticatedUser) {
-        ATLMSession *session = [self.applicationController.persistenceManager persistedSessionWithError:nil];
-        if ([self.applicationController.APIManager resumeSession:session error:nil]) {
+        ATLMUserSession *session = [self.applicationController.persistenceManager persistedSessionWithError:&error];
+        BOOL success = [self.applicationController resumesSession:session error:&error];
+        if (success) {
             [self presentAuthenticatedLayerSession];
             return YES;
         }
@@ -152,22 +170,14 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (void)registerForRemoteNotifications:(UIApplication *)application
 {
-    // Registers for push on iOS 7 and iOS 8
-    if ([application respondsToSelector:@selector(registerForRemoteNotifications)]) {
-        NSSet *categories = nil;
-        if ([UIMutableUserNotificationAction instancesRespondToSelector:@selector(behavior)]) {
-            categories = [NSSet setWithObject:ATLDefaultUserNotificationCategory()];
-        }
-        
-        UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:categories];
-        [application registerUserNotificationSettings:notificationSettings];
-        [application registerForRemoteNotifications];
-    } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeBadge];
-#pragma GCC diagnostic pop
+    NSSet *categories = nil;
+    if ([UIMutableUserNotificationAction instancesRespondToSelector:@selector(behavior)]) {
+        categories = [NSSet setWithObject:ATLDefaultUserNotificationCategory()];
     }
+    
+    UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:categories];
+    [application registerUserNotificationSettings:notificationSettings];
+    [application registerForRemoteNotifications];
 }
 
 - (void)unregisterForRemoteNotifications:(UIApplication *)application
@@ -193,7 +203,6 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    NSLog(@"User Info: %@", userInfo);
     BOOL userTappedRemoteNotification = application.applicationState == UIApplicationStateInactive;
     __block LYRConversation *conversation = [self conversationFromRemoteNotification:userInfo];
     if (userTappedRemoteNotification && conversation) {
@@ -226,20 +235,6 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     return YES;
 }
 
-- (LYRConversation *)conversationFromRemoteNotification:(NSDictionary *)remoteNotification
-{
-    NSURL *conversationIdentifier = [NSURL URLWithString:[remoteNotification valueForKeyPath:@"layer.conversation_identifier"]];
-    return [self.applicationController.layerClient existingConversationForIdentifier:conversationIdentifier];
-}
-
-- (void)navigateToViewForConversation:(LYRConversation *)conversation
-{
-    if (![NSThread isMainThread]) {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Attempted to navigate UI from non-main thread" userInfo:nil];
-    }
-    [self.conversationListViewController selectConversation:conversation];
-}
-
 - (void)application:(UIApplication *)application handleActionWithIdentifier:(nullable NSString *)identifier forRemoteNotification:(nonnull NSDictionary *)userInfo withResponseInfo:(nonnull NSDictionary *)responseInfo completionHandler:(nonnull void (^)())completionHandler
 {
     if ([identifier isEqualToString:ATLUserNotificationInlineReplyActionIdentifier]) {
@@ -266,11 +261,25 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     completionHandler();
 }
 
+- (LYRConversation *)conversationFromRemoteNotification:(NSDictionary *)remoteNotification
+{
+    NSURL *conversationIdentifier = [NSURL URLWithString:[remoteNotification valueForKeyPath:@"layer.conversation_identifier"]];
+    return [self.applicationController.layerClient existingConversationForIdentifier:conversationIdentifier];
+}
+
+- (void)navigateToViewForConversation:(LYRConversation *)conversation
+{
+    if (![NSThread isMainThread]) {
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Attempted to navigate UI from non-main thread" userInfo:nil];
+    }
+    [self.conversationListViewController selectConversation:conversation];
+}
+
 #pragma mark - Authentication Notification Handlers
 
 - (void)didReceiveLayerAppID:(NSNotification *)notification
 {
-    [self setupLayer];
+    [self setupLayerClient];
 }
 
 - (void)userDidAuthenticateWithLayer:(NSNotification *)notification
@@ -287,7 +296,7 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 - (void)userDidAuthenticate:(NSNotification *)notification
 {
     NSError *error;
-    ATLMSession *session = self.applicationController.APIManager.authenticatedSession;
+    ATLMUserSession *session = self.applicationController.APIManager.authenticatedSession;
     BOOL success = [self.applicationController.persistenceManager persistSession:session error:&error];
     if (success) {
         NSLog(@"Persisted authenticated user session: %@", session);
@@ -317,7 +326,7 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
             self.conversationListViewController = nil;
             [self.splitViewController resignFirstResponder];
             [self.splitViewController setDetailViewController:[UIViewController new]];
-            [self setupLayer];
+            [self setupLayerClient];
         }];
     }];
 

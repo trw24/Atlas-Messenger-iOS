@@ -21,6 +21,18 @@
 #import "ATLMUser.h"
 #import "ATLMErrors.h"
 
+@interface ATLMUser ()
+
+@property (nonatomic) NSString *userID;
+@property (nonatomic) NSString *firstName;
+@property (nonatomic) NSString *lastName;
+
+@property (nonatomic, readwrite) NSString *email;
+@property (nonatomic, readwrite) NSString *password;
+@property (nonatomic, readwrite) NSString *passwordConfirmation;
+
+@end
+
 @implementation ATLMUser
 
 + (instancetype)userFromDictionaryRepresentation:(NSDictionary *)representation

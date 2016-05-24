@@ -200,6 +200,11 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 
 #pragma mark - ATLMSettingsViewControllerDelegate
 
+- (void)switchUserTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController
+{
+    // Nothing to do. 
+}
+
 - (void)logoutTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController
 {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeBlack];

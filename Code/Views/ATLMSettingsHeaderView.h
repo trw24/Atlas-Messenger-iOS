@@ -23,7 +23,7 @@
 
 @interface ATLMSettingsHeaderView : UIView
 
-+ (instancetype)headerViewWithUser:(ATLMUser *)user;
++ (instancetype)headerViewWithUser:(LYRIdentity *)user;
 
 - (void)updateConnectedStateWithString:(NSString *)string;
 

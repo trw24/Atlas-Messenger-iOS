@@ -36,7 +36,7 @@
 		251D8DCA1A9688C50000BFA2 /* ATLMSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D9A1A9688C40000BFA2 /* ATLMSettingsViewController.m */; };
 		251D8DCB1A9688C50000BFA2 /* ATLMQRScannerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D9C1A9688C40000BFA2 /* ATLMQRScannerController.m */; };
 		251D8DCC1A9688C50000BFA2 /* ATLMRegistrationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D9E1A9688C40000BFA2 /* ATLMRegistrationViewController.m */; };
-		251D8DCD1A9688C50000BFA2 /* ATLMSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA11A9688C40000BFA2 /* ATLMSession.m */; };
+		251D8DCD1A9688C50000BFA2 /* ATLMUserSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA11A9688C40000BFA2 /* ATLMUserSession.m */; };
 		251D8DCE1A9688C50000BFA2 /* ATLMUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA31A9688C40000BFA2 /* ATLMUser.m */; };
 		251D8DCF1A9688C50000BFA2 /* ATLMConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA61A9688C40000BFA2 /* ATLMConstants.m */; };
 		251D8DD01A9688C50000BFA2 /* ATLMErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA81A9688C40000BFA2 /* ATLMErrors.m */; };
@@ -134,8 +134,8 @@
 		251D8D9C1A9688C40000BFA2 /* ATLMQRScannerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMQRScannerController.m; sourceTree = "<group>"; };
 		251D8D9D1A9688C40000BFA2 /* ATLMRegistrationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMRegistrationViewController.h; sourceTree = "<group>"; };
 		251D8D9E1A9688C40000BFA2 /* ATLMRegistrationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMRegistrationViewController.m; sourceTree = "<group>"; };
-		251D8DA01A9688C40000BFA2 /* ATLMSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMSession.h; sourceTree = "<group>"; };
-		251D8DA11A9688C40000BFA2 /* ATLMSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMSession.m; sourceTree = "<group>"; };
+		251D8DA01A9688C40000BFA2 /* ATLMUserSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMUserSession.h; sourceTree = "<group>"; };
+		251D8DA11A9688C40000BFA2 /* ATLMUserSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMUserSession.m; sourceTree = "<group>"; };
 		251D8DA21A9688C40000BFA2 /* ATLMUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMUser.h; sourceTree = "<group>"; };
 		251D8DA31A9688C40000BFA2 /* ATLMUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMUser.m; sourceTree = "<group>"; };
 		251D8DA51A9688C40000BFA2 /* ATLMConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMConstants.h; sourceTree = "<group>"; };
@@ -200,6 +200,10 @@
 		D633684C1A9D614900FBFCD3 /* atlas-splashscreen-1336.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "atlas-splashscreen-1336.png"; sourceTree = "<group>"; };
 		D633684D1A9D614900FBFCD3 /* atlas-splashscreen-2208.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "atlas-splashscreen-2208.png"; sourceTree = "<group>"; };
 		D648F5A51CEA2C6300614F28 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		D69446601CF4D7CF00802CD6 /* ATLMAuthenticating.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMAuthenticating.h; sourceTree = "<group>"; };
+		D69446611CF4D80D00802CD6 /* ATLMSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMSession.h; sourceTree = "<group>"; };
+		D69446621CF4DA2C00802CD6 /* ATLMAPIManaging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLMAPIManaging.h; path = Controllers/ATLMAPIManaging.h; sourceTree = "<group>"; };
+		D69446631CF4DAA100802CD6 /* ATLMPersistenceManaging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMPersistenceManaging.h; sourceTree = "<group>"; };
 		E3153B19C9CF7D3BAF515798 /* Pods-Atlas MessengerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas MessengerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED41AC588C220B853FB305A1 /* Pods_Atlas_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Atlas_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -327,8 +331,8 @@
 		251D8D9F1A9688C40000BFA2 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				251D8DA01A9688C40000BFA2 /* ATLMSession.h */,
-				251D8DA11A9688C40000BFA2 /* ATLMSession.m */,
+				251D8DA01A9688C40000BFA2 /* ATLMUserSession.h */,
+				251D8DA11A9688C40000BFA2 /* ATLMUserSession.m */,
 				251D8DA21A9688C40000BFA2 /* ATLMUser.h */,
 				251D8DA31A9688C40000BFA2 /* ATLMUser.m */,
 			);
@@ -376,6 +380,7 @@
 		259A57111950EB76000E27B0 /* Code */ = {
 			isa = PBXGroup;
 			children = (
+				D694465C1CF4D76400802CD6 /* Protocols */,
 				251D8D841A9688C40000BFA2 /* ATLMAppDelegate.h */,
 				251D8D851A9688C40000BFA2 /* ATLMAppDelegate.m */,
 				251D8D861A9688C40000BFA2 /* Controllers */,
@@ -484,6 +489,17 @@
 			);
 			name = "Supporting Files";
 			path = Code;
+			sourceTree = "<group>";
+		};
+		D694465C1CF4D76400802CD6 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				D69446621CF4DA2C00802CD6 /* ATLMAPIManaging.h */,
+				D69446631CF4DAA100802CD6 /* ATLMPersistenceManaging.h */,
+				D69446601CF4D7CF00802CD6 /* ATLMAuthenticating.h */,
+				D69446611CF4D80D00802CD6 /* ATLMSession.h */,
+			);
+			name = Protocols;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -715,7 +731,7 @@
 				D648F5A61CEA2C6300614F28 /* main.m in Sources */,
 				251D8DCC1A9688C50000BFA2 /* ATLMRegistrationViewController.m in Sources */,
 				251D8DC31A9688C50000BFA2 /* ATLMConversationDetailViewController.m in Sources */,
-				251D8DCD1A9688C50000BFA2 /* ATLMSession.m in Sources */,
+				251D8DCD1A9688C50000BFA2 /* ATLMUserSession.m in Sources */,
 				251D8DC51A9688C50000BFA2 /* ATLMConversationViewController.m in Sources */,
 				251D8DD91A9688C50000BFA2 /* ATLMSplashView.m in Sources */,
 				251D8DC01A9688C50000BFA2 /* ATLMAppDelegate.m in Sources */,

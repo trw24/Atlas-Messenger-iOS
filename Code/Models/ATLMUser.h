@@ -19,27 +19,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Atlas/Atlas.h>
+#import "ATLMAuthenticating.h"
 
 /**
- @abstract The `ATLMUser` object models a user within Atlas Messenger. The object also conforms the `ATLParticipant` protocol, enabling `ATLMUser` objects to be used with Atlas UI components.
+ @abstract The `ATLMUsers` object conforms to the `ATLMAuthenticating` protocol and models an Atlas Messenger user.
  */
-@interface ATLMUser : NSObject <NSCoding, ATLParticipant>
-
-+ (instancetype)userFromDictionaryRepresentation:(NSDictionary *)representation;
-
-@property (nonatomic) NSString *userID;
-@property (nonatomic) NSString *firstName;
-@property (nonatomic) NSString *lastName;
-@property (nonatomic) NSString *displayName;
-@property (nonatomic) NSString *email;
-@property (nonatomic) NSString *password;
-@property (nonatomic) NSString *passwordConfirmation;
-@property (nonatomic, readonly) NSString *participantIdentifier;
-
-- (BOOL)validate:(NSError **)error;
-
-- (NSURL *)avatarImageURL;
-
+@interface ATLMUser : NSObject <ATLMAuthenticating>
 
 @end

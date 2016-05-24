@@ -19,75 +19,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Atlas/Atlas.h>
-#import "ATLMLayerClient.h"
-#import "ATLMUser.h"
-#import "ATLMPersistenceManager.h"
-#import "ATLMHTTPResponseSerializer.h"
-#import "ATLMErrors.h"
-
-extern NSString *const ATLMUserDidAuthenticateNotification;
-extern NSString *const ATLMUserDidDeauthenticateNotification;
-extern NSString *const ATLMApplicationDidSynchronizeParticipants;
+#import "ATLMAPIManaging.h"
 
 /**
- @abstract The `ATLMAPIManager` class provides an interface for interacting with the Layer Identity Provider JSON API and managing
- the Atlas authentication state.
+ @abstract The `ATLMAPIManager` object conforms to the `ATLMAPIManaging` protocol and provides for executing network requests to the Layer Identity Service.
  */
-@interface ATLMAPIManager : NSObject
-
-///--------------------------------
-/// @name Initializing a Manager
-///--------------------------------
-
-+ (instancetype)managerWithBaseURL:(NSURL *)baseURL layerClient:(LYRClient *)layerClient;
-
-/**
- @abstract
- */
-@property (nonatomic) NSURL *baseURL;
-
-/**
- @abstract The `LYRClient` object used to initialize the receiver.
- */
-@property (nonatomic, readonly) LYRClient *layerClient;
-
-/**
- @abstract The persistence manager responsible for persisting user information.
- */
-@property (nonatomic) ATLMPersistenceManager *persistenceManager;
-
-/**
- @abstract The current authenticated session or `nil` if not yet authenticated.
- */
-@property (nonatomic) ATLMSession *authenticatedSession;
-
-/**
- @abstract The baseURL used to initialize the receiver.
- */
-
-/**
- @abstract The currently configured URL session.
- */
-@property (nonatomic) NSURLSession *URLSession;
-
-/**
- @param error A reference to an `NSError` object that will contain error information in case the action was not successful.
- @return A boolean value that indicates if the manager has a valid session.
- */
-- (BOOL)resumeSession:(ATLMSession *)session error:(NSError **)error;
-
-/**
- @abstract Registers and authenticates an Atlas Messenger user.
- @param name An `NSString` object representing the name of the user attempting to register.
- @param nonce A nonce value obtained via a call to `requestAuthenticationNonceWithCompletion:` on `LYRClient`.
- @param completion completion The block to execute upon completion of the asynchronous user registration operation. The block has no return value and accepts two arguments: An identity token that was obtained upon successful registration (or nil in the event of a failure) and an `NSError` object that describes why the operation failed (or nil if the operation was successful).
- */
-- (void)registerUserWithFirstName:(NSString*)firstName lastName:(NSString *)lastName nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion;
-
-/**
- @abstract Deauthenticates the Atlas Messenger app by discarding its `ATLMSession` object.
- */
-- (void)deauthenticate;
+@interface ATLMAPIManager : NSObject <ATLMAPIManaging>
 
 @end

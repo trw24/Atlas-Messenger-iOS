@@ -7,11 +7,13 @@
 //
 
 #import "ATLMQRScannerController.h"
-#import <AVFoundation/AVFoundation.h>
 #import "ATLMOverlayView.h"
 #import "ATLMRegistrationViewController.h"
 #import "ATLMLayerClient.h"
 #import "ATLMUtilities.h"
+#import "ATLMErrors.h"
+
+#import <AVFoundation/AVFoundation.h>
 #import <ClusterPrePermissions/ClusterPrePermissions.h>
 
 @interface ATLMQRScannerController () <AVCaptureMetadataOutputObjectsDelegate, UIAlertViewDelegate>

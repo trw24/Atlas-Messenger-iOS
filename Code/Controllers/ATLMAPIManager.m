@@ -19,25 +19,25 @@
 //
 
 #import "ATLMAPIManager.h"
-
-NSString *const ATLMUserDidAuthenticateNotification = @"ATLMUserDidAuthenticateNotification";
-NSString *const ATLMUserDidDeauthenticateNotification = @"ATLMUserDidDeauthenticateNotification";
-NSString *const ATLMApplicationDidSynchronizeParticipants = @"ATLMApplicationDidSynchronizeParticipants";
-
-NSString *const ATLMAtlasIdentityKey = @"atlas_identity";
-NSString *const ATLMAtlasIdentitiesKey = @"atlas_identities";
-NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
-
-NSString *const ATLMAtlasUserIdentifierKey = @"id";
-NSString *const ATLMAtlasUserNameKey = @"name";
+#import "ATLMUser.h"
+#import "ATLMHTTPResponseSerializer.h"
+#import "ATLMErrors.h"
+#import "ATLMAPIManaging.h"
+#import "ATLMConstants.h"
 
 @interface ATLMAPIManager () <NSURLSessionDelegate>
 
+@property (nonatomic, readwrite) NSURL *baseURL;
 @property (nonatomic, readwrite) LYRClient *layerClient;
+@property (nonatomic, readwrite) NSURLSession *URLSession;
+@property (nonatomic, readwrite) id <ATLMSession> authenticatedSession;
 
 @end
 
 @implementation ATLMAPIManager
+
+@synthesize persistenceManager = _persistenceManager;
+@synthesize delegate = _delegate;
 
 + (instancetype)managerWithBaseURL:(NSURL *)baseURL layerClient:(LYRClient *)layerClient
 {
@@ -69,10 +69,18 @@ NSString *const ATLMAtlasUserNameKey = @"name";
     return [NSURLSession sessionWithConfiguration:configuration];
 }
 
-- (BOOL)resumeSession:(ATLMSession *)session error:(NSError *__autoreleasing *)error
+- (BOOL)resumeSession:(id <ATLMSession>)session error:(NSError *__autoreleasing *)error
 {
     if (!session) return NO;
-    return [self configureWithSession:session error:error];
+    if (self.authenticatedSession) return YES;
+    if (!session) {
+        if (error) {
+            *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMNoAuthenticatedSession userInfo:@{NSLocalizedDescriptionKey: @"No authenticated session."}];
+            return NO;
+        }
+    }
+    self.authenticatedSession = session;
+    return YES;
 }
 
 - (void)deauthenticate
@@ -88,7 +96,7 @@ NSString *const ATLMAtlasUserNameKey = @"name";
 
 #pragma mark - Registration
 
-- (void)registerUserWithFirstName:(NSString*)firstName lastName:(NSString *)lastName nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
+- (void)registerUserWithFirstName:(NSString*)firstName lastName:(NSString *)lastName nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSDictionary *userData, NSError *error))completion
 {
     NSParameterAssert(firstName);
     NSParameterAssert(lastName);
@@ -108,7 +116,7 @@ NSString *const ATLMAtlasUserNameKey = @"name";
         if (!response && error) {
             NSLog(@"Failed with error: %@", error);
             dispatch_async(dispatch_get_main_queue(), ^{
-                completion(nil, error);
+                completion(nil, nil, error);
             });
             return;
         }
@@ -117,43 +125,17 @@ NSString *const ATLMAtlasUserNameKey = @"name";
         NSDictionary *userDetails;
         BOOL success = [ATLMHTTPResponseSerializer responseObject:&userDetails withData:data response:(NSHTTPURLResponse *)response error:&serializationError];
         if (success) {
-            ATLMUser *user = [ATLMUser userFromDictionaryRepresentation:userDetails[ATLMAtlasIdentityKey]];
-            ATLMSession *session = [ATLMSession sessionWithAuthenticationToken:@"atlas_auth_token" user:user];
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSError *sessionConfigurationError;
-                BOOL success = [self configureWithSession:session error:&sessionConfigurationError];
-                if (!success) {
-                    completion(nil, sessionConfigurationError);
-                    return;
-                }
+                NSDictionary *userData = userDetails[ATLMAtlasIdentityKey];
                 NSString *identityToken = userDetails[ATLMAtlasIdentityTokenKey];
-                completion(identityToken, nil);
+                completion(identityToken, userData, nil);
             });
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
-                completion(nil, serializationError);
+                completion(nil, nil, serializationError);
             });
         }
     }] resume];
-}
-
-- (BOOL)configureWithSession:(ATLMSession *)session error:(NSError **)error
-{
-    if (self.authenticatedSession) return YES;
-    if (!session) {
-        if (error) {
-            *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMNoAuthenticatedSession userInfo:@{NSLocalizedDescriptionKey: @"No authenticated session."}];
-            return NO;
-        }
-    }
-    self.authenticatedSession = session;
-    BOOL success = [self.persistenceManager persistSession:session error:nil];
-    if (!success) {
-        *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMNoAuthenticatedSession userInfo:@{NSLocalizedDescriptionKey: @"There was an error persisting the session."}];
-        return NO;
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:ATLMUserDidAuthenticateNotification object:session.user];
-    return YES;
 }
 
 @end

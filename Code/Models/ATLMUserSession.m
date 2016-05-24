@@ -18,18 +18,26 @@
 //  limitations under the License.
 //
 
-#import "ATLMSession.h"
+#import "ATLMUserSession.h"
+#import "ATLMUser.h"
 
-@implementation ATLMSession
+@interface ATLMUserSession ()
 
-+ (instancetype)sessionWithAuthenticationToken:(NSString *)authenticationToken user:(ATLMUser *)user
+@property (nonatomic, readwrite) NSString *authenticationToken;
+@property (nonatomic, readwrite) id <ATLMAuthenticating> user;
+
+@end
+
+@implementation ATLMUserSession
+
++ (instancetype)sessionWithAuthenticationToken:(NSString *)authenticationToken user:(id <ATLMAuthenticating>)user
 {
     NSParameterAssert(authenticationToken);
     NSParameterAssert(user);
     return [[self alloc] initWithAuthenticationToken:authenticationToken user:user];
 }
 
-- (id)initWithAuthenticationToken:(NSString *)authenticationToken user:(ATLMUser *)user
+- (id)initWithAuthenticationToken:(NSString *)authenticationToken user:(id <ATLMAuthenticating>)user
 {
     self = [super init];
     if (self) {
@@ -63,14 +71,14 @@
 
 - (NSUInteger)hash
 {
-    return self.authenticationToken.hash ^ self.user.participantIdentifier.hash;
+    return self.authenticationToken.hash ^ self.user.userID.hash;
 }
 
 - (BOOL)isEqual:(id)object
 {
     if (!object) return NO;
-    if (![object isKindOfClass:[ATLMSession class]]) return NO;
-    ATLMSession *otherSession = object;
+    if (![object isKindOfClass:[ATLMUserSession class]]) return NO;
+    ATLMUserSession *otherSession = object;
     if (![self.authenticationToken isEqualToString:otherSession.authenticationToken]) return NO;
     if (![self.user isEqual:otherSession.user]) return NO;
     return YES;
