@@ -28,7 +28,6 @@
 @interface ATLMAPIManager () <NSURLSessionDelegate>
 
 @property (nonatomic, readwrite) NSURL *baseURL;
-@property (nonatomic, readwrite) LYRClient *layerClient;
 @property (nonatomic, readwrite) NSURLSession *URLSession;
 @property (nonatomic, readwrite) id <ATLMSession> authenticatedSession;
 
@@ -37,12 +36,11 @@
 @implementation ATLMAPIManager
 
 @synthesize persistenceManager = _persistenceManager;
-@synthesize delegate = _delegate;
+@synthesize layerClient = _layerClient;
 
 + (instancetype)managerWithBaseURL:(NSURL *)baseURL layerClient:(LYRClient *)layerClient
 {
     NSParameterAssert(baseURL);
-    NSParameterAssert(layerClient);
     return [[self alloc] initWithBaseURL:baseURL layerClient:layerClient];
 }
 
@@ -62,8 +60,17 @@
     @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Failed to call designated initializer." userInfo:nil];
 }
 
+- (void)setLayerClient:(LYRClient *)layerClient
+{
+    _layerClient = layerClient;
+    _URLSession = [self defaultURLSession];
+}
+
 - (NSURLSession *)defaultURLSession
 {
+    if (!self.layerClient) {
+        return nil;
+    }
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
     configuration.HTTPAdditionalHeaders = @{ @"Accept": @"application/json", @"X_LAYER_APP_ID": self.layerClient.appID.absoluteString };
     return [NSURLSession sessionWithConfiguration:configuration];

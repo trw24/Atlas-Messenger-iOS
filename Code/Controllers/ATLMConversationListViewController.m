@@ -138,16 +138,19 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     NSMutableArray *firstNames = [NSMutableArray new];
     [participants enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
         id<ATLParticipant> participant = obj;
-        if (participant.firstName) {
+        if (participant.displayName) {
             // Put the last message sender's name first
             if ([conversation.lastMessage.sender.userID isEqualToString:participant.userID]) {
-                [firstNames insertObject:participant.firstName atIndex:0];
+                [firstNames insertObject:participant.displayName atIndex:0];
             } else {
-                [firstNames addObject:participant.firstName];
+                [firstNames addObject:participant.displayName];
             }
         }
     }];
     NSString *firstNamesString = [firstNames componentsJoinedByString:@", "];
+    if (!firstNamesString) {
+        
+    }
     return firstNamesString;
 }
 

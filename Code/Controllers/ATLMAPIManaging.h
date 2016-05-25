@@ -47,7 +47,7 @@
 /**
  @abstract The `LYRClient` object used to initialize the receiver.
  */
-@property (nonatomic, readonly) LYRClient *layerClient;
+@property (nonatomic) LYRClient *layerClient;
 
 /**
  @abstract The currently configured URL session.

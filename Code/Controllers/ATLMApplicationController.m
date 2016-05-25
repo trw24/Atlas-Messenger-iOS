@@ -47,10 +47,7 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
     self = [super init];
     if (self) {
         _persistenceManager = persistenceManager;
-        
-        APIManager.delegate = self;
         _APIManager = APIManager;
-        
     }
     return self;
 }
@@ -64,6 +61,7 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
 {
     _layerClient = layerClient;
     _layerClient.delegate = self;
+    _APIManager.layerClient = layerClient;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLayerClientWillBeginSynchronizationNotification:) name:LYRClientWillBeginSynchronizationNotification object:layerClient];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLayerClientDidFinishSynchronizationNotification:) name:LYRClientDidFinishSynchronizationNotification object:layerClient];
 }
@@ -102,9 +100,6 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
 - (void)layerClient:(LYRClient *)client didReceiveAuthenticationChallengeWithNonce:(NSString *)nonce
 {
     NSLog(@"Layer Client did recieve authentication challenge with nonce: %@", nonce);
-    ATLMUser *user = self.APIManager.authenticatedSession.user;
-    if (!user) return;
-    //TODO - Handle Auth Challenge;
 }
 
 - (void)layerClient:(LYRClient *)client didAuthenticateAsUserID:(NSString *)userID

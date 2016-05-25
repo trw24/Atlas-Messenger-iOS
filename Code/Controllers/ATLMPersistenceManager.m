@@ -178,7 +178,7 @@ static NSString *const ATLMOnDiskPersistenceManagerSessionFileName = @"Session.p
     if (self.session) return self.session;
 
     NSString *path = [self sessionPath];
-    ATLMUserSession *session = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
+    id <ATLMSession> session = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
     self.session = session;
     return session;
 }
