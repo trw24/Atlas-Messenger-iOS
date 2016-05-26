@@ -104,7 +104,10 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (void)setupApplicationController
 {
+#warning Replace `ATLMAPIManger` with an object conforming to `ATLAPIManaging` protocol.
     ATLMAPIManager *APIManager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerClient:self.layerClient];
+
+#warning Replace `ATLMPersistenceManager` with an object conforming to `ATLMPersistenceManaging` protocol.
     ATLMPersistenceManager *persistenceManager = [ATLMPersistenceManager defaultManager];
     self.applicationController = [ATLMApplicationController controllerWithAPIManager:APIManager persistenceManager:persistenceManager];
     self.applicationController.layerClient = self.layerClient;
@@ -147,7 +150,7 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 {
     NSError *error;
     if (self.applicationController.layerClient.authenticatedUser) {
-        ATLMUserSession *session = [self.applicationController.persistenceManager persistedSessionWithError:&error];
+        id <ATLMSession> session = [self.applicationController.persistenceManager persistedSessionWithError:&error];
         BOOL success = [self.applicationController resumesSession:session error:&error];
         if (success) {
             [self presentAuthenticatedLayerSession];
@@ -296,7 +299,7 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 - (void)userDidAuthenticate:(NSNotification *)notification
 {
     NSError *error;
-    ATLMUserSession *session = self.applicationController.APIManager.authenticatedSession;
+    id <ATLMSession> session = self.applicationController.APIManager.authenticatedSession;
     BOOL success = [self.applicationController.persistenceManager persistSession:session error:&error];
     if (success) {
         NSLog(@"Persisted authenticated user session: %@", session);
@@ -314,7 +317,6 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
         NSLog(@"Cleared persisted user session");
     } else {
         NSLog(@"Failed clearing persistent user session: %@", error);
-        //TODO - Handle Error
     }
     [self addSplashView];
     self.splashView.alpha = 0.0f;
