@@ -13,8 +13,6 @@
 #import "ATLMConstants.h"
 #import "ATLMUtilities.h"
 #import <SVProgressHUD/SVProgressHUD.h>
-#import "ATLMUser.h"
-#import "ATLMUserSession.h"
 #import "ATLMConstants.h"
 #import "ATLMErrors.h"  
 

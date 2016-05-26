@@ -34,8 +34,6 @@
 		251D8DCA1A9688C50000BFA2 /* ATLMSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D9A1A9688C40000BFA2 /* ATLMSettingsViewController.m */; };
 		251D8DCB1A9688C50000BFA2 /* ATLMQRScannerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D9C1A9688C40000BFA2 /* ATLMQRScannerController.m */; };
 		251D8DCC1A9688C50000BFA2 /* ATLMRegistrationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D9E1A9688C40000BFA2 /* ATLMRegistrationViewController.m */; };
-		251D8DCD1A9688C50000BFA2 /* ATLMUserSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA11A9688C40000BFA2 /* ATLMUserSession.m */; };
-		251D8DCE1A9688C50000BFA2 /* ATLMUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA31A9688C40000BFA2 /* ATLMUser.m */; };
 		251D8DCF1A9688C50000BFA2 /* ATLMConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA61A9688C40000BFA2 /* ATLMConstants.m */; };
 		251D8DD01A9688C50000BFA2 /* ATLMErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA81A9688C40000BFA2 /* ATLMErrors.m */; };
 		251D8DD11A9688C50000BFA2 /* ATLMHTTPResponseSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DAA1A9688C40000BFA2 /* ATLMHTTPResponseSerializer.m */; };
@@ -129,10 +127,6 @@
 		251D8D9C1A9688C40000BFA2 /* ATLMQRScannerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMQRScannerController.m; sourceTree = "<group>"; };
 		251D8D9D1A9688C40000BFA2 /* ATLMRegistrationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMRegistrationViewController.h; sourceTree = "<group>"; };
 		251D8D9E1A9688C40000BFA2 /* ATLMRegistrationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMRegistrationViewController.m; sourceTree = "<group>"; };
-		251D8DA01A9688C40000BFA2 /* ATLMUserSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMUserSession.h; sourceTree = "<group>"; };
-		251D8DA11A9688C40000BFA2 /* ATLMUserSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMUserSession.m; sourceTree = "<group>"; };
-		251D8DA21A9688C40000BFA2 /* ATLMUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMUser.h; sourceTree = "<group>"; };
-		251D8DA31A9688C40000BFA2 /* ATLMUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMUser.m; sourceTree = "<group>"; };
 		251D8DA51A9688C40000BFA2 /* ATLMConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMConstants.h; sourceTree = "<group>"; };
 		251D8DA61A9688C40000BFA2 /* ATLMConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMConstants.m; sourceTree = "<group>"; };
 		251D8DA71A9688C40000BFA2 /* ATLMErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMErrors.h; sourceTree = "<group>"; };
@@ -320,17 +314,6 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
-		251D8D9F1A9688C40000BFA2 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				251D8DA01A9688C40000BFA2 /* ATLMUserSession.h */,
-				251D8DA11A9688C40000BFA2 /* ATLMUserSession.m */,
-				251D8DA21A9688C40000BFA2 /* ATLMUser.h */,
-				251D8DA31A9688C40000BFA2 /* ATLMUser.m */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		251D8DA41A9688C40000BFA2 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -376,7 +359,6 @@
 				251D8D841A9688C40000BFA2 /* ATLMAppDelegate.h */,
 				251D8D851A9688C40000BFA2 /* ATLMAppDelegate.m */,
 				251D8D861A9688C40000BFA2 /* Controllers */,
-				251D8D9F1A9688C40000BFA2 /* Models */,
 				251D8DA41A9688C40000BFA2 /* Utilities */,
 				251D8DB11A9688C40000BFA2 /* Views */,
 				0A0C242519477D8F00401B74 /* Frameworks */,
@@ -716,11 +698,9 @@
 				251D8DCA1A9688C50000BFA2 /* ATLMSettingsViewController.m in Sources */,
 				251D8DD21A9688C50000BFA2 /* ATLMLayerClient.m in Sources */,
 				5A92FDDE1BA379030021C110 /* ATLMSplitViewController.m in Sources */,
-				251D8DCE1A9688C50000BFA2 /* ATLMUser.m in Sources */,
 				D648F5A61CEA2C6300614F28 /* main.m in Sources */,
 				251D8DCC1A9688C50000BFA2 /* ATLMRegistrationViewController.m in Sources */,
 				251D8DC31A9688C50000BFA2 /* ATLMConversationDetailViewController.m in Sources */,
-				251D8DCD1A9688C50000BFA2 /* ATLMUserSession.m in Sources */,
 				251D8DC51A9688C50000BFA2 /* ATLMConversationViewController.m in Sources */,
 				251D8DD91A9688C50000BFA2 /* ATLMSplashView.m in Sources */,
 				251D8DC01A9688C50000BFA2 /* ATLMAppDelegate.m in Sources */,

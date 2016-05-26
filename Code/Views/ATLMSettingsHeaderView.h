@@ -19,7 +19,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ATLMUser.h"
+#import <LayerKit/LayerKit.h>
 
 @interface ATLMSettingsHeaderView : UIView
 

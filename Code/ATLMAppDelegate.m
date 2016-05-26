@@ -32,7 +32,6 @@
 #import "ATLMSplashView.h"
 #import "ATLMQRScannerController.h"
 #import "ATLMUtilities.h"
-#import "ATLMUserSession.h"
 #import "ATLMConstants.h"
 #import "ATLMAuthenticationProvider.h"
 
@@ -254,7 +253,7 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
             [self.conversationListViewController selectConversation:conversation];
         });
     } else {
-        self.conversationListViewController selectConversation:conversation];
+        [self.conversationListViewController selectConversation:conversation];
     }
 }
 
