@@ -12,6 +12,7 @@
 
 NSString *const ATLMFirstNameKey = @"ATLMFirstNameKey";
 NSString *const ATLMLastNameKey = @"ATLMLastNameKey";
+NSString *const ATLMCredentialsKey = @"ATLMCredentialsKey";
 
 @interface ATLMAuthenticationProvider ();
 
@@ -81,6 +82,8 @@ NSString *const ATLMLastNameKey = @"ATLMLastNameKey";
                 NSString *identityToken = userDetails[ATLMAtlasIdentityTokenKey];
                 completion(identityToken, nil);
             });
+            [[NSUserDefaults standardUserDefaults] setValue:credentials forKey:ATLMCredentialsKey];
+            [[NSUserDefaults standardUserDefaults] synchronize];
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completion(nil, serializationError);
@@ -91,7 +94,10 @@ NSString *const ATLMLastNameKey = @"ATLMLastNameKey";
 
 - (void)refreshAuthenticationWithNonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
 {
-    
+    NSDictionary *credentails = [[NSUserDefaults standardUserDefaults] objectForKey:ATLMCredentialsKey];
+    [self authenticateWithCredentials:credentails nonce:nonce completion:^(NSString * _Nonnull identityToken, NSError * _Nonnull error) {
+        completion(identityToken, error);
+    }];
 }
 
 @end

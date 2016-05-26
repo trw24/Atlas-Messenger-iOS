@@ -31,8 +31,8 @@ extern NSString *const ATLMConversationParticipantsDidChangeNotification;
 extern NSString *const ATLMConversationDeletedNotification;
 
 /**
- @abstract The `LSApplicationController` manages global resources needed by multiple view controller classes in the Atlas Messenger App.
- It also implement the `LYRClientDelegate` protocol. Only one instance should be instantiated and it should be passed to 
+ @abstract The `ATLMApplicationController` manages global resources needed by multiple view controller classes in the Atlas Messenger App.
+ It also implement the `LYRClientDelegate` protocol. Only one inst ance should be instantiated and it should be passed to 
  controllers that require it.
  */
 @interface ATLMApplicationController : NSObject <LYRClientDelegate>
@@ -41,10 +41,23 @@ extern NSString *const ATLMConversationDeletedNotification;
 /// @name Initializing a Controller
 ///--------------------------------
 
+/**
+ @abstract Initializes the `ATLMApplicationController` instance with the supplied provider. 
+ @param provider An object conforming to the `ATLMAuthenticating protocol. 
+ */
 + (instancetype)applicationControllerWithAuthenticationProvider:(id<ATLMAuthenticating>)authenticationProvider;
 
+/**
+ @abstract Authenticates the application by performing the Layer authentication handshake.
+ @param credentials An `NSDictionary` containing authetication credentials. 
+ @param completions A block to be called upon completion of the operation.
+ */
 - (void)authenticateWithCredentials:(NSDictionary *)credentials completion:(void (^)(LYRSession *session, NSError *error))completion;
 
+/**
+ @abstract Updates the controller with a `LYRClient` instance.
+ @param client The `LYRClient` instancce.
+ */
 - (void)updateWithLayerClient:(nonnull LYRClient *)client;
 
 ///--------------------------------
@@ -59,7 +72,7 @@ extern NSString *const ATLMConversationDeletedNotification;
 /**
  @abstract The `LYRClient` object for the application.
  */
-@property (nullable, nonatomic) LYRClient *layerClient;
+@property (nullable, nonatomic, readonly) LYRClient *layerClient;
 
 /**
  @abstract The `ATLMSplitViewController` controller which is the application's root controller.

@@ -195,8 +195,8 @@
 		D633684C1A9D614900FBFCD3 /* atlas-splashscreen-1336.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "atlas-splashscreen-1336.png"; sourceTree = "<group>"; };
 		D633684D1A9D614900FBFCD3 /* atlas-splashscreen-2208.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "atlas-splashscreen-2208.png"; sourceTree = "<group>"; };
 		D648F5A51CEA2C6300614F28 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D68F000B1CF78D5C001792B2 /* ATLMAuthenticationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMAuthenticationProvider.h; sourceTree = "<group>"; };
-		D68F000C1CF78D5C001792B2 /* ATLMAuthenticationProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMAuthenticationProvider.m; sourceTree = "<group>"; };
+		D68F000B1CF78D5C001792B2 /* ATLMAuthenticationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLMAuthenticationProvider.h; path = ../ATLMAuthenticationProvider.h; sourceTree = "<group>"; };
+		D68F000C1CF78D5C001792B2 /* ATLMAuthenticationProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ATLMAuthenticationProvider.m; path = ../ATLMAuthenticationProvider.m; sourceTree = "<group>"; };
 		D69446601CF4D7CF00802CD6 /* ATLMAuthenticating.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMAuthenticating.h; sourceTree = "<group>"; };
 		E3153B19C9CF7D3BAF515798 /* Pods-Atlas MessengerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas MessengerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED41AC588C220B853FB305A1 /* Pods_Atlas_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Atlas_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -292,6 +292,8 @@
 		251D8D861A9688C40000BFA2 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				D68F000B1CF78D5C001792B2 /* ATLMAuthenticationProvider.h */,
+				D68F000C1CF78D5C001792B2 /* ATLMAuthenticationProvider.m */,
 				251D8D891A9688C40000BFA2 /* ATLMApplicationController.h */,
 				251D8D8A1A9688C40000BFA2 /* ATLMApplicationController.m */,
 				251D8D8B1A9688C40000BFA2 /* ATLMConversationDetailViewController.h */,
@@ -370,8 +372,6 @@
 		259A57111950EB76000E27B0 /* Code */ = {
 			isa = PBXGroup;
 			children = (
-				D68F000B1CF78D5C001792B2 /* ATLMAuthenticationProvider.h */,
-				D68F000C1CF78D5C001792B2 /* ATLMAuthenticationProvider.m */,
 				D694465C1CF4D76400802CD6 /* Protocols */,
 				251D8D841A9688C40000BFA2 /* ATLMAppDelegate.h */,
 				251D8D851A9688C40000BFA2 /* ATLMAppDelegate.m */,

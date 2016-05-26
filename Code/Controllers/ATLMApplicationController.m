@@ -59,9 +59,19 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
 - (void)authenticateWithCredentials:(NSDictionary *)credentials completion:(void (^)(LYRSession *session, NSError *error))completion
 {
     [self.layerClient requestAuthenticationNonceWithCompletion:^(NSString * _Nullable nonce, NSError * _Nullable error) {
+        if (nonce) {
+            completion(nil, error);
+        }
         [self.authenticationProvider authenticateWithCredentials:credentials nonce:nonce completion:^(NSString * _Nonnull identityToken, NSError * _Nonnull error) {
+            if (identityToken) {
+                completion(nil, error);
+            }
             [self.layerClient authenticateWithIdentityToken:identityToken completion:^(LYRIdentity * _Nullable authenticatedUser, NSError * _Nullable error) {
-                completion(self.layerClient.currentSession, nil);
+                if (authenticatedUser) {
+                    completion(nil, error);
+                } else {
+                    completion(self.layerClient.currentSession, nil);
+                }
             }];
         }];
     }];
@@ -71,7 +81,7 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
 
 - (void)updateWithLayerClient:(nonnull LYRClient *)client
 {
-    self.layerClient = client;
+    _layerClient = client;
 }
 
 #pragma mark - LYRClientDelegate
