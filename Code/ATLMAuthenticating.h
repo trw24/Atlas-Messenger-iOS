@@ -12,33 +12,12 @@
 /**
  @abstract The `ATLMATLMAuthenticating` protocol must be adopted by objects that model users in the Atlas Messenger application.
  */
-@protocol ATLMAuthenticating <NSObject, NSCoding, ATLParticipant>
+@protocol ATLMAuthenticating <NSObject>
 
-/**
- @abstract Builds the object conforming to `ATLMAuthenticating` from a dictionary representation, usually a JSON payload.
- */
-+ (instancetype)userFromDictionaryRepresentation:(NSDictionary *)representation;
+@required
 
-/**
- @abstract Validates the object conforming to `ATLMAuthenticating` is valid.
- */
-- (BOOL)validate:(NSError **)error;
+- (void)authenticateWithCredentials:(nonnull NSDictionary *)credentials nonce:(nonnull NSString *)nonce completion:(void (^)( NSString * _Nonnull identityToken,  NSError * _Nonnull error))completion;
 
-/**
- @abstract An email address for the user.
- */
-@property (nonatomic, readonly) NSString *email;
-
-/**
- @abstract The password for the user.
- */
-@property (nonatomic, readonly) NSString *password;
-
-/**
- @abstract The password confirmation for the user.
- */
-@property (nonatomic, readonly) NSString *passwordConfirmation;
+- (void)refreshAuthenticationWithNonce:(nonnull NSString *)nonce completion:(void (^)( NSString * _Nonnull  identityToken,  NSError * _Nonnull error))completion;
 
 @end
-
-

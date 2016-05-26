@@ -19,7 +19,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ATLMPersistenceManager.h"
+#import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSInteger, ATLMEnvironment) {
     ATLMEnvironmentProduction = 0,

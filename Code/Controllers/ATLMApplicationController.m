@@ -35,19 +35,16 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
 
 @implementation ATLMApplicationController
 
-+ (instancetype)controllerWithAPIManager:(id <ATLMAPIManaging>)APIManager persistenceManager:(id <ATLMPersistenceManaging>)persistenceManager;
++ (instancetype)applicationControllerWithAuthenticationProvider:(id<ATLMAuthenticating>)authenticationProvider
 {
-    NSParameterAssert(persistenceManager);
-    NSParameterAssert(APIManager);
-    return [[self alloc] initWithAPIManager:APIManager persistenceManager:persistenceManager];
+    return [[self alloc] initWithAuthenticationProvider:authenticationProvider];
 }
 
-- (id)initWithAPIManager:(id <ATLMAPIManaging>)APIManager  persistenceManager:(id <ATLMPersistenceManaging>)persistenceManager
+- (id)initWithAuthenticationProvider:(id<ATLMAuthenticating>)authenticationProvider
 {
     self = [super init];
     if (self) {
-        _persistenceManager = persistenceManager;
-        _APIManager = APIManager;
+        _authenticationProvider = authenticationProvider;
     }
     return self;
 }
@@ -57,49 +54,33 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)setLayerClient:(ATLMLayerClient *)layerClient
+#pragma mark Authentication
+
+- (void)authenticateWithCredentials:(NSDictionary *)credentials completion:(void (^)(LYRSession *session, NSError *error))completion
 {
-    _layerClient = layerClient;
-    _layerClient.delegate = self;
-    _APIManager.layerClient = layerClient;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLayerClientWillBeginSynchronizationNotification:) name:LYRClientWillBeginSynchronizationNotification object:layerClient];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLayerClientDidFinishSynchronizationNotification:) name:LYRClientDidFinishSynchronizationNotification object:layerClient];
+    [self.layerClient requestAuthenticationNonceWithCompletion:^(NSString * _Nullable nonce, NSError * _Nullable error) {
+        [self.authenticationProvider authenticateWithCredentials:credentials nonce:nonce completion:^(NSString * _Nonnull identityToken, NSError * _Nonnull error) {
+            [self.layerClient authenticateWithIdentityToken:identityToken completion:^(LYRIdentity * _Nullable authenticatedUser, NSError * _Nullable error) {
+                completion(self.layerClient.currentSession, nil);
+            }];
+        }];
+    }];
 }
 
-- (BOOL)resumesSession:(id<ATLMSession>)session error:(NSError *__autoreleasing *)error
-{
-    NSError *resumeError;
-    BOOL success = [self.APIManager resumeSession:session error:&resumeError];
-    if (!success) {
-        if (error) {
-            *error = resumeError;
-        }
-        return NO;
-        
-    }
-    success = [self.persistenceManager persistSession:session error:&resumeError];
-    if (!success) {
-        if (error) {
-            *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMNoAuthenticatedSession userInfo:@{NSLocalizedDescriptionKey: @"There was an error persisting the session."}];
-        }
-        return NO;
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:ATLMUserDidAuthenticateNotification object:session.user];
-    return YES;
-}
+#pragma mark Update Layer Client
 
-#pragma mark - ATLAPIManagerDelegate
-
-- (void)APIManager:(id<ATLMAPIManaging>)APIManager didAuthenticateWithSession:(id<ATLMSession>)sessison
+- (void)updateWithLayerClient:(nonnull LYRClient *)client
 {
-    [self.persistenceManager persistSession:sessison error:nil];
+    self.layerClient = client;
 }
 
 #pragma mark - LYRClientDelegate
 
 - (void)layerClient:(LYRClient *)client didReceiveAuthenticationChallengeWithNonce:(NSString *)nonce
 {
-    NSLog(@"Layer Client did recieve authentication challenge with nonce: %@", nonce);
+    [self.authenticationProvider refreshAuthenticationWithNonce:nonce completion:^(NSString * _Nonnull identityToken, NSError * _Nonnull error) {
+        //
+    }];
 }
 
 - (void)layerClient:(LYRClient *)client didAuthenticateAsUserID:(NSString *)userID
@@ -109,7 +90,6 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
 
 - (void)layerClientDidDeauthenticate:(LYRClient *)client
 {
-    [self.APIManager deauthenticate];
     NSLog(@"Layer Client did deauthenticate");
 }
 

@@ -10,7 +10,6 @@
 #import "ATLLogoView.h"
 #import <Atlas/Atlas.h>
 #import "ATLMLayerClient.h"
-#import "ATLMAPIManager.h"
 #import "ATLMConstants.h"
 #import "ATLMUtilities.h"
 #import <SVProgressHUD/SVProgressHUD.h>
@@ -115,39 +114,11 @@ CGFloat const ATLMfirstNameTextFieldBottomPadding = 20;
     }
     
     [SVProgressHUD showWithStatus:@"Authenticating with Layer"];
-    NSLog(@"Requesting Authentication Nonce");
-    [self.applicationController.layerClient requestAuthenticationNonceWithCompletion:^(NSString *nonce, NSError *error) {
-        NSLog(@"Got a nonce %@", nonce);
-        if (error) {
-            ATLMAlertWithError(error);
-            return;
-        }
-        NSLog(@"Registering user");
-        [self.applicationController.APIManager registerUserWithFirstName:firstName lastName:lastName nonce:nonce completion:^(NSString *identityToken, NSDictionary *userData, NSError *error) {
-            NSLog(@"User registered and got identity token: %@ (error=%@)", identityToken, error);
-            if (error) {
-                ATLMAlertWithError(error);
-                return;
-            }
-            NSLog(@"Authenticating Layer");
-            if (!identityToken) {
-                NSError *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMInvalidIdentityToken userInfo:@{NSLocalizedDescriptionKey : @"Failed to obtain a valid identity token"}];
-                ATLMAlertWithError(error);
-                return;
-            }
-            
-            ATLMUser *user = [ATLMUser userFromDictionaryRepresentation:userData];
-            __block ATLMUserSession *session = [ATLMUserSession sessionWithAuthenticationToken:@"atlas_auth_token" user:user];
-            [self.applicationController.layerClient authenticateWithIdentityToken:identityToken completion:^(LYRIdentity *authenticatedUser, NSError *error) {
-                if (error) {
-                    ATLMAlertWithError(error);
-                    return;
-                }
-                NSLog(@"Layer authenticated as: %@", authenticatedUser);
-                [self.applicationController resumesSession:session error:nil];
-                [SVProgressHUD showSuccessWithStatus:@"Authenticated!"];
-            }];
-        }];
+    NSDictionary *credentials = @{ ATLMFirstNameKey : firstName, ATLMLastNameKey : lastName };
+    [self.applicationController authenticateWithCredentials:credentials completion:^(LYRSession *session, NSError *error) {
+        NSLog(@"Layer authenticated as: %@", session.authenticatedUser);
+        [SVProgressHUD showSuccessWithStatus:@"Authenticated!"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:ATLMUserDidAuthenticateNotification object:nil];
     }];
 }
 

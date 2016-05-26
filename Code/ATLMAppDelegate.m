@@ -34,6 +34,7 @@
 #import "ATLMUtilities.h"
 #import "ATLMUserSession.h"
 #import "ATLMConstants.h"
+#import "ATLMAuthenticationProvider.h"
 
 static NSString *const ATLMLayerAppID = nil;
 static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
@@ -53,17 +54,12 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Setup Layer
-    [self setupLayerClient];
     
     // Setup the application controller.
     [self setupApplicationController];
     
-    // Set up window
-    [self configureWindow];
-    
-    // Setup Session
-    [self configureSesion];
+    // Setup Layer
+    [self setupLayerClient];
     
     // Setup notifications
     [self registerNotificationObservers];
@@ -71,12 +67,10 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     // Configure Atlas Messenger UI appearance
     [self configureGlobalUserInterfaceAttributes];
     
+    // Set up window
+    [self configureWindow];
+    
     return YES;
-}
-
-- (void)applicationWillEnterForeground:(UIApplication *)application
-{
-    [self resumeSession];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -86,31 +80,29 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 #pragma mark - Setup
 
-- (void)setupLayerClient
-{
-    NSString *appID = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
-    if (appID) {
-        if (!self.layerClient) {
-            NSDictionary *options = @{LYRClientOptionSynchronizationPolicy : @(LYRClientSynchronizationPolicyMessageCount), LYRClientOptionSynchronizationMessageCount: @(10)};
-            self.layerClient = [ATLMLayerClient clientWithAppID:[NSURL URLWithString:appID] options:options];
-            self.layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
-            if (self.applicationController) {
-                self.applicationController.layerClient = self.layerClient;
-            }
-        }
-        [self connectLayerIfNeeded];
-    }
-}
-
 - (void)setupApplicationController
 {
 #warning Replace `ATLMAPIManger` with an object conforming to `ATLAPIManaging` protocol.
-    ATLMAPIManager *APIManager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerClient:self.layerClient];
+    ATLMAuthenticationProvider *provider = [ATLMAuthenticationProvider providerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction)];
+    self.applicationController = [ATLMApplicationController applicationControllerWithAuthenticationProvider:provider];
+}
 
-#warning Replace `ATLMPersistenceManager` with an object conforming to `ATLMPersistenceManaging` protocol.
-    ATLMPersistenceManager *persistenceManager = [ATLMPersistenceManager defaultManager];
-    self.applicationController = [ATLMApplicationController controllerWithAPIManager:APIManager persistenceManager:persistenceManager];
-    self.applicationController.layerClient = self.layerClient;
+- (void)setupLayerClient
+{
+    [[NSUserDefaults standardUserDefaults] setValue:@"layer:///apps/staging/1a607db0-bcb4-11e4-b40f-9b1c0100594f" forKey:ATLMLayerApplicationID];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    NSString *appID = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
+    if (!appID) {
+        return;
+    }
+    if (!self.layerClient) {
+        NSDictionary *options = @{LYRClientOptionSynchronizationPolicy : @(LYRClientSynchronizationPolicyMessageCount), LYRClientOptionSynchronizationMessageCount: @(10)};
+        self.layerClient = [ATLMLayerClient clientWithAppID:[NSURL URLWithString:appID] options:options];
+        self.layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
+        [self.applicationController updateWithLayerClient:self.layerClient];
+        [(ATLMAuthenticationProvider *)self.applicationController.authenticationProvider updateWithAppID:[NSURL URLWithString:appID]];
+    }
+    [self connectLayerIfNeeded];
 }
 
 - (void)configureWindow
@@ -124,16 +116,17 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     self.window.rootViewController = self.splitViewController;
 
     [self addSplashView];
-}
-
-- (void)configureSesion
-{
-    // Attempt to resume an existing session.
-    if ([self resumeSession]) {
-        [self removeSplashView];
+    
+    if (self.layerClient.authenticatedUser) {
+        [self presentAuthenticatedLayerSession];
     } else {
-        [self presentScannerViewController:YES withAuthenticationController:NO];
+        if (self.layerClient.appID) {
+            [self presentScannerViewController:YES withAuthenticationController:YES];
+        } else {
+            [self presentScannerViewController:YES withAuthenticationController:NO];
+        }
     }
+    [self removeSplashView];
 }
 
 - (void)registerNotificationObservers
@@ -142,22 +135,6 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidAuthenticate:) name:ATLMUserDidAuthenticateNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidAuthenticateWithLayer:) name:LYRClientDidAuthenticateNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidDeauthenticate:) name:ATLMUserDidDeauthenticateNotification object:nil];
-}
-
-#pragma mark - Session Management
-
-- (BOOL)resumeSession
-{
-    NSError *error;
-    if (self.applicationController.layerClient.authenticatedUser) {
-        id <ATLMSession> session = [self.applicationController.persistenceManager persistedSessionWithError:&error];
-        BOOL success = [self.applicationController resumesSession:session error:&error];
-        if (success) {
-            [self presentAuthenticatedLayerSession];
-            return YES;
-        }
-    }
-    return NO;
 }
 
 - (void)connectLayerIfNeeded
@@ -267,7 +244,7 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 - (LYRConversation *)conversationFromRemoteNotification:(NSDictionary *)remoteNotification
 {
     NSURL *conversationIdentifier = [NSURL URLWithString:[remoteNotification valueForKeyPath:@"layer.conversation_identifier"]];
-    return [self.applicationController.layerClient existingConversationForIdentifier:conversationIdentifier];
+    return [(ATLMLayerClient *)self.applicationController.layerClient existingConversationForIdentifier:conversationIdentifier];
 }
 
 - (void)navigateToViewForConversation:(LYRConversation *)conversation
@@ -298,26 +275,11 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (void)userDidAuthenticate:(NSNotification *)notification
 {
-    NSError *error;
-    id <ATLMSession> session = self.applicationController.APIManager.authenticatedSession;
-    BOOL success = [self.applicationController.persistenceManager persistSession:session error:&error];
-    if (success) {
-        NSLog(@"Persisted authenticated user session: %@", session);
-    } else {
-        NSLog(@"Failed persisting authenticated user: %@. Error: %@", session, error);
-    }
     [self registerForRemoteNotifications:[UIApplication sharedApplication]];
 }
 
 - (void)userDidDeauthenticate:(NSNotification *)notification
 {
-    NSError *error;
-    BOOL success = [self.applicationController.persistenceManager persistSession:nil error:&error];
-    if (success) {
-        NSLog(@"Cleared persisted user session");
-    } else {
-        NSLog(@"Failed clearing persistent user session: %@", error);
-    }
     [self addSplashView];
     self.splashView.alpha = 0.0f;
     
@@ -407,7 +369,7 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (void)setApplicationBadgeNumber
 {
-    NSUInteger countOfUnreadMessages = [self.applicationController.layerClient countOfUnreadMessages];
+    NSUInteger countOfUnreadMessages = [(ATLMLayerClient *)self.applicationController.layerClient countOfUnreadMessages];
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:countOfUnreadMessages];
 }
 

@@ -20,7 +20,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import "ATLMAPIManager.h"
+#import "ATLMAuthenticationProvider.h"
 #import "ATLMLayerClient.h"
 
 @class ATLMSplitViewController;
@@ -41,9 +41,11 @@ extern NSString *const ATLMConversationDeletedNotification;
 /// @name Initializing a Controller
 ///--------------------------------
 
-+ (instancetype)controllerWithAPIManager:(id <ATLMAPIManaging>)APIManager persistenceManager:(id <ATLMPersistenceManaging>)persistenceManager;
++ (instancetype)applicationControllerWithAuthenticationProvider:(id<ATLMAuthenticating>)authenticationProvider;
 
-- (BOOL)resumesSession:(id<ATLMSession>)session error:(NSError **)error;
+- (void)authenticateWithCredentials:(NSDictionary *)credentials completion:(void (^)(LYRSession *session, NSError *error))completion;
+
+- (void)updateWithLayerClient:(nonnull LYRClient *)client;
 
 ///--------------------------------
 /// @name Global Resources
@@ -52,21 +54,16 @@ extern NSString *const ATLMConversationDeletedNotification;
 /**
  @abstract The `LSAPIManager` object for the application.
  */
-@property (nonatomic, readonly) id <ATLMAPIManaging> APIManager;
-
-/**
- @abstract The `LSPersistenceManager` object for the application.
- */
-@property (nonatomic, readonly) id <ATLMPersistenceManaging> persistenceManager;
+@property (nonnull, nonatomic, readonly) id <ATLMAuthenticating> authenticationProvider;
 
 /**
  @abstract The `LYRClient` object for the application.
  */
-@property (nonatomic) ATLMLayerClient *layerClient;
+@property (nullable, nonatomic) LYRClient *layerClient;
 
 /**
  @abstract The `ATLMSplitViewController` controller which is the application's root controller.
  */
-@property (weak, nonatomic) ATLMSplitViewController *splitViewController;
+@property (nullable, weak, nonatomic) ATLMSplitViewController *splitViewController;
 
 @end

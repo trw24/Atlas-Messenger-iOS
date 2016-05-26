@@ -19,11 +19,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ATLMSession.h"
 
 /**
  @abstract The `ATLMUserSession` object conforms to the `ATLMSession` protocol and models an Atlas Messenger session.
  */
-@interface ATLMUserSession : NSObject <ATLMSession>
+@interface ATLMUserSession : NSObject 
 
 @end

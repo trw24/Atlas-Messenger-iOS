@@ -18,7 +18,6 @@
 //  limitations under the License.
 //
 
-#import "ATLMPersistenceManager.h"
 #import "ATLMUtilities.h"
 
 BOOL ATLMIsRunningTests(void)
