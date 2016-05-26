@@ -250,9 +250,12 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 - (void)navigateToViewForConversation:(LYRConversation *)conversation
 {
     if (![NSThread isMainThread]) {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Attempted to navigate UI from non-main thread" userInfo:nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.conversationListViewController selectConversation:conversation];
+        });
+    } else {
+        self.conversationListViewController selectConversation:conversation];
     }
-    [self.conversationListViewController selectConversation:conversation];
 }
 
 #pragma mark - Authentication Notification Handlers
