@@ -25,10 +25,10 @@
 
 @class ATLMSplitViewController;
 
-extern NSString *const ATLMLayerApplicationID;
-extern NSString *const ATLMConversationMetadataDidChangeNotification;
-extern NSString *const ATLMConversationParticipantsDidChangeNotification;
-extern NSString *const ATLMConversationDeletedNotification;
+extern NSString * _Nonnull const ATLMLayerApplicationID;
+extern NSString * _Nonnull const ATLMConversationMetadataDidChangeNotification;
+extern NSString * _Nonnull const ATLMConversationParticipantsDidChangeNotification;
+extern NSString * _Nonnull const ATLMConversationDeletedNotification;
 
 /**
  @abstract The `ATLMApplicationController` manages global resources needed by multiple view controller classes in the Atlas Messenger App.
@@ -45,14 +45,14 @@ extern NSString *const ATLMConversationDeletedNotification;
  @abstract Initializes the `ATLMApplicationController` instance with the supplied provider. 
  @param provider An object conforming to the `ATLMAuthenticating protocol. 
  */
-+ (instancetype)applicationControllerWithAuthenticationProvider:(id<ATLMAuthenticating>)authenticationProvider;
++ (nonnull instancetype)applicationControllerWithAuthenticationProvider:(nonnull id<ATLMAuthenticating>)authenticationProvider;
 
 /**
  @abstract Authenticates the application by performing the Layer authentication handshake.
  @param credentials An `NSDictionary` containing authetication credentials. 
  @param completions A block to be called upon completion of the operation.
  */
-- (void)authenticateWithCredentials:(NSDictionary *)credentials completion:(void (^)(LYRSession *session, NSError *error))completion;
+- (void)authenticateWithCredentials:(nonnull NSDictionary *)credentials completion:(nonnull void (^)(LYRSession * _Nonnull session, NSError * _Nonnull error))completion;
 
 /**
  @abstract Updates the controller with a `LYRClient` instance.
