@@ -1,10 +1,16 @@
 # Atlas Messenger Changelog
 
+## 0.20.0
+
+### Enchancements
+
+* Added support for reloading participant cells when identity updates occur.
+
 ## 0.9.2-pre1
 
 ### Enchancements
 
-* Added support for inliner replies to push notifications.
+* Added support for inline replies to push notifications.
 
 ## 0.9.1
 
