@@ -130,6 +130,9 @@ static ATLMDateProximity ATLMProximityToDate(NSDate *date)
 
 @interface ATLMConversationViewController () <ATLMConversationDetailViewControllerDelegate, ATLParticipantTableViewControllerDelegate>
 
+@property (nonatomic, nullable) LYRQueryController *participantsQueryController;
+@property (nonatomic, nullable) ATLMParticipantTableViewController *participantTableViewController;
+
 @end
 
 @implementation ATLMConversationViewController
@@ -374,21 +377,50 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
         selectedParticipantIDs = [NSSet new];
     }
     
+    NSError *error;
     LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
     query.predicate = [LYRPredicate predicateWithProperty:@"userID" predicateOperator:LYRPredicateOperatorIsNotIn value:selectedParticipantIDs];
-    NSError *error;
-    NSOrderedSet *identities = [self.layerClient executeQuery:query error:&error];
-    if (error) {
+    LYRQueryController *queryController = [self.layerClient queryControllerWithQuery:query error:&error];
+    queryController.delegate = self;
+    if (!queryController) {
+        if (error) {
             ATLMAlertWithError(error);
+        }
+        return;
+    }
+    BOOL success = [queryController execute:&error];
+    if (!success) {
+        if (error) {
+            ATLMAlertWithError(error);
+        }
+        return;
     }
     
+    NSOrderedSet *identities = queryController.allObjects;
+    self.participantsQueryController = queryController;
     ATLMParticipantTableViewController  *controller = [ATLMParticipantTableViewController participantTableViewControllerWithParticipants:identities.set sortType:ATLParticipantPickerSortTypeFirstName];
     controller.blockedParticipantIdentifiers = [self.layerClient.policies valueForKey:@"sentByUserID"];
     controller.delegate = self;
     controller.allowsMultipleSelection = NO;
+    self.participantTableViewController = controller;
     
     UINavigationController *navigationController =[[UINavigationController alloc] initWithRootViewController:controller];
     [self.navigationController presentViewController:navigationController animated:YES completion:nil];
+}
+
+- (void)queryController:(LYRQueryController *)controller
+        didChangeObject:(id)object
+            atIndexPath:(NSIndexPath *)indexPath
+          forChangeType:(LYRQueryControllerChangeType)type
+           newIndexPath:(NSIndexPath *)newIndexPath
+{
+    if (controller == self.participantsQueryController) {
+        if (type == LYRQueryControllerChangeTypeUpdate) {
+            [self.participantTableViewController.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+    } else {
+        [super queryController:controller didChangeObject:object atIndexPath:indexPath forChangeType:type newIndexPath:newIndexPath];
+    }
 }
 
 /**
@@ -423,7 +455,10 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 - (void)participantTableViewController:(ATLParticipantTableViewController *)participantTableViewController didSelectParticipant:(id<ATLParticipant>)participant
 {
     [self.addressBarController selectParticipant:participant];
-    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+        self.participantsQueryController = nil;
+        self.participantTableViewController = nil;
+    }];
 }
 
 /**

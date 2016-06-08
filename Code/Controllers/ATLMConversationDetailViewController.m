@@ -39,12 +39,14 @@ typedef NS_ENUM(NSInteger, ATLMActionSheetTag) {
     ATLMActionSheetLeaveConversation,
 };
 
-@interface ATLMConversationDetailViewController () <ATLParticipantTableViewControllerDelegate, UITextFieldDelegate, UIActionSheetDelegate>
+@interface ATLMConversationDetailViewController () <ATLParticipantTableViewControllerDelegate, UITextFieldDelegate, UIActionSheetDelegate, LYRQueryControllerDelegate>
 
 @property (nonatomic) LYRConversation *conversation;
 @property (nonatomic) NSMutableArray *participants;
 @property (nonatomic) NSIndexPath *indexPathToRemove;
 @property (nonatomic) CLLocationManager *locationManager;
+@property (nonatomic, nullable) LYRQueryController *participantsQueryController;
+@property (nonatomic, nullable) ATLMParticipantTableViewController *participantTableViewController;
 
 @end
 
@@ -314,7 +316,24 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
     query.predicate = [LYRPredicate predicateWithProperty:@"userID" predicateOperator:LYRPredicateOperatorIsNotIn value:[self.conversation.participants valueForKey:@"userID"]];
     NSError *error;
-    NSOrderedSet *identities = [self.applicationController.layerClient executeQuery:query error:&error];
+    LYRQueryController *queryController = [self.applicationController.layerClient queryControllerWithQuery:query error:&error];
+    queryController.delegate = self;
+    if (!queryController) {
+        if (error) {
+            ATLMAlertWithError(error);
+        }
+        return;
+    }
+    BOOL success = [queryController execute:&error];
+    if (!success) {
+        if (error) {
+            ATLMAlertWithError(error);
+        }
+        return;
+    }
+    
+    NSOrderedSet *identities = queryController.allObjects;
+    self.participantsQueryController = queryController;
     
     ATLMParticipantTableViewController  *controller = [ATLMParticipantTableViewController participantTableViewControllerWithParticipants:identities.set sortType:ATLParticipantPickerSortTypeFirstName];
     controller.delegate = self;
@@ -410,7 +429,10 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 - (void)participantTableViewController:(ATLParticipantTableViewController *)participantTableViewController didSelectParticipant:(id<ATLParticipant>)participant
 {
-    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+        self.participantTableViewController = nil;
+        self.participantsQueryController = nil;
+    }];
     
     [self.participants addObject:participant];
     if (self.conversation.participants.count < 3) {
@@ -437,6 +459,19 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
             completion([NSSet set]);
         }
     }];
+}
+
+- (void)queryController:(LYRQueryController *)controller
+        didChangeObject:(id)object
+            atIndexPath:(NSIndexPath *)indexPath
+          forChangeType:(LYRQueryControllerChangeType)type
+           newIndexPath:(NSIndexPath *)newIndexPath
+{
+    if (controller == self.participantsQueryController) {
+        if (type == LYRQueryControllerChangeTypeUpdate) {
+            [self.participantTableViewController.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+    }
 }
 
 #pragma mark - Conversation Configuration
