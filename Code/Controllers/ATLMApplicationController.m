@@ -75,6 +75,8 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
     NSLog(@"Layer Client did recieve authentication challenge with nonce: %@", nonce);
     ATLMUser *user = self.APIManager.authenticatedSession.user;
     if (!user) return;
+    // Note: In our demo backend, we will avoid registering duplicate users
+    // Instead, we'll reuse identity instances if one exists that matches the firstname/lastname
     [self.APIManager registerUserWithFirstName:user.firstName lastName:user.lastName nonce:nonce completion:^(NSString *identityToken, NSError *error) {
         NSLog(@"Reauthenticated user with identity token: %@ (error=%@)", identityToken, error);
         if (error) {
