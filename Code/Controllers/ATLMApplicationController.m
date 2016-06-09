@@ -20,6 +20,7 @@
 
 #import "ATLMApplicationController.h"
 #import <SVProgressHUD/SVProgressHUD.h>
+#import "ATLMUtilities.h"
 
 NSString *const ATLMLayerApplicationID = @"LAYER_APP_ID";
 
@@ -74,7 +75,26 @@ NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNot
     NSLog(@"Layer Client did recieve authentication challenge with nonce: %@", nonce);
     ATLMUser *user = self.APIManager.authenticatedSession.user;
     if (!user) return;
-    //TODO - Handle Auth Challenge;
+    [self.APIManager registerUserWithFirstName:user.firstName lastName:user.lastName nonce:nonce completion:^(NSString *identityToken, NSError *error) {
+        NSLog(@"Reauthenticated user with identity token: %@ (error=%@)", identityToken, error);
+        if (error) {
+            ATLMAlertWithError(error);
+            return;
+        }
+        if (!identityToken) {
+            NSError *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMInvalidIdentityToken userInfo:@{NSLocalizedDescriptionKey : @"Failed to obtain a valid identity token"}];
+            ATLMAlertWithError(error);
+            return;
+        }
+        NSLog(@"Answering Layer challenge");
+        [self.layerClient authenticateWithIdentityToken:identityToken completion:^(LYRIdentity * _Nullable authenticatedUser, NSError * _Nullable error) {
+            if (error) {
+                ATLMAlertWithError(error);
+                return;
+            }
+            NSLog(@"Layer reauthenticated as %@", authenticatedUser);
+        }];
+    }];
 }
 
 - (void)layerClient:(LYRClient *)client didAuthenticateAsUserID:(NSString *)userID
