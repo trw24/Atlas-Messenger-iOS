@@ -63,4 +63,3 @@
 - (LYRConversation *)existingConversationForParticipants:(NSSet *)participants;
 
 @end
-
