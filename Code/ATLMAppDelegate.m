@@ -58,7 +58,9 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     [self setupApplicationController];
     
     // Setup Layer
-    [self setupLayerClient];
+    NSString *appIDString = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
+    NSURL *appID = [NSURL URLWithString:appIDString];
+    [self setupLayerClientWithAppID:appID];
     
     // Setup notifications
     [self registerNotificationObservers];
@@ -81,25 +83,19 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (void)setupApplicationController
 {
-#warning Replace `ATLMAPIManger` with an object conforming to `ATLAPIManaging` protocol.
+    // TODO: Revisit this...
     ATLMAuthenticationProvider *provider = [ATLMAuthenticationProvider providerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction)];
     self.applicationController = [ATLMApplicationController applicationControllerWithAuthenticationProvider:provider];
 }
 
-- (void)setupLayerClient
+- (void)setupLayerClientWithAppID:(nonnull NSURL *)appID
 {
-    [[NSUserDefaults standardUserDefaults] setValue:@"layer:///apps/staging/1a607db0-bcb4-11e4-b40f-9b1c0100594f" forKey:ATLMLayerApplicationID];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    NSString *appID = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
-    if (!appID) {
-        return;
-    }
     if (!self.layerClient) {
         NSDictionary *options = @{LYRClientOptionSynchronizationPolicy : @(LYRClientSynchronizationPolicyMessageCount), LYRClientOptionSynchronizationMessageCount: @(10)};
-        self.layerClient = [ATLMLayerClient clientWithAppID:[NSURL URLWithString:appID] options:options];
+        self.layerClient = [ATLMLayerClient clientWithAppID:appID options:options];
         self.layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
         [self.applicationController updateWithLayerClient:self.layerClient];
-        [(ATLMAuthenticationProvider *)self.applicationController.authenticationProvider updateWithAppID:[NSURL URLWithString:appID]];
+        [(ATLMAuthenticationProvider *)self.applicationController.authenticationProvider updateWithAppID:appID];
     }
     [self connectLayerIfNeeded];
 }
