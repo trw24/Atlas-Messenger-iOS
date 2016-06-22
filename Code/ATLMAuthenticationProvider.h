@@ -49,5 +49,3 @@ extern NSString * _Nonnull const ATLMLastNameKey;
 - (void)updateWithAppID:(nonnull NSURL *)appID;
 
 @end
-
-
