@@ -7,9 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ATLMConversationListViewController.h"
-#import "ATLMConversationViewController.h"
-#import "ATLMNavigationController.h"
 
 /**
  @abstract Subclass of the `UISplitViewController`. Presents a user interface for the application window.

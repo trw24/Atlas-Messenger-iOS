@@ -8,6 +8,7 @@
 
 #import "ATLMSplitViewController.h"
 #import "ATLMNavigationController.h"
+#import "ATLMConversationViewController.h"
 
 @interface ATLMSplitViewController ()
 
@@ -18,10 +19,22 @@
 
 @implementation ATLMSplitViewController
 
-- (void)viewDidLoad
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
-    [super viewDidLoad];
-    [self setup];
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        [self setup];
+    }
+    return self;
+}
+
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        [self setup];
+    }
+    return self;
 }
 
 - (void)setup
@@ -33,6 +46,7 @@
 
 - (void)setMainViewController:(UIViewController *)mainViewController
 {
+    mainViewController = mainViewController ?: [[ATLMNavigationController alloc] initWithRootViewController:[UIViewController new]];
     [self.mainNavigationController setViewControllers:@[ mainViewController ]];
 }
 
@@ -41,10 +55,10 @@
     BOOL shouldDisplayDetailViewController = !([self.detailNavigationController.viewControllers[0] isMemberOfClass:[UIViewController class]]);
     
     if (shouldDisplayDetailViewController) {
-        self.detailNavigationController = [[ATLMNavigationController alloc] initWithRootViewController:detailViewController];
+        self.detailNavigationController = [[ATLMNavigationController alloc] initWithRootViewController:detailViewController ?: [UIViewController new]];
         [self showDetailViewController:self.detailNavigationController sender:self];
     } else {
-        self.detailNavigationController.viewControllers = @[ detailViewController ];
+        self.detailNavigationController.viewControllers = @[ detailViewController ?: [[ATLMNavigationController alloc] initWithRootViewController:[UIViewController new]] ];
     }
 }
 
