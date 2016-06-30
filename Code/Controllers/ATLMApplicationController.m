@@ -54,6 +54,7 @@ NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControll
         _authenticationProvider = authenticationProvider;
         _layerClientOptions = layerClientOptions;
         _state = ATLMApplicationStateAppIDNotSet;
+        // Restore the appID from the user defaults (if available).
         NSString *appIDString = [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
         NSURL *appID = [NSURL URLWithString:appIDString];
         if (appID) {
@@ -71,7 +72,7 @@ NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControll
 - (void)setState:(ATLMApplicationState)state
 {
     if (_state == state) {
-        // Prevent to notify the delegate with the same state.
+        // Prevent notifying the delegate with the same state.
         return;
     }
     _state = state;
