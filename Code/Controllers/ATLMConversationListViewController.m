@@ -172,6 +172,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     conversationViewController.conversation = conversation;
     
     [self.applicationController.splitViewController setDetailViewController:conversationViewController];
+    [self.splitViewController setDetailViewController:conversationViewController];
 }
 
 #pragma mark - Actions
@@ -261,7 +262,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
         return;
     }
     
-    NSString *authenticatedUserID = self.applicationController.layerClient.authenticatedUser.userID;
+    NSString *authenticatedUserID = self.layerClient.authenticatedUser.userID;
     if (!authenticatedUserID) return;
     LYRConversation *conversation = notification.object;
     if ([[conversation.participants valueForKeyPath:@"userID"] containsObject:authenticatedUserID]) return;

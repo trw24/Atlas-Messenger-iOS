@@ -295,8 +295,8 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 - (NSAttributedString *)conversationViewController:(ATLConversationViewController *)conversationViewController attributedStringForDisplayOfRecipientStatus:(NSDictionary *)recipientStatus
 {
     NSMutableDictionary *mutableRecipientStatus = [recipientStatus mutableCopy];
-    if ([mutableRecipientStatus valueForKey:self.applicationController.layerClient.authenticatedUser.userID]) {
-        [mutableRecipientStatus removeObjectForKey:self.applicationController.layerClient.authenticatedUser.userID];
+    if ([mutableRecipientStatus valueForKey:self.layerClient.authenticatedUser.userID]) {
+        [mutableRecipientStatus removeObjectForKey:self.layerClient.authenticatedUser.userID];
     }
     
     NSString *statusString = [NSString new];
@@ -337,7 +337,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     } else {
         __block NSString *blockStatusString = [NSString new];
         [mutableRecipientStatus enumerateKeysAndObjectsUsingBlock:^(NSString *userID, NSNumber *statusNumber, BOOL *stop) {
-            if ([userID isEqualToString:self.applicationController.layerClient.authenticatedUser.userID]) return;
+            if ([userID isEqualToString:self.layerClient.authenticatedUser.userID]) return;
             LYRRecipientStatus status = statusNumber.integerValue;
             switch (status) {
                 case LYRRecipientStatusInvalid:
@@ -382,7 +382,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
             ATLMAlertWithError(error);
     }
     
-    ATLMParticipantTableViewController  *controller = [ATLMParticipantTableViewController participantTableViewControllerWithParticipants:identities.set sortType:ATLParticipantPickerSortTypeFirstName];
+    ATLMParticipantTableViewController *controller = [ATLMParticipantTableViewController participantTableViewControllerWithParticipants:identities.set sortType:ATLParticipantPickerSortTypeFirstName];
     controller.blockedParticipantIdentifiers = [self.layerClient.policies valueForKey:@"sentByUserID"];
     controller.delegate = self;
     controller.allowsMultipleSelection = NO;
@@ -480,7 +480,6 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 {
     ATLMConversationDetailViewController *detailViewController = [ATLMConversationDetailViewController conversationDetailViewControllerWithConversation:self.conversation];
     detailViewController.detailDelegate = self;
-    detailViewController.applicationController = self.applicationController;
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
 

@@ -65,14 +65,18 @@ extern NSString *const ATLMConnecting;
  */
 @interface ATLMSettingsViewController : UITableViewController
 
+- (nullable instancetype)initWithStyle:(UITableViewStyle)style layerClient:(nonnull LYRClient *)layerClient;
+- (nullable instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil layerClient:(nonnull LYRClient *)layerClient;
+- (nullable instancetype)initWithCoder:(nonnull NSCoder *)aDecoder layerClient:(nonnull LYRClient *)layerClient;
+
 /**
  @abstract The controller object for the application.
  */
-@property (nonatomic) ATLMApplicationController *applicationController;
+@property (nonnull, nonatomic, readonly) LYRClient *layerClient;
 
 /**
  @abstract The `ATLMSettingsViewControllerDelegate` object for the controller.
  */
-@property (nonatomic) id<ATLMSettingsViewControllerDelegate> settingsDelegate;
+@property (nullable, nonatomic, weak) id<ATLMSettingsViewControllerDelegate> settingsDelegate;
 
 @end

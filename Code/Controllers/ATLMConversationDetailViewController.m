@@ -444,7 +444,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 - (void)switchToConversationForParticipants
 {
     NSSet *participantIdentifiers = [self.participants valueForKey:@"userID"];
-    LYRConversation *conversation = [(ATLMLayerClient *)self.applicationController.layerClient existingConversationForParticipants:participantIdentifiers];
+    LYRConversation *conversation = [self.applicationController existingConversationForParticipants:participantIdentifiers];
     if (!conversation) {
         conversation = [self.applicationController.layerClient newConversationWithParticipants:participantIdentifiers options:nil error:nil];
     }
