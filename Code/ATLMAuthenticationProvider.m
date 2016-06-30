@@ -61,7 +61,8 @@ NSString *const ATLMCredentialsKey = @"ATLMCredentialsKey";
 - (NSURLSession *)defaultURLSession
 {
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    configuration.HTTPAdditionalHeaders = @{ @"Accept": @"application/json", @"X_LAYER_APP_ID": self.appID.absoluteString };
+    configuration.HTTPAdditionalHeaders = @{ @"Accept": @"application/json",
+                                             @"X_LAYER_APP_ID": self.appID.absoluteString };
     return [NSURLSession sessionWithConfiguration:configuration];
 }
 
@@ -73,7 +74,12 @@ NSString *const ATLMCredentialsKey = @"ATLMCredentialsKey";
     NSString *appUUID = [[self.appID pathComponents] lastObject];
     NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
     NSURL *URL = [NSURL URLWithString:urlString relativeToURL:self.baseURL];
-    NSDictionary *parameters = @{ @"user" : @{ @"first_name": firstName, @"last_name": lastName, @"display_name": displayName, @"avatar_url": @"" }, @"nonce" : nonce };
+    NSDictionary *parameters = @{ @"nonce": nonce,
+                                  @"user":
+                                    @{ @"first_name": firstName,
+                                       @"last_name": lastName,
+                                       @"display_name": displayName,
+                                       @"avatar_url": @"" } };
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     request.HTTPMethod = @"POST";
     request.HTTPBody = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:nil];
