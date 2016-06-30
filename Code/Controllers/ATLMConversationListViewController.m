@@ -36,6 +36,27 @@ NSString *const ATLMConversationListTableViewAccessibilityLabel = @"Conversation
 NSString *const ATLMSettingsButtonAccessibilityLabel = @"Settings Button";
 NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 
++ (nonnull instancetype)conversationListViewControllerWithLayerClient:(nonnull LYRClient *)layerClient splitViewController:(nonnull ATLMSplitViewController *)splitViewController
+{
+    return [[self alloc] initWithLayerClient:layerClient splitViewController:splitViewController];
+}
+
+- (nonnull instancetype)initWithLayerClient:(nonnull LYRClient *)layerClient splitViewController:(nonnull ATLMSplitViewController *)splitViewController
+{
+    self = [super initWithLayerClient:layerClient];
+    if (self) {
+        _splitViewController = splitViewController;
+    }
+    return self;
+}
+
+- (instancetype)initWithLayerClient:(LYRClient *)layerClient
+{
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Failed to call the designated initializer. Use conversationListViewControllerWithLayerClient:splitViewController:" userInfo:nil];
+}
+
+#pragma mark UIView overrides
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -147,9 +168,6 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
         }
     }];
     NSString *firstNamesString = [firstNames componentsJoinedByString:@", "];
-    if (!firstNamesString) {
-        
-    }
     return firstNamesString;
 }
 
@@ -160,18 +178,16 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 {
     ATLMConversationViewController *existingConversationViewController = [self existingConversationViewController];
     if (existingConversationViewController && existingConversationViewController.conversation == conversation) {
-        if (self.navigationController.topViewController == existingConversationViewController) return;
+        if (self.navigationController.topViewController == existingConversationViewController) {
+            return;
+        }
         [self.navigationController popToViewController:existingConversationViewController animated:YES];
         return;
     }
-    
     BOOL shouldShowAddressBar = (conversation.participants.count > 2 || !conversation.participants.count);
-    ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.applicationController.layerClient];
-    conversationViewController.applicationController = self.applicationController;
+    ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.layerClient];
     conversationViewController.displaysAddressBar = shouldShowAddressBar;
     conversationViewController.conversation = conversation;
-    
-    [self.applicationController.splitViewController setDetailViewController:conversationViewController];
     [self.splitViewController setDetailViewController:conversationViewController];
 }
 
@@ -179,12 +195,11 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 
 - (void)settingsButtonTapped
 {
-    ATLMSettingsViewController *settingsViewController = [[ATLMSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
-    settingsViewController.applicationController = self.applicationController;
+    ATLMSettingsViewController *settingsViewController = [[ATLMSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped layerClient:self.layerClient];
     settingsViewController.settingsDelegate = self;
     
     UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
-    [self.navigationController presentViewController:controller animated:YES completion:nil];
+    [self presentViewController:controller animated:YES completion:nil];
 }
 
 - (void)composeButtonTapped
@@ -212,9 +227,20 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeBlack];
     [SVProgressHUD show];
-    if (self.applicationController.layerClient.isConnected) {
-        [self.applicationController.layerClient deauthenticateWithCompletion:^(BOOL success, NSError *error) {
+    __weak typeof(self) weakSelf = self;
+    if (self.layerClient.isConnected) {
+        if ([weakSelf.presentationDelegate respondsToSelector:@selector(conversationListViewControllerWillBeDismissed:)]) {
+            [weakSelf.presentationDelegate conversationListViewControllerWillBeDismissed:weakSelf];
+        }
+        [self.layerClient deauthenticateWithCompletion:^(BOOL success, NSError *error) {
             [SVProgressHUD dismiss];
+            [settingsViewController dismissViewControllerAnimated:YES completion:^{
+                // Inform the presentation delegate all subviews (from child view
+                // controllers) have been dismissed.
+                if ([weakSelf.presentationDelegate respondsToSelector:@selector(conversationListViewControllerWasDismissed:)]) {
+                    [weakSelf.presentationDelegate conversationListViewControllerWasDismissed:weakSelf];
+                }
+            }];
         }];
     } else {
         [SVProgressHUD showErrorWithStatus:@"Unable to logout. Layer is not connected"];
