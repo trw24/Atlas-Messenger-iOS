@@ -25,6 +25,4 @@
 
 @property (nonatomic) UIWindow *window;
 
-@property (nonatomic) ATLMApplicationController *applicationController;
-
 @end
