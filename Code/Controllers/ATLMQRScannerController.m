@@ -8,8 +8,6 @@
 
 #import "ATLMQRScannerController.h"
 #import "ATLMOverlayView.h"
-#import "ATLMRegistrationViewController.h"
-#import "ATLMLayerClient.h"
 #import "ATLMUtilities.h"
 #import "ATLMErrors.h"
 

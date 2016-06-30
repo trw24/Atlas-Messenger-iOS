@@ -9,7 +9,6 @@
 #import "ATLMRegistrationViewController.h"
 #import "ATLLogoView.h"
 #import <Atlas/Atlas.h>
-#import "ATLMLayerClient.h"
 #import "ATLMConstants.h"
 #import "ATLMUtilities.h"
 #import <SVProgressHUD/SVProgressHUD.h>
