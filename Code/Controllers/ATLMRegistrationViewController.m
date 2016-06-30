@@ -105,19 +105,12 @@ CGFloat const ATLMfirstNameTextFieldBottomPadding = 20;
 - (void)registerAndAuthenticateUserWithFirstName:(NSString *)firstName lastName:(NSString *)lastName
 {
     [self.view endEditing:YES];
-    
-    if (self.applicationController.layerClient.authenticatedUser.userID) {
-        NSLog(@"Layer already authenticated as: %@", self.applicationController.layerClient.authenticatedUser);
-        return;
+
+    // Gather and send the credentials to the delegate.
+    NSDictionary *credentials = @{ ATLMFirstNameKey: firstName, ATLMLastNameKey: lastName };
+    if ([self.delegate respondsToSelector:@selector(registrationViewController:didSubmitCredentials:)]) {
+        [self.delegate registrationViewController:self didSubmitCredentials:credentials];
     }
-    
-    [SVProgressHUD showWithStatus:@"Authenticating with Layer"];
-    NSDictionary *credentials = @{ ATLMFirstNameKey : firstName, ATLMLastNameKey : lastName };
-    [self.applicationController authenticateWithCredentials:credentials completion:^(LYRSession *session, NSError *error) {
-        NSLog(@"Layer authenticated as: %@", session.authenticatedUser);
-        [SVProgressHUD showSuccessWithStatus:@"Authenticated!"];
-        [[NSNotificationCenter defaultCenter] postNotificationName:ATLMUserDidAuthenticateNotification object:nil];
-    }];
 }
 
 - (void)configureLayoutConstraints
@@ -132,13 +125,11 @@ CGFloat const ATLMfirstNameTextFieldBottomPadding = 20;
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.firstNameTextField attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ATLMfirstNameTextFieldHeight]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.firstNameTextField attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.lastNameTextField attribute:NSLayoutAttributeTop multiplier:1.0 constant:-ATLMfirstNameTextFieldBottomPadding]];
 
-    
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.lastNameTextField attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.lastNameTextField attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:ATLMfirstNameTextFieldWidthRatio constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.lastNameTextField attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ATLMfirstNameTextFieldHeight]];
     self.lastNameTextFieldBottomConstraint = [NSLayoutConstraint constraintWithItem:self.lastNameTextField attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-ATLMfirstNameTextFieldBottomPadding];
     [self.view addConstraint:self.lastNameTextFieldBottomConstraint];
-    
 }
 
 @end
