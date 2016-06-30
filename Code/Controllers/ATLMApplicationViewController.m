@@ -16,6 +16,8 @@
 #import "ATLMSplitViewController.h"
 #import "ATLMNavigationController.h"
 
+static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
+
 @interface ATLMApplicationViewController () <ATLMQRScannerControllerDelegate, ATLMRegistrationViewControllerDelegate, ATLMConversationListViewControllerPresentationDelegate>
 
 @property (nonnull, nonatomic, readwrite) UIApplication *application;
@@ -240,8 +242,28 @@
     [self presentViewControllerForApplicationState:applicationState];
 }
 
-- (void)applicationController:(ATLMApplicationController *)applicationController didFinishHandlingRemoteNotificationForConversation:(LYRConversation *)conversation message:(LYRMessage *)message
+- (void)applicationController:(ATLMApplicationController *)applicationController didFinishHandlingRemoteNotificationForConversation:(LYRConversation *)conversation message:(LYRMessage *)message responseText:(nullable NSString *)responseText
 {
+    if (responseText.length) {
+        // Handle the inline message reply.
+        if (!conversation) {
+            NSLog(@"Failed to complete inline reply: unable to find Conversation referenced by remote notification.");
+            return;
+        }
+        LYRMessagePart *messagePart = [LYRMessagePart messagePartWithText:responseText];
+        NSString *fullName = self.applicationController.layerClient.authenticatedUser.displayName;
+        NSString *pushText = [NSString stringWithFormat:@"%@: %@", fullName, responseText];
+        LYRMessage *message = ATLMessageForParts(self.applicationController.layerClient, @[ messagePart ], pushText, ATLMPushNotificationSoundName);
+        if (message) {
+            NSError *error = nil;
+            BOOL success = [conversation sendMessage:message error:&error];
+            if (!success) {
+                NSLog(@"Failed to send inline reply: %@", [error localizedDescription]);
+            }
+        }
+        return;
+    }
+    
     // Navigate to the conversation, after the remote notification's been handled.
     BOOL userTappedRemoteNotification = self.application.applicationState == UIApplicationStateInactive;
     if (userTappedRemoteNotification && conversation) {
