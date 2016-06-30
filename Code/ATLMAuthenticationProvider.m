@@ -29,13 +29,14 @@ NSString *const ATLMCredentialsKey = @"ATLMCredentialsKey";
 
 @interface ATLMAuthenticationProvider ();
 
-@property (nonatomic) NSURL *appID;
 @property (nonatomic) NSURL *baseURL;
 @property (nonatomic) NSURLSession *URLSession;
 
 @end
 
 @implementation ATLMAuthenticationProvider
+
+@synthesize appID = _appID;
 
 + (nonnull instancetype)providerWithBaseURL:(nonnull NSURL *)baseURL
 {

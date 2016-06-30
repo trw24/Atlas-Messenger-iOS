@@ -42,10 +42,4 @@ extern NSString * _Nonnull const ATLMLastNameKey;
  */
 + (nonnull instancetype)providerWithBaseURL:(nonnull NSURL *)baseURL;
 
-/**
- @abstract Updates the `ATLMAuthenticationProvider` with a Layer app ID.
- @param appID The Layer app ID.
- */
-- (void)updateWithAppID:(nonnull NSURL *)appID;
-
 @end
