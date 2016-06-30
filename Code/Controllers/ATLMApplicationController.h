@@ -80,7 +80,7 @@ typedef NS_ENUM(NSUInteger, ATLMApplicationState) {
  @param conversation The `LYRConversation` instance associated with the remote notification.
  @param conversation The `LYRMessage` instance associated with the remote notification.
  */
-- (void)applicationController:(nonnull ATLMApplicationController *)applicationController didFinishHandlingRemoteNotificationForConversation:(nullable LYRConversation *)conversation message:(nullable LYRMessage *)message;
+- (void)applicationController:(nonnull ATLMApplicationController *)applicationController didFinishHandlingRemoteNotificationForConversation:(nullable LYRConversation *)conversation message:(nullable LYRMessage *)message responseText:(nullable NSString *)responseText;
 
 /**
  @abstract Notifies the receiver that the underlying Layer Client will attempt to establish a connection.
@@ -178,13 +178,15 @@ typedef NS_ENUM(NSUInteger, ATLMApplicationState) {
    once the synchronization completes.
  @param userInfo The remote notification dictionary passed by the app
    delegate upon receiving a remote notification or user responding to it.
+ @param responseInfo The response info containing the message reply entered
+   by the user from the notification center.
  @param completionHandler A block to be called upon completion of the
    synchronization process. The `completionHandler` will always be executed,
    no matter if the underlying client handled the remote notification
    successfully, hit an error, or if the remote notification was not meant
    for the underlying `layerClient`.
  */
-- (void)handleRemoteNotification:(nonnull NSDictionary *)userInfo completion:(nonnull void (^)(BOOL success, NSError *_Nullable error))completionHandler;
+- (void)handleRemoteNotification:(nonnull NSDictionary *)userInfo responseInfo:(nullable NSDictionary *)responseInfo completion:(nonnull void (^)(BOOL success, NSError *_Nullable error))completionHandler;
 
 ///-----------------------
 /// @name Global Resources

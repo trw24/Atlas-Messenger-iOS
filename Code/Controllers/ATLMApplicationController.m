@@ -161,10 +161,17 @@ NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControll
 
 #pragma mark - Remote notification handling
 
-- (void)handleRemoteNotification:(NSDictionary *)userInfo completion:(void (^)(BOOL success, NSError *_Nullable error))completionHandler
+- (void)handleRemoteNotification:(NSDictionary *)userInfo responseInfo:(nullable NSDictionary *)responseInfo completion:(void (^)(BOOL success, NSError *_Nullable error))completionHandler
 {
+    __weak typeof(self) weakSelf = self;
     BOOL success = [self.layerClient synchronizeWithRemoteNotification:userInfo completion:^(LYRConversation * _Nullable conversation, LYRMessage * _Nullable message, NSError * _Nullable error) {
         if (conversation || message) {
+            // Notify the delegate the remote notification has been handled.
+            if ([weakSelf.delegate respondsToSelector:@selector(applicationController:didFinishHandlingRemoteNotificationForConversation:message:responseText:)]) {
+                // Extract the response text from the responseInfo dictionary (if available).
+                NSString *responseText = responseInfo[UIUserNotificationActionResponseTypedTextKey];
+                [weakSelf.delegate applicationController:weakSelf didFinishHandlingRemoteNotificationForConversation:conversation message:message responseText:responseText];
+            }
             completionHandler(YES, nil);
         } else {
             if (error) {
