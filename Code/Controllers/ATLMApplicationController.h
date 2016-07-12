@@ -133,6 +133,7 @@ typedef NS_ENUM(NSUInteger, ATLMApplicationState) {
 
 /**
  @abstract Creates the `ATLMApplicationController` instance with the supplied provider.
+ @param layerAppID The application identifier for the Layer client.
  @param provider An object conforming to the `ATLMAuthenticating protocol.
  @param layerClientOptions The Layer client's options instance, which will be passed
    to the `LYRClient` during its initialization.
@@ -140,23 +141,7 @@ typedef NS_ENUM(NSUInteger, ATLMApplicationState) {
  @discussion The application controller creates an instance of the `LYRClient` once the
    appID is known.
  */
-+ (nonnull instancetype)applicationControllerWithAuthenticationProvider:(nonnull id<ATLMAuthenticating>)authenticationProvider layerClientOptions:(nullable LYRClientOptions *)layerClientOptions;
-
-/**
- @abstract Updates the application controller with the Layer appID. Updating the
-   appID will create and assign an instance of the `LYRClient` on this
-   `ATLMApplicationController` instance.
- @param appID The Layer AppID used to initialize an underlying `LYRClient`
-   instance.
- @param error An `out` error reference instance will be set in case the
-   operation failed.
- @return Returns `YES` if the appID was set and the underlying `LYRClient` instance
-   was successfully created; In case the method is called when the appID has
-   already been set, the method will return `NO`.
- @warning The appID can be set only once, other attempts will be ignored and the
-   method will return `NO` with an error.
- */
-- (BOOL)setAppID:(nonnull NSURL *)appID error:(NSError *_Nullable *_Nullable)error;
++ (nonnull instancetype)applicationControllerWithLayerAppID:(nonnull NSURL *)layerAppID clientOptions:(nullable LYRClientOptions *)clientOptions authenticationProvider:(nonnull id<ATLMAuthenticating>)authenticationProvider;
 
 /**
  @abstract Authenticates the application by performing the Layer authentication handshake.
@@ -201,11 +186,6 @@ typedef NS_ENUM(NSUInteger, ATLMApplicationState) {
  @abstract The `LSAPIManager` object for the application.
  */
 @property (nonnull, nonatomic, readonly) id<ATLMAuthenticating> authenticationProvider;
-
-/**
- @abstract The Layer appID used to initialize the underlying `LYRClient`.
- */
-@property (nullable, nonatomic, readonly) NSURL *appID;
 
 /**
  @abstract The `LYRClient` object for the application.

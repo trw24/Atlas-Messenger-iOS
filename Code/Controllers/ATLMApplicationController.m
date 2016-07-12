@@ -33,7 +33,6 @@ NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControll
 @interface ATLMApplicationController ()
 
 @property (nonnull, nonatomic, readwrite) id<ATLMAuthenticating> authenticationProvider;
-@property (nullable, nonatomic, readwrite) NSURL *appID;
 @property (nullable, nonatomic, readwrite) LYRClient *layerClient;
 @property (assign, nonatomic, readwrite) ATLMApplicationState state;
 @property (nonatomic, readwrite, copy) LYRClientOptions *layerClientOptions;
@@ -42,24 +41,19 @@ NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControll
 
 @implementation ATLMApplicationController
 
-+ (instancetype)applicationControllerWithAuthenticationProvider:(id<ATLMAuthenticating>)authenticationProvider layerClientOptions:(LYRClientOptions *)layerClientOptions
++ (nonnull instancetype)applicationControllerWithLayerAppID:(nonnull NSURL *)layerAppID clientOptions:(nullable LYRClientOptions *)clientOptions authenticationProvider:(nonnull id<ATLMAuthenticating>)authenticationProvider
 {
-    return [[self alloc] initWithAuthenticationProvider:authenticationProvider layerClientOptions:layerClientOptions];
+    return [[self alloc] initWithWithLayerAppID:layerAppID clientOptions:clientOptions authenticationProvider:authenticationProvider];
 }
 
-- (id)initWithAuthenticationProvider:(id<ATLMAuthenticating>)authenticationProvider layerClientOptions:(LYRClientOptions *)layerClientOptions
+- (id)initWithWithLayerAppID:(nonnull NSURL *)layerAppID clientOptions:(nullable LYRClientOptions *)clientOptions authenticationProvider:(nonnull id<ATLMAuthenticating>)authenticationProvider
 {
     self = [super init];
     if (self) {
+        _layerClient = [LYRClient clientWithAppID:layerAppID delegate:self options:clientOptions];
+        _layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
         _authenticationProvider = authenticationProvider;
-        _layerClientOptions = layerClientOptions;
         _state = ATLMApplicationStateAppIDNotSet;
-        // Restore the appID from the user defaults (if available).
-        NSString *appIDString = [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
-        NSURL *appID = [NSURL URLWithString:appIDString];
-        if (appID) {
-            [self setAppID:appID error:nil];
-        }
     }
     return self;
 }
@@ -78,51 +72,6 @@ NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControll
     _state = state;
     if ([self.delegate respondsToSelector:@selector(applicationController:didChangeState:)]) {
         [self.delegate applicationController:self didChangeState:state];
-    }
-}
-
-#pragma mark - LayerKit client initialization and configuration
-
-- (BOOL)setAppID:(nonnull NSURL *)appID error:(NSError *__autoreleasing _Nullable*)error
-{
-    if (self.appID) {
-        // Prevent from re-setting the appID.
-        if (error) {
-            *error = [NSError errorWithDomain:ATLMApplicationControllerErrorDomain code:ATLMApplicationControllerErrorAppIDAlreadySet userInfo:@{ NSLocalizedDescriptionKey: @"Failed to set the appID because it has been previously set." }];
-        }
-        return NO;
-    }
-    _appID = appID;
-    
-    // Persist the appID into the user defaults.
-    [[NSUserDefaults standardUserDefaults] setValue:appID.absoluteString forKey:ATLMLayerApplicationID];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    // Associate the authentication model with the new appID.
-    [self.authenticationProvider updateWithAppID:appID];
-    
-    // Create a new instance of LYRClient and configure it.
-    [self initializeLayerClient];
-    
-    // Bump the application state.
-    if (self.layerClient.currentSession.state == LYRSessionStateAuthenticated) {
-        self.state = ATLMApplicationStateAuthenticated;
-    } else {
-        self.state = ATLMApplicationStateCredentialsRequired;
-    }
-    return YES;
-}
-
-- (void)initializeLayerClient
-{
-    self.layerClient = [LYRClient clientWithAppID:self.appID delegate:self options:self.layerClientOptions];
-    self.layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
-    
-    // Connect if possible.
-    if (!self.layerClient.isConnected && !self.layerClient.isConnecting) {
-        [self.layerClient connectWithCompletion:^(BOOL success, NSError *error) {
-            NSLog(@"Layer Client Connected");
-        }];
     }
 }
 
