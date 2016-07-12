@@ -71,8 +71,7 @@ NSString *const ATLMCredentialsKey = @"ATLMCredentialsKey";
                                   @"user":
                                     @{ @"first_name": firstName,
                                        @"last_name": lastName,
-                                       @"display_name": displayName,
-                                       @"avatar_url": @"" } };
+                                       @"display_name": displayName } };
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     request.HTTPMethod = @"POST";
     request.HTTPBody = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:nil];
