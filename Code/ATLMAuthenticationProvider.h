@@ -40,6 +40,6 @@ extern NSString * _Nonnull const ATLMLastNameKey;
  @abstract The initializer for the `ATLMAuthenticationProvider`.
  @param baseURL The base url for the Layer Identity provider.
  */
-+ (nonnull instancetype)providerWithBaseURL:(nonnull NSURL *)baseURL;
++ (nonnull instancetype)providerWithBaseURL:(nonnull NSURL *)baseURL layerAppID:(nonnull NSURL *)layerAppID;
 
 @end

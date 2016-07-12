@@ -31,38 +31,31 @@ NSString *const ATLMCredentialsKey = @"ATLMCredentialsKey";
 
 @property (nonatomic) NSURL *baseURL;
 @property (nonatomic) NSURLSession *URLSession;
-
+@property (nonatomic, copy) NSURL *layerAppID;
 @end
 
 @implementation ATLMAuthenticationProvider
 
-@synthesize appID = _appID;
-
-+ (nonnull instancetype)providerWithBaseURL:(nonnull NSURL *)baseURL
++ (nonnull instancetype)providerWithBaseURL:(nonnull NSURL *)baseURL layerAppID:(NSURL *)layerAppID
 {
-    return  [[self alloc] initWithBaseURL:baseURL];
+    return  [[self alloc] initWithBaseURL:baseURL layerAppID:layerAppID];
 }
 
-- (id)initWithBaseURL:(nonnull NSURL *)baseURL;
+- (id)initWithBaseURL:(nonnull NSURL *)baseURL layerAppID:(NSURL *)layerAppID;
 {
     self = [super init];
     if (self) {
         _baseURL = baseURL;
+        _layerAppID = layerAppID;
     }
     return self;
-}
-
-- (void)updateWithAppID:(NSURL *)appID
-{
-    _appID = appID;
-    _URLSession = [self defaultURLSession];
 }
 
 - (NSURLSession *)defaultURLSession
 {
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
     configuration.HTTPAdditionalHeaders = @{ @"Accept": @"application/json",
-                                             @"X_LAYER_APP_ID": self.appID.absoluteString };
+                                             @"X_LAYER_APP_ID": self.layerAppID.absoluteString };
     return [NSURLSession sessionWithConfiguration:configuration];
 }
 
@@ -71,7 +64,7 @@ NSString *const ATLMCredentialsKey = @"ATLMCredentialsKey";
     NSString *firstName = credentials[ATLMFirstNameKey];
     NSString *lastName = credentials[ATLMLastNameKey];
     NSString *displayName = [NSString stringWithFormat:@"%@ %@", firstName, lastName];
-    NSString *appUUID = [[self.appID pathComponents] lastObject];
+    NSString *appUUID = [[self.layerAppID pathComponents] lastObject];
     NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
     NSURL *URL = [NSURL URLWithString:urlString relativeToURL:self.baseURL];
     NSDictionary *parameters = @{ @"nonce": nonce,
