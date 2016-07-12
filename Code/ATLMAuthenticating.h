@@ -33,24 +33,13 @@
  @param nonce A nonce required for the identity token.
  @param completion A block to be called upon completion of the operation.
  */
-- (void)authenticateWithCredentials:(nonnull NSDictionary *)credentials nonce:(nonnull NSString *)nonce completion:(nonnull void (^)(NSString * _Nonnull identityToken,  NSError * _Nonnull error))completion;
+- (void)authenticateWithCredentials:(nonnull NSDictionary *)credentials nonce:(nonnull NSString *)nonce completion:(nonnull void (^)(NSString * _Nonnull identityToken, NSError * _Nonnull error))completion;
 
 /**
  @abstract Requests a new identity token with the supplied nonce.
  @param nonce A nonce required for the identity token.
  @param completion A block to be called upon completion of the operation.
  */
-- (void)refreshAuthenticationWithNonce:(nonnull NSString *)nonce completion:(nonnull void (^)(NSString * _Nonnull  identityToken, NSError * _Nonnull error))completion;
-
-/**
- @abstract Associates the authenticating provider with the Layer appID.
- @param appID The Layer app ID.
- */
-- (void)updateWithAppID:(nonnull NSURL *)appID;
-
-/**
- @abstract The appID associated with the authentication model.
- */
-@property (nullable, nonatomic, copy) NSURL *appID;
+- (void)refreshAuthenticationWithNonce:(nonnull NSString *)nonce completion:(nonnull void (^)(NSString * _Nonnull identityToken, NSError * _Nonnull error))completion;
 
 @end
