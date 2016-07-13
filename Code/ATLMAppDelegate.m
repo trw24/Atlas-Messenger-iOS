@@ -36,6 +36,7 @@
 #import "ATLMAuthenticationProvider.h"
 #import "ATLMApplicationViewController.h"
 
+static NSString *const ATLMLayerApplicationID = @"LAYER_APP_ID";
 static NSString *const ATLMLayerAppID = nil;
 
 @interface ATLMAppDelegate () <MFMailComposeViewControllerDelegate>
@@ -51,8 +52,23 @@ static NSString *const ATLMLayerAppID = nil;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Create the authentication provider instance
-    ATLMAuthenticationProvider *provider = [ATLMAuthenticationProvider providerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction)];
+    // Restore the appID from the user defaults (if available).
+    NSString *appIDString = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
+    NSURL *appID = [NSURL URLWithString:appIDString];
+//    if (appIDString) {
+//        
+//    } else {
+//        // QR Scanner flow
+//    }
+//    NSURL *appID = [NSURL URLWithString:appIDString];
+//    if (appID) {
+//        [self setAppID:appID error:nil];
+//    }
+//    
+//    // Create the authentication provider instance
+//    NSString *appIDString = [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
+//    NSURL *appID = [NSURL URLWithString:ATLMLayerAppID];
+    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerAppID:appID];
     
     // Configure the Layer Client options.
     LYRClientOptions *clientOptions = [LYRClientOptions new];
@@ -60,13 +76,7 @@ static NSString *const ATLMLayerAppID = nil;
     clientOptions.partialHistoryMessageCount = 20;
     
     // Create the application controller.
-    self.applicationController = [ATLMApplicationController applicationControllerWithAuthenticationProvider:provider layerClientOptions:clientOptions];
-    if (!self.applicationController.appID) {
-        // Application controller has a persistent appID which is stored
-        // in NSUserDefaults, and is restored during initialization.
-        NSURL *appID = [NSURL URLWithString:ATLMLayerAppID];
-        [self.applicationController setAppID:appID error:nil];
-    }
+    self.applicationController = [ATLMApplicationController applicationControllerWithLayerAppID:appID clientOptions:clientOptions authenticationProvider:authenticationProvider];
     
     // Create the view controller that will also be the root view controller of the app.
     self.applicationViewController = [[ATLMApplicationViewController alloc] initWithApplication:application applicationController:self.applicationController];

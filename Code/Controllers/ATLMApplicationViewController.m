@@ -201,6 +201,11 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     if (!success) {
         ATLMAlertWithError(error);
     }
+//    NSError *error;
+//    BOOL success = [self.applicationController setAppID:appID error:&error];
+//    if (!success) {
+//        ATLMAlertWithError(error);
+//    }
 }
 
 - (void)scannerController:(ATLMQRScannerController *)scannerController didFailWithError:(NSError *)error

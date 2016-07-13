@@ -24,7 +24,6 @@
 #import "ATLMConstants.h"
 #import "ATLMessagingUtilities.h"
 
-NSString *const ATLMLayerApplicationID = @"LAYER_APP_ID";
 NSString *const ATLMConversationMetadataDidChangeNotification = @"LSConversationMetadataDidChangeNotification";
 NSString *const ATLMConversationParticipantsDidChangeNotification = @"LSConversationParticipantsDidChangeNotification";
 NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNotification";
