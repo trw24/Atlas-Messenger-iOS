@@ -23,17 +23,17 @@
 
 @class ATLMSettingsViewController;
 
-extern NSString *const ATLMSettingsViewControllerTitle;
-extern NSString *const ATLMSettingsTableViewAccessibilityIdentifier;
-extern NSString *const ATLMSettingsHeaderAccessibilityLabel;
+extern NSString * _Nonnull const ATLMSettingsViewControllerTitle;
+extern NSString * _Nonnull const ATLMSettingsTableViewAccessibilityIdentifier;
+extern NSString * _Nonnull const ATLMSettingsHeaderAccessibilityLabel;
 
-extern NSString *const ATLMDefaultCellIdentifier;
-extern NSString *const ATLMCenterTextCellIdentifier;
+extern NSString * _Nonnull const ATLMDefaultCellIdentifier;
+extern NSString * _Nonnull const ATLMCenterTextCellIdentifier;
 
-extern NSString *const ATLMConnected;
-extern NSString *const ATLMDisconnected;
-extern NSString *const ATLMLostConnection;
-extern NSString *const ATLMConnecting;
+extern NSString * _Nonnull const ATLMConnected;
+extern NSString * _Nonnull const ATLMDisconnected;
+extern NSString * _Nonnull const ATLMLostConnection;
+extern NSString * _Nonnull const ATLMConnecting;
 
 /**
  @abstract The `ATLMSettingsViewControllerDelegate` protocol informs the receiver of events that have occurred within the controller.
@@ -44,19 +44,19 @@ extern NSString *const ATLMConnecting;
  @abstract Informs the receiver that a logout button has been tapped in the controller.
  @param settingsViewController The controller in which the selection occurred.
  */
-- (void)logoutTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController;
+- (void)logoutTappedInSettingsViewController:(nonnull ATLMSettingsViewController *)settingsViewController;
 
 /**
  @abstract Informs the receiver that a switch user button has been tapped in the controller.
  @param settingsViewController The controller in which the selection occurred.
  */
-- (void)switchUserTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController;
+- (void)switchUserTappedInSettingsViewController:(nonnull ATLMSettingsViewController *)settingsViewController;
 
 /**
  @abstract Informs the receiver that the user wants to dismiss the controller.
  @param settingsViewController The controller in which the selection occurred.
  */
-- (void)settingsViewControllerDidFinish:(ATLMSettingsViewController *)settingsViewController;
+- (void)settingsViewControllerDidFinish:(nonnull ATLMSettingsViewController *)settingsViewController;
 
 @end
 
