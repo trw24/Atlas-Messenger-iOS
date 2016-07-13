@@ -20,14 +20,6 @@
 
 #import <UIKit/UIKit.h>
 
-extern NSString *const ATLMUserDidAuthenticateNotification;
-extern NSString *const ATLMUserDidDeauthenticateNotification;
-extern NSString *const ATLMApplicationDidSynchronizeParticipants;
-
-extern NSString *const ATLMAtlasIdentityKey;
-extern NSString *const ATLMAtlasIdentitiesKey;
-extern NSString *const ATLMAtlasIdentityTokenKey;
-
 UIFont *ATLMUltraLightFont(CGFloat size);
 
 UIFont *ATLMLightFont(CGFloat size);

@@ -8,14 +8,6 @@
 
 #import "ATLMConstants.h"
 
-NSString *const ATLMUserDidAuthenticateNotification = @"ATLMUserDidAuthenticateNotification";
-NSString *const ATLMUserDidDeauthenticateNotification = @"ATLMUserDidDeauthenticateNotification";
-NSString *const ATLMApplicationDidSynchronizeParticipants = @"ATLMApplicationDidSynchronizeParticipants";
-
-NSString *const ATLMAtlasIdentityKey = @"atlas_identity";
-NSString *const ATLMAtlasIdentitiesKey = @"atlas_identities";
-NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
-
 UIFont *ATLMUltraLightFont(CGFloat size)
 {
     return [UIFont fontWithName:@"AvenirNext-UltraLight" size:size];

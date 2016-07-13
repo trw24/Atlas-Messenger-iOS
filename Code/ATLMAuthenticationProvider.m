@@ -26,6 +26,7 @@
 NSString *const ATLMFirstNameKey = @"ATLMFirstNameKey";
 NSString *const ATLMLastNameKey = @"ATLMLastNameKey";
 NSString *const ATLMCredentialsKey = @"ATLMCredentialsKey";
+static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
 
 @interface ATLMAuthenticationProvider ();
 
