@@ -18,6 +18,7 @@
 //  limitations under the License.
 //
 
+@import Atlas.ATLParticipantPresenting;
 #import "ATLMConversationViewController.h"
 #import "ATLMConversationDetailViewController.h"
 #import "ATLMMediaViewController.h"
@@ -379,7 +380,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     NSError *error;
     NSOrderedSet *identities = [self.layerClient executeQuery:query error:&error];
     if (error) {
-            ATLMAlertWithError(error);
+        ATLMAlertWithError(error);
     }
     
     ATLMParticipantTableViewController *controller = [ATLMParticipantTableViewController participantTableViewControllerWithParticipants:identities.set sortType:ATLParticipantPickerSortTypeFirstName];
