@@ -24,7 +24,6 @@
 #import "ATLMMediaViewController.h"
 #import "ATLMUtilities.h"
 #import "ATLMParticipantTableViewController.h"
-#import "ATLMSplitViewController.h"
 #import "LYRIdentity+ATLParticipant.h"
 
 static NSDateFormatter *ATLMShortTimeFormatter()

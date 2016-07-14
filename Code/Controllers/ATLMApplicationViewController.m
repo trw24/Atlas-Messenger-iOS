@@ -13,7 +13,6 @@
 #import "ATLMConversationListViewController.h"
 #import "ATLMConversationViewController.h"
 #import "ATLMUtilities.h"
-#import "ATLMSplitViewController.h"
 #import "ATLMNavigationController.h"
 
 ///-------------------------
@@ -51,7 +50,6 @@ static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationV
 @property (nullable, nonatomic) ATLMSplashView *splashView;
 @property (nullable, nonatomic) ATLMQRScannerController *QRCodeScannerController;
 @property (nullable, nonatomic) UINavigationController *registrationNavigationController;
-@property (nullable, nonatomic) ATLMSplitViewController *splitViewController;
 @property (nullable, nonatomic) ATLMConversationListViewController *conversationListViewController;
 
 @end
@@ -90,7 +88,7 @@ static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationV
 {
     if (context == ATLMApplicationViewControllerObservationContext) {
         if ([keyPath isEqualToString:@"state"]) {
-            [self presentViewControllerForApplicationState:self.state];
+            [self presentViewControllerForApplicationState];
         }
     }
 }
@@ -144,9 +142,6 @@ static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationV
             // Only if there's no child view controller being presented on top.
             [self presentViewController:self.registrationNavigationController animated:YES completion:nil];
         }
-        [self.splitViewController removeFromParentViewController];
-        [self.splitViewController.view removeFromSuperview];
-        self.splitViewController = nil;
         self.conversationListViewController = nil;
     }
 }
@@ -176,29 +171,18 @@ static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationV
     [self.registrationNavigationController dismissViewControllerAnimated:YES completion:nil];
     self.registrationNavigationController = nil;
     
-    // Add splitview controller onto the current view.
-    self.splitViewController = [[ATLMSplitViewController alloc] init];
-    [self addChildViewController:_splitViewController];
-    [self.view addSubview:_splitViewController.view];
-    [self.splitViewController didMoveToParentViewController:self];
-    
-    // And have the conversation view controller be the detail view controller.
-    ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.layerController.layerClient];
-    [self.splitViewController setDetailViewController:conversationViewController];
-    
-    // Put the conversation list view controller as the main view controller
-    // in the split view.
-    self.conversationListViewController = [ATLMConversationListViewController conversationListViewControllerWithLayerClient:self.layerController.layerClient splitViewController:self.splitViewController];
+    self.conversationListViewController = [ATLMConversationListViewController conversationListViewControllerWithLayerClient:self.layerController.layerClient];
     self.conversationListViewController.presentationDelegate = self;
-    [self.splitViewController setMainViewController:self.conversationListViewController];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.conversationListViewController];
+    [self presentViewController:navigationController animated:YES completion:nil];
 }
 
 #pragma mark - Managing UI view transitions
 
-- (void)presentViewControllerForApplicationState:(ATLMApplicationState)applicationState
+- (void)presentViewControllerForApplicationState
 {
     [self makeSplashViewVisible:YES];
-    switch (applicationState) {
+    switch (self.state) {
         case ATLMApplicationStateAppIDNotSet:{
             [self presentQRCodeScannerViewController];
             break;
@@ -212,7 +196,7 @@ static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationV
             break;
         }
         default:
-            [NSException raise:NSInternalInconsistencyException format:@"Unhandled ATLMApplicationState value=%lu", (NSUInteger)applicationState];
+            [NSException raise:NSInternalInconsistencyException format:@"Unhandled ATLMApplicationState value=%lu", (NSUInteger)self.state];
             break;
     }
 }
@@ -250,7 +234,6 @@ static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationV
 {
     // Prepare the current view controller for dismissal of the
     [self makeSplashViewVisible:YES];
-    [self.splitViewController setDetailViewController:nil];
 }
 
 - (void)conversationListViewControllerWasDismissed:(nonnull ATLConversationListViewController *)conversationListViewController
@@ -259,12 +242,6 @@ static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationV
 }
 
 #pragma mark - ATLMLayerControllerDelegate implementation
-
-- (void)applicationController:(ATLMLayerController *)applicationController didChangeState:(ATLMApplicationState)applicationState
-{
-    // Handle UI transitions
-    [self presentViewControllerForApplicationState:applicationState];
-}
 
 - (void)applicationController:(ATLMLayerController *)applicationController didFinishHandlingRemoteNotificationForConversation:(LYRConversation *)conversation message:(LYRMessage *)message responseText:(nullable NSString *)responseText
 {

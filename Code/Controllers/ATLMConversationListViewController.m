@@ -23,7 +23,6 @@
 #import "ATLMSettingsViewController.h"
 #import "ATLMConversationDetailViewController.h"
 #import "ATLMNavigationController.h"
-#import "ATLMSplitViewController.h"
 #import "LYRIdentity+ATLParticipant.h"
 
 @interface ATLMConversationListViewController () <ATLConversationListViewControllerDelegate, ATLConversationListViewControllerDataSource, ATLMSettingsViewControllerDelegate, UIActionSheetDelegate>
@@ -35,25 +34,6 @@
 NSString *const ATLMConversationListTableViewAccessibilityLabel = @"Conversation List Table View";
 NSString *const ATLMSettingsButtonAccessibilityLabel = @"Settings Button";
 NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
-
-+ (nonnull instancetype)conversationListViewControllerWithLayerClient:(nonnull LYRClient *)layerClient splitViewController:(nonnull ATLMSplitViewController *)splitViewController
-{
-    return [[self alloc] initWithLayerClient:layerClient splitViewController:splitViewController];
-}
-
-- (nonnull instancetype)initWithLayerClient:(nonnull LYRClient *)layerClient splitViewController:(nonnull ATLMSplitViewController *)splitViewController
-{
-    self = [super initWithLayerClient:layerClient];
-    if (self) {
-        _splitViewController = splitViewController;
-    }
-    return self;
-}
-
-- (instancetype)initWithLayerClient:(LYRClient *)layerClient
-{
-    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Failed to call the designated initializer. Use conversationListViewControllerWithLayerClient:splitViewController:" userInfo:nil];
-}
 
 #pragma mark UIView overrides
 
@@ -188,7 +168,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.layerClient];
     conversationViewController.displaysAddressBar = shouldShowAddressBar;
     conversationViewController.conversation = conversation;
-    [self.splitViewController setDetailViewController:conversationViewController];
+    [self.navigationController pushViewController:conversationViewController animated:YES];
 }
 
 #pragma mark - Actions

@@ -19,7 +19,6 @@
 //
 
 #import <Atlas/Atlas.h>
-#import "ATLMSplitViewController.h"
 #import <SVProgressHUD/SVProgressHUD.h>
 
 
@@ -56,11 +55,6 @@
 @interface ATLMConversationListViewController : ATLConversationListViewController
 
 /**
- @abstract The split view controller this conversation list view controller resides.
- */
-@property (nonnull, nonatomic, readonly) ATLMSplitViewController *splitViewController;
-
-/**
  @abstract Determines if the view controller should display an `Info` item as
    the left bar button item of the navigation controller.
  */
@@ -71,8 +65,6 @@
    view controller.
  */
 @property (nullable, nonatomic, weak) id<ATLMConversationListViewControllerPresentationDelegate> presentationDelegate;
-
-+ (nonnull instancetype)conversationListViewControllerWithLayerClient:(nonnull LYRClient *)layerClient splitViewController:(nonnull ATLMSplitViewController *)splitViewController;
 
 /**
  @abstract Programmatically simulates the selection of an `LYRConversation`
