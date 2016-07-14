@@ -314,7 +314,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
     query.predicate = [LYRPredicate predicateWithProperty:@"userID" predicateOperator:LYRPredicateOperatorIsNotIn value:[self.conversation.participants valueForKey:@"userID"]];
     NSError *error;
-    NSOrderedSet *identities = [self.applicationController.layerClient executeQuery:query error:&error];
+    NSOrderedSet *identities = [self.layerController.layerClient executeQuery:query error:&error];
     
     ATLMParticipantTableViewController  *controller = [ATLMParticipantTableViewController participantTableViewControllerWithParticipants:identities.set sortType:ATLParticipantPickerSortTypeFirstName];
     controller.delegate = self;
@@ -343,7 +343,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     LYRPolicy *policy =  [self blockedParticipantAtIndexPath:indexPath];
     if (policy) {
         NSError *error;
-        [self.applicationController.layerClient removePolicies:[NSSet setWithObject:policy] error:&error];
+        [self.layerController.layerClient removePolicies:[NSSet setWithObject:policy] error:&error];
         if (error) {
             ATLMAlertWithError(error);
             return;
@@ -360,7 +360,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     blockPolicy.sentByUserID = identitifer;
     
     NSError *error;
-    [self.applicationController.layerClient addPolicies:[NSSet setWithObject:blockPolicy] error:&error];
+    [self.layerController.layerClient addPolicies:[NSSet setWithObject:blockPolicy] error:&error];
     if (error) {
         ATLMAlertWithError(error);
         return;
@@ -383,7 +383,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 - (void)leaveConversation
 {
-    NSSet *participants = [NSSet setWithObject:self.applicationController.layerClient.authenticatedUser.userID];
+    NSSet *participants = [NSSet setWithObject:self.layerController.layerClient.authenticatedUser.userID];
     NSError *error;
     [self.conversation removeParticipants:participants error:&error];
     if (error) {
@@ -430,7 +430,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 {
     LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
     query.predicate = [LYRPredicate predicateWithProperty:@"displayName" predicateOperator:LYRPredicateOperatorLike value:searchText];
-    [self.applicationController.layerClient executeQuery:query completion:^(NSOrderedSet<id<LYRQueryable>> * _Nullable resultSet, NSError * _Nullable error) {
+    [self.layerController.layerClient executeQuery:query completion:^(NSOrderedSet<id<LYRQueryable>> * _Nullable resultSet, NSError * _Nullable error) {
         if (resultSet) {
             completion(resultSet.set);
         } else {
@@ -444,9 +444,9 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 - (void)switchToConversationForParticipants
 {
     NSSet *participantIdentifiers = [self.participants valueForKey:@"userID"];
-    LYRConversation *conversation = [self.applicationController existingConversationForParticipants:participantIdentifiers];
+    LYRConversation *conversation = [self.layerController existingConversationForParticipants:participantIdentifiers];
     if (!conversation) {
-        conversation = [self.applicationController.layerClient newConversationWithParticipants:participantIdentifiers options:nil error:nil];
+        conversation = [self.layerController.layerClient newConversationWithParticipants:participantIdentifiers options:nil error:nil];
     }
     [self.detailDelegate conversationDetailViewController:self didChangeConversation:conversation];
     self.conversation = conversation;
@@ -454,7 +454,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 - (LYRPolicy *)blockedParticipantAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSOrderedSet *policies = self.applicationController.layerClient.policies;
+    NSOrderedSet *policies = self.layerController.layerClient.policies;
     id<ATLParticipant>participant = self.participants[indexPath.row];
     NSPredicate *policyPredicate = [NSPredicate predicateWithFormat:@"SELF.sentByUserID = %@", [participant userID]];
     NSOrderedSet *filteredPolicies = [policies filteredOrderedSetUsingPredicate:policyPredicate];
@@ -527,7 +527,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     
     NSMutableArray *insertedIndexPaths = [NSMutableArray new];
     NSMutableSet *insertedParticipants = [self.conversation.participants mutableCopy];
-    [insertedParticipants removeObject:self.applicationController.layerClient.authenticatedUser];
+    [insertedParticipants removeObject:self.layerController.layerClient.authenticatedUser];
     [insertedParticipants minusSet:existingParticipants];
     for (LYRIdentity *identity in insertedParticipants) {
         [self.participants addObject:identity];
@@ -543,7 +543,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 - (NSMutableArray *)filteredParticipants
 {
     NSMutableArray *participants = [[self.conversation.participants allObjects] mutableCopy];
-    [participants removeObject:self.applicationController.layerClient.authenticatedUser];
+    [participants removeObject:self.layerController.layerClient.authenticatedUser];
     return participants;
 }
 

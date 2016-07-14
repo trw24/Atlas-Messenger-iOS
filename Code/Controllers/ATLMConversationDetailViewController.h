@@ -68,6 +68,6 @@ extern NSString *const ATLMConversationMetadataNameKey;
 /**
  @abstract The controller object for the application.
  */
-@property (nonatomic) ATLMLayerController *applicationController;
+@property (nonatomic) ATLMLayerController *layerController;
 
 @end
