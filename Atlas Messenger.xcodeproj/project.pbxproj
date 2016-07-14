@@ -24,7 +24,7 @@
 		0AADB5D41947C88B0083732B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AADB5D31947C88B0083732B /* SystemConfiguration.framework */; };
 		0ABEFFAF196B7686006FFFF3 /* logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABEFFAE196B7686006FFFF3 /* logo@2x.png */; };
 		251D8DC01A9688C50000BFA2 /* ATLMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D851A9688C40000BFA2 /* ATLMAppDelegate.m */; };
-		251D8DC21A9688C50000BFA2 /* ATLMApplicationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D8A1A9688C40000BFA2 /* ATLMApplicationController.m */; };
+		251D8DC21A9688C50000BFA2 /* ATLMLayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D8A1A9688C40000BFA2 /* ATLMLayerController.m */; };
 		251D8DC31A9688C50000BFA2 /* ATLMConversationDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D8C1A9688C40000BFA2 /* ATLMConversationDetailViewController.m */; };
 		251D8DC41A9688C50000BFA2 /* ATLMConversationListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D8E1A9688C40000BFA2 /* ATLMConversationListViewController.m */; };
 		251D8DC51A9688C50000BFA2 /* ATLMConversationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D901A9688C40000BFA2 /* ATLMConversationViewController.m */; };
@@ -59,7 +59,7 @@
 		D62D17351A9C22E100E0EFAF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D62D17341A9C22E100E0EFAF /* Images.xcassets */; };
 		D62D17371A9C267C00E0EFAF /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D62D17361A9C267C00E0EFAF /* Launch Screen.xib */; };
 		D6306DFB1A6F30B200E16E85 /* ATLMAPIManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B107B1A6F2D99009BFA9C /* ATLMAPIManagerTest.m */; };
-		D6306DFC1A6F30B200E16E85 /* ATLMApplicationControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B107C1A6F2D99009BFA9C /* ATLMApplicationControllerTest.m */; };
+		D6306DFC1A6F30B200E16E85 /* ATLMLayerControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B107C1A6F2D99009BFA9C /* ATLMLayerControllerTest.m */; };
 		D6306DFE1A6F30B200E16E85 /* ATLMConversationDetailViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B107E1A6F2D99009BFA9C /* ATLMConversationDetailViewControllerTest.m */; };
 		D6306DFF1A6F30B200E16E85 /* ATLMConversationListViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B107F1A6F2D99009BFA9C /* ATLMConversationListViewControllerTest.m */; };
 		D6306E001A6F30B200E16E85 /* ATLMConversationViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B10801A6F2D99009BFA9C /* ATLMConversationViewControllerTest.m */; };
@@ -107,8 +107,8 @@
 		0ABEFFAE196B7686006FFFF3 /* logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo@2x.png"; sourceTree = "<group>"; };
 		251D8D841A9688C40000BFA2 /* ATLMAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMAppDelegate.h; sourceTree = "<group>"; };
 		251D8D851A9688C40000BFA2 /* ATLMAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMAppDelegate.m; sourceTree = "<group>"; };
-		251D8D891A9688C40000BFA2 /* ATLMApplicationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMApplicationController.h; sourceTree = "<group>"; };
-		251D8D8A1A9688C40000BFA2 /* ATLMApplicationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMApplicationController.m; sourceTree = "<group>"; };
+		251D8D891A9688C40000BFA2 /* ATLMLayerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMLayerController.h; sourceTree = "<group>"; };
+		251D8D8A1A9688C40000BFA2 /* ATLMLayerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMLayerController.m; sourceTree = "<group>"; };
 		251D8D8B1A9688C40000BFA2 /* ATLMConversationDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMConversationDetailViewController.h; sourceTree = "<group>"; };
 		251D8D8C1A9688C40000BFA2 /* ATLMConversationDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMConversationDetailViewController.m; sourceTree = "<group>"; };
 		251D8D8D1A9688C40000BFA2 /* ATLMConversationListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMConversationListViewController.h; sourceTree = "<group>"; };
@@ -164,7 +164,7 @@
 		D016D0FA1D20D9D900D9AA4F /* ATLMApplicationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMApplicationViewController.h; sourceTree = "<group>"; };
 		D016D0FB1D20D9D900D9AA4F /* ATLMApplicationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMApplicationViewController.m; sourceTree = "<group>"; };
 		D61B107B1A6F2D99009BFA9C /* ATLMAPIManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMAPIManagerTest.m; sourceTree = "<group>"; };
-		D61B107C1A6F2D99009BFA9C /* ATLMApplicationControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMApplicationControllerTest.m; sourceTree = "<group>"; };
+		D61B107C1A6F2D99009BFA9C /* ATLMLayerControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMLayerControllerTest.m; sourceTree = "<group>"; };
 		D61B107E1A6F2D99009BFA9C /* ATLMConversationDetailViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMConversationDetailViewControllerTest.m; sourceTree = "<group>"; };
 		D61B107F1A6F2D99009BFA9C /* ATLMConversationListViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMConversationListViewControllerTest.m; sourceTree = "<group>"; };
 		D61B10801A6F2D99009BFA9C /* ATLMConversationViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMConversationViewControllerTest.m; sourceTree = "<group>"; };
@@ -299,8 +299,8 @@
 			children = (
 				D68F000B1CF78D5C001792B2 /* ATLMAuthenticationProvider.h */,
 				D68F000C1CF78D5C001792B2 /* ATLMAuthenticationProvider.m */,
-				251D8D891A9688C40000BFA2 /* ATLMApplicationController.h */,
-				251D8D8A1A9688C40000BFA2 /* ATLMApplicationController.m */,
+				251D8D891A9688C40000BFA2 /* ATLMLayerController.h */,
+				251D8D8A1A9688C40000BFA2 /* ATLMLayerController.m */,
 				D016D0FA1D20D9D900D9AA4F /* ATLMApplicationViewController.h */,
 				D016D0FB1D20D9D900D9AA4F /* ATLMApplicationViewController.m */,
 				251D8D8B1A9688C40000BFA2 /* ATLMConversationDetailViewController.h */,
@@ -425,7 +425,7 @@
 			isa = PBXGroup;
 			children = (
 				D61B107B1A6F2D99009BFA9C /* ATLMAPIManagerTest.m */,
-				D61B107C1A6F2D99009BFA9C /* ATLMApplicationControllerTest.m */,
+				D61B107C1A6F2D99009BFA9C /* ATLMLayerControllerTest.m */,
 				D61B107E1A6F2D99009BFA9C /* ATLMConversationDetailViewControllerTest.m */,
 				D61B107F1A6F2D99009BFA9C /* ATLMConversationListViewControllerTest.m */,
 				D61B10801A6F2D99009BFA9C /* ATLMConversationViewControllerTest.m */,
@@ -695,7 +695,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D016D0FC1D20D9D900D9AA4F /* ATLMApplicationViewController.m in Sources */,
-				251D8DC21A9688C50000BFA2 /* ATLMApplicationController.m in Sources */,
+				251D8DC21A9688C50000BFA2 /* ATLMLayerController.m in Sources */,
 				251D8DCA1A9688C50000BFA2 /* ATLMSettingsViewController.m in Sources */,
 				5A92FDDE1BA379030021C110 /* ATLMSplitViewController.m in Sources */,
 				D648F5A61CEA2C6300614F28 /* main.m in Sources */,
@@ -732,7 +732,7 @@
 				D6306E051A6F30BE00E16E85 /* ATLMTestInterface.m in Sources */,
 				D6306E061A6F30BE00E16E85 /* ATLMTestUser.m in Sources */,
 				D6306DFB1A6F30B200E16E85 /* ATLMAPIManagerTest.m in Sources */,
-				D6306DFC1A6F30B200E16E85 /* ATLMApplicationControllerTest.m in Sources */,
+				D6306DFC1A6F30B200E16E85 /* ATLMLayerControllerTest.m in Sources */,
 				D6306DFE1A6F30B200E16E85 /* ATLMConversationDetailViewControllerTest.m in Sources */,
 				D6306DFF1A6F30B200E16E85 /* ATLMConversationListViewControllerTest.m in Sources */,
 				D6306E001A6F30B200E16E85 /* ATLMConversationViewControllerTest.m in Sources */,

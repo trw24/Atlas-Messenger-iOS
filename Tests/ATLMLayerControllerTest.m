@@ -1,5 +1,5 @@
 //
-//  ATLMApplicationControllerTest.m
+//  ATLMLayerControllerTest.m
 //  Atlas Messenger
 //
 //  Created by Kevin Coleman on 1/20/15.
@@ -22,23 +22,23 @@
 #import <KIFViewControllerActions/KIFViewControllerActions.h>
 #import <XCTest/XCTest.h>
 
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
 #import "ATLMTestInterface.h"
 #import "ATLMTestUser.h"
 
-@interface ATLMApplicationControllerTest : KIFTestCase
+@interface ATLMLayerControllerTest : KIFTestCase
 
 @property (nonatomic) ATLMTestInterface *testInterface;
 @property (nonatomic) ATLMTestUser *testUser;
 
 @end
 
-@implementation ATLMApplicationControllerTest
+@implementation ATLMLayerControllerTest
 
 - (void)setUp
 {
     [super setUp];
-    ATLMApplicationController *applicationController =  [(ATLMAppDelegate *)[[UIApplication sharedApplication] delegate] applicationController];
+    ATLMLayerController *applicationController =  [(ATLMAppDelegate *)[[UIApplication sharedApplication] delegate] layerController];
     self.testInterface = [ATLMTestInterface testInterfaceWithApplicationController:applicationController];
 }
 

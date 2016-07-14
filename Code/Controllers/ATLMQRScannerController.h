@@ -19,7 +19,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
 
 @class ATLMQRScannerController;
 
@@ -36,7 +36,7 @@
  @param scannerController The sender that did the delegate invocation.
  @param appID The Layer appID the scanner detected.
  */
-- (void)scannerController:(nonnull ATLMQRScannerController *)scannerController didReceiveAppID:(nonnull NSURL *)appID;
+- (void)scannerController:(nonnull ATLMQRScannerController *)scannerController didScanLayerAppID:(nonnull NSURL *)appID;
 
 /**
  @abstract Tells the receiver that the QR scanner view controller hit an error.
@@ -48,7 +48,7 @@
 @end
 
 /** 
- @abstract The `ATLMQRScannerController` presents a user interface for scanning QR codes. When a QR code is succesfully scanned, it is persisted to the `NSUserDefaults` dictionary as the value for the `ATLMLayerApplicationID` key.
+ @abstract The `ATLMQRScannerController` presents a user interface for scanning Layer App IDs from QR codes.
  */
 @interface ATLMQRScannerController : UIViewController
 

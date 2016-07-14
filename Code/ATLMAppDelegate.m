@@ -20,9 +20,6 @@
 
 #import <LayerKit/LayerKit.h>
 #import <Atlas/Atlas.h>
-#import <MessageUI/MessageUI.h>
-#import <sys/sysctl.h>
-#import <asl.h>
 #import <SVProgressHUD/SVProgressHUD.h>
 
 #import "ATLMAppDelegate.h"
@@ -36,50 +33,38 @@
 #import "ATLMAuthenticationProvider.h"
 #import "ATLMApplicationViewController.h"
 
-static NSString *const ATLMLayerApplicationID = @"LAYER_APP_ID";
 static NSString *const ATLMLayerAppID = nil;
+static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas-Messenger.appID";
 
-@interface ATLMAppDelegate () <MFMailComposeViewControllerDelegate>
+@interface ATLMAppDelegate () <ATLMApplicationControllerDelegate, ATLMLayerControllerDelegate>
 
-@property (nonnull, nonatomic) ATLMApplicationController *applicationController;
+@property (nonnull, nonatomic) ATLMLayerController *layerController;
 @property (nonnull, nonatomic) ATLMApplicationViewController *applicationViewController;
 
 @end
 
 @implementation ATLMAppDelegate
 
-#pragma mark UIApplicationDelegate implementation
+#pragma mark UIApplicationDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Restore the appID from the user defaults (if available).
-    NSString *appIDString = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
-    NSURL *appID = [NSURL URLWithString:appIDString];
-//    if (appIDString) {
-//        
-//    } else {
-//        // QR Scanner flow
-//    }
-//    NSURL *appID = [NSURL URLWithString:appIDString];
-//    if (appID) {
-//        [self setAppID:appID error:nil];
-//    }
-//    
-//    // Create the authentication provider instance
-//    NSString *appIDString = [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
-//    NSURL *appID = [NSURL URLWithString:ATLMLayerAppID];
-    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerAppID:appID];
-    
-    // Configure the Layer Client options.
-    LYRClientOptions *clientOptions = [LYRClientOptions new];
-    clientOptions.synchronizationPolicy = LYRClientSynchronizationPolicyPartialHistory;
-    clientOptions.partialHistoryMessageCount = 20;
-    
-    // Create the application controller.
-    self.applicationController = [ATLMApplicationController applicationControllerWithLayerAppID:appID clientOptions:clientOptions authenticationProvider:authenticationProvider];
+    [SVProgressHUD setMinimumDismissTimeInterval:3.0f];
     
     // Create the view controller that will also be the root view controller of the app.
-    self.applicationViewController = [[ATLMApplicationViewController alloc] initWithApplication:application applicationController:self.applicationController];
+    self.applicationViewController = [ATLMApplicationViewController new];
+    self.applicationViewController.delegate = self;
+    
+    // Restore the appID from the user defaults (if available).
+    NSString *appIDString = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationIDUserDefaultsKey];
+    NSURL *appID = [NSURL URLWithString:appIDString];
+    if (appID) {
+        [self initializeLayerWithAppID:appID];
+    }
+    
+    // Push Notifications follow authentication state
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(registerForRemoteNotifications) name:LYRClientDidAuthenticateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(unregisterForRemoteNotifications) name:LYRClientDidDeauthenticateNotification object:nil];
 
     // Put the view controller on screen.
     self.window = [UIWindow new];
@@ -89,9 +74,35 @@ static NSString *const ATLMLayerAppID = nil;
     return YES;
 }
 
+- (void)initializeLayerWithAppID:(nonnull NSURL *)appID
+{
+    NSParameterAssert(appID);
+    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerAppID:appID];
+    
+    // Configure the Layer Client options.
+    LYRClientOptions *clientOptions = [LYRClientOptions new];
+    clientOptions.synchronizationPolicy = LYRClientSynchronizationPolicyPartialHistory;
+    clientOptions.partialHistoryMessageCount = 20;
+    
+    // Create the application controller.
+    self.layerController = [ATLMLayerController applicationControllerWithLayerAppID:appID clientOptions:clientOptions authenticationProvider:authenticationProvider];
+    self.layerController.delegate = self;
+    
+    self.applicationViewController.layerController = self.layerController;
+    
+    // Persist the appID for subsequent launches
+    [[NSUserDefaults standardUserDefaults] setObject:[appID absoluteString] forKey:ATLMLayerApplicationIDUserDefaultsKey];
+}
+
+- (void)applicationController:(nonnull ATLMApplicationViewController *)applicationController didCollectLayerAppID:(nonnull NSURL *)appID
+{
+    [self initializeLayerWithAppID:appID];
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    [self.applicationViewController refreshApplicationBadgeCount];
+    NSUInteger countOfUnreadMessages = [self.layerController countOfUnreadMessages];
+    [application setApplicationIconBadgeNumber:countOfUnreadMessages];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
@@ -101,12 +112,12 @@ static NSString *const ATLMLayerAppID = nil;
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-    [self.applicationController updateRemoteNotificationDeviceToken:deviceToken];
+    [self.layerController updateRemoteNotificationDeviceToken:deviceToken];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    [self.applicationController handleRemoteNotification:userInfo responseInfo:nil completion:^(BOOL success, NSError * _Nullable error) {
+    [self.layerController handleRemoteNotification:userInfo responseInfo:nil completion:^(BOOL success, NSError * _Nullable error) {
         if (success) {
             completionHandler(UIBackgroundFetchResultNewData);
         } else {
@@ -122,7 +133,7 @@ static NSString *const ATLMLayerAppID = nil;
         // Bail out, if the action identifier is not meant for us.
         return;
     }
-    [self.applicationController handleRemoteNotification:userInfo responseInfo:responseInfo completion:^(BOOL success, NSError * _Nullable error) {
+    [self.layerController handleRemoteNotification:userInfo responseInfo:responseInfo completion:^(BOOL success, NSError * _Nullable error) {
         if (success) {
             completionHandler(UIBackgroundFetchResultNewData);
         } else {
@@ -135,6 +146,30 @@ static NSString *const ATLMLayerAppID = nil;
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
     return YES;
+}
+
+#pragma mark - Remote Notifications
+
+- (void)registerForRemoteNotifications
+{
+    NSSet *categories = [NSSet setWithObject:ATLDefaultUserNotificationCategory()];
+    UIUserNotificationType types = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+    UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:types
+                                                                                         categories:categories];
+    [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+}
+
+- (void)unregisterForRemoteNotifications
+{
+    [[UIApplication sharedApplication] unregisterForRemoteNotifications];
+}
+
+#pragma mark - ATLMLayerControllerDelegate
+
+- (void)layerController:(ATLMLayerController *)applicationController didFailWithError:(NSError *)error
+{
+    NSLog(@"Application controller=%@ has hit an error=%@", applicationController, error);
 }
 
 @end

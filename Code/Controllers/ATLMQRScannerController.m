@@ -117,8 +117,8 @@ NSString *const ATLMDidReceiveLayerAppID = @"ATLMDidRecieveLayerAppID";
 {
     NSURL *applicationID = [NSURL URLWithString:appID];
     if (applicationID) {
-        if ([self.delegate respondsToSelector:@selector(scannerController:didReceiveAppID:)]) {
-            [self.delegate scannerController:self didReceiveAppID:applicationID];
+        if ([self.delegate respondsToSelector:@selector(scannerController:didScanLayerAppID:)]) {
+            [self.delegate scannerController:self didScanLayerAppID:applicationID];
         }
     } else {
         NSError *error = [[NSError alloc] initWithDomain:ATLMErrorDomain code:ATLMInvalidAppIDString userInfo:@{ NSLocalizedDescriptionKey: @"There was an error scanning the QR code. Please try again." }];

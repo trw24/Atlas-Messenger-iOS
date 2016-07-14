@@ -7,47 +7,37 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
+
+@class ATLMApplicationViewController;
+
+@protocol ATLMApplicationControllerDelegate <NSObject>
+
+@required
+
+/**
+ @abstract Informs the delegate that the application has obtained a Layer app ID.
+ @param applicationController The controller that collected the Layer app ID.
+ @param layerAppID The Layer app ID that was collected.
+ */
+- (void)applicationController:(nonnull ATLMApplicationViewController *)applicationController didCollectLayerAppID:(nonnull NSURL *)layerAppID;
+
+@end
 
 /**
  @abstract The `ATLMApplicationViewController` is responsible for taking care
-   of the UI. It listens on the `ATLMApplicationController` state changes and
+   of the UI. It listens on the `ATLMLayerController` state changes and
    configures the UI accordingly. It also works with the `UIApplication` to
    setup remote notification registration and updating the icon badge counts.
  */
-@interface ATLMApplicationViewController : UIViewController <ATLMApplicationControllerDelegate>
+@interface ATLMApplicationViewController : UIViewController <ATLMLayerControllerDelegate>
 
-/**
- @abstract It initializes the view controller and sets itself as the delegate
-   of the `ATLMApplicationController`. As soon as this view controller is
-   added to the UI stack and is loaded, it will present the splash screen
-   followed by the view that corresponds to the `ATLMApplicationController`
-   current state.
- @param application The `UIApplication` which this view controller uses to
-   update application icon's badge count and asks the user for the remote
-   notification permissions.
- @param applicationController The application controller in charge of managing
-   Layer client and authentication process.
- @return Returns an initialized application view controller.
- */
-- (nonnull id)initWithApplication:(nonnull UIApplication *)application applicationController:(nonnull ATLMApplicationController *)applicationController;
-
-/**
- @abstract It counts the total unread messages count and updates the `UIApplication`'s
-   application badge count.
- */
-- (void)refreshApplicationBadgeCount;
-
-/**
- @abstract The app object this view controller uses to update the badge count and
-   request the remote notification permissions.
- */
-@property (nonnull, nonatomic, readonly) UIApplication *application;
+@property (nullable, nonatomic, weak) id<ATLMApplicationControllerDelegate> delegate;
 
 /**
  @abstract Reference to the application controller view controller works with
    to present the appropriate UI and perform authentication when needed.
  */
-@property (nonnull, nonatomic, readonly) ATLMApplicationController *applicationController;
+@property (nonnull, nonatomic) ATLMLayerController *layerController;
 
 @end

@@ -16,12 +16,38 @@
 #import "ATLMSplitViewController.h"
 #import "ATLMNavigationController.h"
 
+///-------------------------
+/// @name Application States
+///-------------------------
+
+typedef NS_ENUM(NSUInteger, ATLMApplicationState) {
+    /**
+     @abstract A state where the app has not yet established a state.
+     */
+    ATLMApplicationStateIndeterminate           = 0,
+    
+    /**
+     @abstract A state where the app doesn't have a Layer appID yet.
+     */
+    ATLMApplicationStateAppIDNotSet             = 1,
+    
+    /**
+     @abstract A state where the app has the appID, but no user credentials.
+     */
+    ATLMApplicationStateCredentialsRequired     = 2,
+    
+    /**
+     @abstract A state where the app is fully authenticated.
+     */
+    ATLMApplicationStateAuthenticated           = 3
+};
+
 static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
+static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationViewControllerObservationContext;
 
 @interface ATLMApplicationViewController () <ATLMQRScannerControllerDelegate, ATLMRegistrationViewControllerDelegate, ATLMConversationListViewControllerPresentationDelegate>
 
-@property (nonnull, nonatomic, readwrite) UIApplication *application;
-@property (nonnull, nonatomic, readwrite) ATLMApplicationController *applicationController;
+@property (assign, nonatomic, readwrite) ATLMApplicationState state;
 @property (nullable, nonatomic) ATLMSplashView *splashView;
 @property (nullable, nonatomic) ATLMQRScannerController *QRCodeScannerController;
 @property (nullable, nonatomic) UINavigationController *registrationNavigationController;
@@ -32,38 +58,41 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 @implementation ATLMApplicationViewController
 
-- (nonnull id)initWithApplication:(nonnull UIApplication *)application applicationController:(nonnull ATLMApplicationController *)applicationController
+- (nonnull id)init
 {
     self = [super init];
     if (self) {
-        _application = application;
-        _applicationController = applicationController;
-        _applicationController.delegate = self;
+        _state = ATLMApplicationStateIndeterminate;
+        [self addObserver:self forKeyPath:@"state" options:0 context:ATLMApplicationViewControllerObservationContext];
     }
     return self;
 }
 
-- (void)refreshApplicationBadgeCount
+- (void)dealloc
 {
-    NSUInteger countOfUnreadMessages = [self.applicationController countOfUnreadMessages];
-    [self.application setApplicationIconBadgeNumber:countOfUnreadMessages];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)registerForRemoteNotifications
+- (ATLMApplicationState)determineInitialApplicationState
 {
-    NSSet *categories = nil;
-    if ([UIMutableUserNotificationAction instancesRespondToSelector:@selector(behavior)]) {
-        categories = [NSSet setWithObject:ATLDefaultUserNotificationCategory()];
+    if (self.layerController == nil) {
+        return ATLMApplicationStateAppIDNotSet;
+    } else {
+        if (self.layerController.layerClient.authenticatedUser == nil) {
+            return ATLMApplicationStateCredentialsRequired;
+        } else {
+            return ATLMApplicationStateAuthenticated;
+        }
     }
-
-    UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:categories];
-    [self.application registerUserNotificationSettings:notificationSettings];
-    [self.application registerForRemoteNotifications];
 }
 
-- (void)unregisterForRemoteNotifications
+- (void)observeValueForKeyPath:(nullable NSString *)keyPath ofObject:(nullable id)object change:(nullable NSDictionary<NSString*, id> *)change context:(nullable void *)context
 {
-    [self.application unregisterForRemoteNotifications];
+    if (context == ATLMApplicationViewControllerObservationContext) {
+        if ([keyPath isEqualToString:@"state"]) {
+            [self presentViewControllerForApplicationState:self.state];
+        }
+    }
 }
 
 #pragma mark - UIViewController Overrides
@@ -77,7 +106,8 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self presentViewControllerForApplicationState:self.applicationController.state];
+    
+    self.state = [self determineInitialApplicationState];
 }
 
 #pragma mark - Splash View
@@ -153,12 +183,12 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     [self.splitViewController didMoveToParentViewController:self];
     
     // And have the conversation view controller be the detail view controller.
-    ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.applicationController.layerClient];
+    ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.layerController.layerClient];
     [self.splitViewController setDetailViewController:conversationViewController];
     
     // Put the conversation list view controller as the main view controller
     // in the split view.
-    self.conversationListViewController = [ATLMConversationListViewController conversationListViewControllerWithLayerClient:self.applicationController.layerClient splitViewController:self.splitViewController];
+    self.conversationListViewController = [ATLMConversationListViewController conversationListViewControllerWithLayerClient:self.layerController.layerClient splitViewController:self.splitViewController];
     self.conversationListViewController.presentationDelegate = self;
     [self.splitViewController setMainViewController:self.conversationListViewController];
 }
@@ -170,17 +200,14 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     [self makeSplashViewVisible:YES];
     switch (applicationState) {
         case ATLMApplicationStateAppIDNotSet:{
-            [self unregisterForRemoteNotifications];
             [self presentQRCodeScannerViewController];
             break;
         }
         case ATLMApplicationStateCredentialsRequired: {
-            [self unregisterForRemoteNotifications];
             [self presentRegistrationViewController];
             break;
         }
         case ATLMApplicationStateAuthenticated: {
-            [self registerForRemoteNotifications];
             [self presentConversationListViewController];
             break;
         }
@@ -192,20 +219,10 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 #pragma mark - ATLMQRScannerControllerDelegate implementation
 
-- (void)scannerController:(ATLMQRScannerController *)scannerController didReceiveAppID:(NSURL *)appID
+- (void)scannerController:(ATLMQRScannerController *)scannerController didScanLayerAppID:(NSURL *)appID
 {
     NSLog(@"Received an appID=%@ from the scannerController=%@", appID, scannerController);
-    // Update the application controller with the appID recevied from the QR code scanner.
-    NSError *error;
-    BOOL success = [self.applicationController setAppID:appID error:&error];
-    if (!success) {
-        ATLMAlertWithError(error);
-    }
-//    NSError *error;
-//    BOOL success = [self.applicationController setAppID:appID error:&error];
-//    if (!success) {
-//        ATLMAlertWithError(error);
-//    }
+    [self.delegate applicationController:self didCollectLayerAppID:appID];
 }
 
 - (void)scannerController:(ATLMQRScannerController *)scannerController didFailWithError:(NSError *)error
@@ -217,9 +234,11 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (void)registrationViewController:(ATLMRegistrationViewController *)registrationViewController didSubmitCredentials:(NSDictionary *)credentials
 {
-    [self.applicationController authenticateWithCredentials:credentials completion:^(LYRSession *_Nonnull session, NSError *_Nullable error) {
-        if (!session && error) {
-            NSLog(@"Failed to authenticate with credentials=%@", credentials);
+    [self.layerController authenticateWithCredentials:credentials completion:^(LYRSession *_Nonnull session, NSError *_Nullable error) {
+        if (session) {
+            self.state = ATLMApplicationStateAuthenticated;
+        } else {
+            NSLog(@"Failed to authenticate with credentials=%@. errors=%@", credentials, error);
             ATLMAlertWithError(error);
         }
     }];
@@ -239,15 +258,15 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     [self presentViewController:self.registrationNavigationController animated:YES completion:nil];
 }
 
-#pragma mark - ATLMApplicationControllerDelegate implementation
+#pragma mark - ATLMLayerControllerDelegate implementation
 
-- (void)applicationController:(ATLMApplicationController *)applicationController didChangeState:(ATLMApplicationState)applicationState
+- (void)applicationController:(ATLMLayerController *)applicationController didChangeState:(ATLMApplicationState)applicationState
 {
     // Handle UI transitions
     [self presentViewControllerForApplicationState:applicationState];
 }
 
-- (void)applicationController:(ATLMApplicationController *)applicationController didFinishHandlingRemoteNotificationForConversation:(LYRConversation *)conversation message:(LYRMessage *)message responseText:(nullable NSString *)responseText
+- (void)applicationController:(ATLMLayerController *)applicationController didFinishHandlingRemoteNotificationForConversation:(LYRConversation *)conversation message:(LYRMessage *)message responseText:(nullable NSString *)responseText
 {
     if (responseText.length) {
         // Handle the inline message reply.
@@ -256,9 +275,9 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
             return;
         }
         LYRMessagePart *messagePart = [LYRMessagePart messagePartWithText:responseText];
-        NSString *fullName = self.applicationController.layerClient.authenticatedUser.displayName;
+        NSString *fullName = self.layerController.layerClient.authenticatedUser.displayName;
         NSString *pushText = [NSString stringWithFormat:@"%@: %@", fullName, responseText];
-        LYRMessage *message = ATLMessageForParts(self.applicationController.layerClient, @[ messagePart ], pushText, ATLMPushNotificationSoundName);
+        LYRMessage *message = ATLMessageForParts(self.layerController.layerClient, @[ messagePart ], pushText, ATLMPushNotificationSoundName);
         if (message) {
             NSError *error = nil;
             BOOL success = [conversation sendMessage:message error:&error];
@@ -270,7 +289,7 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     }
     
     // Navigate to the conversation, after the remote notification's been handled.
-    BOOL userTappedRemoteNotification = self.application.applicationState == UIApplicationStateInactive;
+    BOOL userTappedRemoteNotification = [UIApplication sharedApplication].applicationState == UIApplicationStateInactive;
     if (userTappedRemoteNotification && conversation) {
         [self.conversationListViewController selectConversation:conversation];
     } else if (userTappedRemoteNotification) {
@@ -278,38 +297,75 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
     }
 }
 
-- (void)applicationController:(ATLMApplicationController *)applicationController didFailWithError:(NSError *)error
+- (void)setLayerController:(ATLMLayerController *)layerController
 {
-    // Prompt user of error if necessary
-    NSLog(@"Application controller=%@ has hit an error=%@", applicationController, error);
+    if (_layerController == layerController) {
+        return;
+    }
+    
+    _layerController = layerController;
+    if (layerController) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleLayerClientWillAttemptToConnectNotification:) name:LYRClientWillAttemptToConnectNotification object:layerController.layerClient];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleLayerClientDidConnectNotification:) name:LYRClientDidConnectNotification object:layerController.layerClient];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleLayerClientDidDisconnectNotification:) name:LYRClientDidDisconnectNotification object:layerController.layerClient];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleLayerClientDidLoseConnectionNotification:) name:LYRClientDidLoseConnectionNotification object:layerController.layerClient];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleLayerClientDidAuthenticateNotification:) name:LYRClientDidAuthenticateNotification object:layerController.layerClient];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleLayerClientDidDeauthenticateNotification:) name:LYRClientDidDeauthenticateNotification object:layerController.layerClient];
+        
+        // Connect the client
+        [layerController.layerClient connectWithCompletion:^(BOOL success, NSError * _Nullable error) {
+            if (success) {
+                NSLog(@"Connected to Layer");
+            } else {
+                NSLog(@"Failed connection to Layer: %@", error);
+            }
+        }];
+        
+        if (self.state != ATLMApplicationStateIndeterminate) {
+            self.state = [self determineInitialApplicationState];
+        }
+    }
 }
 
-- (void)applicationController:(ATLMApplicationController *)applicationController willAttemptToConnect:(NSUInteger)attemptNumber afterDelay:(NSTimeInterval)delayInterval maximumNumberOfAttempts:(NSUInteger)attemptLimit
+- (void)handleLayerClientWillAttemptToConnectNotification:(NSNotification *)notification
 {
+    unsigned long attemptNumber = [notification.userInfo[@"attemptNumber"] unsignedLongValue];
+    unsigned long attemptLimit = [notification.userInfo[@"attemptLimit"] unsignedLongValue];
+    NSTimeInterval delayInterval = [notification.userInfo[@"delayInterval"] floatValue];
     // Show HUD with message
     if (attemptNumber == 1) {
         [SVProgressHUD showWithStatus:@"Connecting to Layer"];
     } else {
-        [SVProgressHUD showWithStatus:[NSString stringWithFormat:@"Connecting to Layer in %lus (%lu of %lu)", (unsigned long)ceil(delayInterval), (unsigned long)attemptNumber, (unsigned long)attemptLimit]];
+        [SVProgressHUD showWithStatus:[NSString stringWithFormat:@"Connecting to Layer in %lus (%lu of %lu)", (unsigned long)ceil(delayInterval), attemptNumber, attemptLimit]];
     }
 }
 
-- (void)applicationControllerDidConnect:(ATLMApplicationController *)applicationController
+- (void)handleLayerClientDidConnectNotification:(NSNotification *)notification
 {
     // Show HUD with message
-    [SVProgressHUD showWithStatus:@"Connected to Layer"];
+    [SVProgressHUD showSuccessWithStatus:@"Connected to Layer"];
 }
 
-- (void)applicationControllerDidDisconnect:(ATLMApplicationController *)applicationController
+- (void)handleLayerClientDidDisconnectNotification:(NSNotification *)notification
 {
     // Show HUD with message
     [SVProgressHUD showWithStatus:@"Disconnected from Layer"];
 }
 
-- (void)applicationController:(ATLMApplicationController *)applicationController didLoseConnectionWithError:(NSError *)error
+- (void)handleLayerClientDidLoseConnectionNotification:(NSNotification *)notification
 {
     // Show HUD with message
     [SVProgressHUD showErrorWithStatus:@"Lost connection from Layer"];
+}
+
+- (void)handleLayerClientDidAuthenticateNotification:(NSNotification *)notification
+{
+    self.state = ATLMApplicationStateAuthenticated;
+}
+
+- (void)handleLayerClientDidDeauthenticateNotification:(NSNotification *)notification
+{
+    self.state = ATLMApplicationStateCredentialsRequired;
 }
 
 @end

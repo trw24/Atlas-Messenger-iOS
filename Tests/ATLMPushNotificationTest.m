@@ -23,7 +23,7 @@
 #import "KIFSystemTestActor+ViewControllerActions.h"
 #import <XCTest/XCTest.h>
 
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
 #import "ATLMTestInterface.h"
 #import "ATLMAuthenticationViewController.h"
 #import "ATLMTestUser.h"
@@ -44,7 +44,7 @@
 {
     [super setUp];
     
-    ATLMApplicationController *applicationController =  [(ATLMAppDelegate *)[[UIApplication sharedApplication] delegate] applicationController];
+    ATLMLayerController *applicationController =  [(ATLMAppDelegate *)[[UIApplication sharedApplication] delegate] applicationController];
     self.testInterface = [ATLMTestInterface testInterfaceWithApplicationController:applicationController];
     [self.testInterface deleteContacts];
     

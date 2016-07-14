@@ -1,5 +1,5 @@
 //
-//  ATLMApplicationController.m
+//  ATLMLayerController.m
 //  Atlas Messenger
 //
 //  Created by Kevin Coleman on 6/12/14.
@@ -18,7 +18,7 @@
 //  limitations under the License.
 //
 
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
 #import <SVProgressHUD/SVProgressHUD.h>
 #import "ATLMErrors.h"
 #import "ATLMConstants.h"
@@ -27,18 +27,17 @@
 NSString *const ATLMConversationMetadataDidChangeNotification = @"LSConversationMetadataDidChangeNotification";
 NSString *const ATLMConversationParticipantsDidChangeNotification = @"LSConversationParticipantsDidChangeNotification";
 NSString *const ATLMConversationDeletedNotification = @"LSConversationDeletedNotification";
-NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControllerErrorDomain";
+NSString *const ATLMLayerControllerErrorDomain = @"ATLMLayerControllerErrorDomain";
 
-@interface ATLMApplicationController ()
+@interface ATLMLayerController ()
 
 @property (nonnull, nonatomic, readwrite) id<ATLMAuthenticating> authenticationProvider;
 @property (nullable, nonatomic, readwrite) LYRClient *layerClient;
-@property (assign, nonatomic, readwrite) ATLMApplicationState state;
 @property (nonatomic, readwrite, copy) LYRClientOptions *layerClientOptions;
 
 @end
 
-@implementation ATLMApplicationController
+@implementation ATLMLayerController
 
 + (nonnull instancetype)applicationControllerWithLayerAppID:(nonnull NSURL *)layerAppID clientOptions:(nullable LYRClientOptions *)clientOptions authenticationProvider:(nonnull id<ATLMAuthenticating>)authenticationProvider
 {
@@ -52,7 +51,6 @@ NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControll
         _layerClient = [LYRClient clientWithAppID:layerAppID delegate:self options:clientOptions];
         _layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
         _authenticationProvider = authenticationProvider;
-        _state = ATLMApplicationStateAppIDNotSet;
     }
     return self;
 }
@@ -62,35 +60,21 @@ NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControll
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)setState:(ATLMApplicationState)state
-{
-    if (_state == state) {
-        // Prevent notifying the delegate with the same state.
-        return;
-    }
-    _state = state;
-    if ([self.delegate respondsToSelector:@selector(applicationController:didChangeState:)]) {
-        [self.delegate applicationController:self didChangeState:state];
-    }
-}
-
 - (void)authenticateWithCredentials:(NSDictionary *)credentials completion:(void (^)(LYRSession *session, NSError *error))completion
 {
-    __weak typeof(self) weakSelf = self;
     [self.layerClient requestAuthenticationNonceWithCompletion:^(NSString * _Nullable nonce, NSError * _Nullable error) {
         if (!nonce) {
             completion(nil, error);
             return;
         }
-        [weakSelf.authenticationProvider authenticateWithCredentials:credentials nonce:nonce completion:^(NSString * _Nonnull identityToken, NSError * _Nonnull error) {
+        [self.authenticationProvider authenticateWithCredentials:credentials nonce:nonce completion:^(NSString * _Nonnull identityToken, NSError * _Nonnull error) {
             if (!identityToken) {
                 completion(nil, error);
                 return;
             }
-            [weakSelf.layerClient authenticateWithIdentityToken:identityToken completion:^(LYRIdentity * _Nullable authenticatedUser, NSError * _Nullable error) {
+            [self.layerClient authenticateWithIdentityToken:identityToken completion:^(LYRIdentity * _Nullable authenticatedUser, NSError * _Nullable error) {
                 if (authenticatedUser) {
-                    completion(weakSelf.layerClient.currentSession, nil);
-                    weakSelf.state = ATLMApplicationStateAuthenticated;
+                    completion(self.layerClient.currentSession, nil);
                 } else {
                     completion(nil, error);
                 }
@@ -116,10 +100,10 @@ NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControll
     BOOL success = [self.layerClient synchronizeWithRemoteNotification:userInfo completion:^(LYRConversation * _Nullable conversation, LYRMessage * _Nullable message, NSError * _Nullable error) {
         if (conversation || message) {
             // Notify the delegate the remote notification has been handled.
-            if ([weakSelf.delegate respondsToSelector:@selector(applicationController:didFinishHandlingRemoteNotificationForConversation:message:responseText:)]) {
+            if ([weakSelf.delegate respondsToSelector:@selector(layerController:didFinishHandlingRemoteNotificationForConversation:message:responseText:)]) {
                 // Extract the response text from the responseInfo dictionary (if available).
                 NSString *responseText = responseInfo[UIUserNotificationActionResponseTypedTextKey];
-                [weakSelf.delegate applicationController:weakSelf didFinishHandlingRemoteNotificationForConversation:conversation message:message responseText:responseText];
+                [weakSelf.delegate layerController:weakSelf didFinishHandlingRemoteNotificationForConversation:conversation message:message responseText:responseText];
             }
             completionHandler(YES, nil);
         } else {
@@ -159,15 +143,11 @@ NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControll
 - (void)layerClient:(LYRClient *)client didAuthenticateAsUserID:(NSString *)userID
 {
     NSLog(@"Layer Client did authenticate as userID=%@", userID);
-    // Bumping the application state to "authenticated".
-    self.state = ATLMApplicationStateAuthenticated;
 }
 
 - (void)layerClientDidDeauthenticate:(LYRClient *)client
 {
     NSLog(@"Layer Client did deauthenticate");
-    // Revert the state back to "AppIDCollected".
-    self.state = ATLMApplicationStateCredentialsRequired;
 }
 
 - (void)layerClient:(LYRClient *)client objectsDidChange:(NSArray *)changes
@@ -194,45 +174,13 @@ NSString *const ATLMApplicationControllerErrorDomain = @"ATLMApplicationControll
     [self notifyDelegateOfError:error];
 }
 
-- (void)layerClient:(LYRClient *)client willAttemptToConnect:(NSUInteger)attemptNumber afterDelay:(NSTimeInterval)delayInterval maximumNumberOfAttempts:(NSUInteger)attemptLimit
-{
-    NSLog(@"Layer Client will attempt to connect after %.2fs; attempt=%lu; maximumAttempts=%lu", delayInterval, attemptNumber, attemptLimit);
-    if ([self.delegate respondsToSelector:@selector(applicationController:willAttemptToConnect:afterDelay:maximumNumberOfAttempts:)]) {
-        [self.delegate applicationController:self willAttemptToConnect:attemptNumber afterDelay:delayInterval maximumNumberOfAttempts:attemptLimit];
-    }
-}
-
-- (void)layerClientDidConnect:(LYRClient *)client
-{
-    NSLog(@"Layer Client did connect");
-    if ([self.delegate respondsToSelector:@selector(applicationControllerDidConnect:)]) {
-        [self.delegate applicationControllerDidConnect:self];
-    }
-}
-
-- (void)layerClientDidDisconnect:(LYRClient *)client
-{
-    NSLog(@"Layer Client did disconnect");
-    if ([self.delegate respondsToSelector:@selector(applicationControllerDidConnect:)]) {
-        [self.delegate applicationControllerDidDisconnect:self];
-    }
-}
-
-- (void)layerClient:(LYRClient *)client didLoseConnectionWithError:(NSError *)error
-{
-    NSLog(@"Layer Client did lose connection");
-    if ([self.delegate respondsToSelector:@selector(applicationControllerDidConnect:)]) {
-        [self.delegate applicationController:self didLoseConnectionWithError:error];
-    }
-}
-
 #pragma mark - Helpers
 
 - (void)notifyDelegateOfError:(NSError *)error
 {
     if (error) {
-        if ([self.delegate respondsToSelector:@selector(applicationController:didFailWithError:)]) {
-            [self.delegate applicationController:self didFailWithError:error];
+        if ([self.delegate respondsToSelector:@selector(layerController:didFailWithError:)]) {
+            [self.delegate layerController:self didFailWithError:error];
         }
     }
 }

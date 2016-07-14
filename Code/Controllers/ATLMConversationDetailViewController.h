@@ -20,7 +20,7 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
 
 extern NSString *const ATLMConversationDetailViewControllerTitle;
 extern NSString *const ATLMConversationMetadataNameKey;
@@ -68,6 +68,6 @@ extern NSString *const ATLMConversationMetadataNameKey;
 /**
  @abstract The controller object for the application.
  */
-@property (nonatomic) ATLMApplicationController *applicationController;
+@property (nonatomic) ATLMLayerController *applicationController;
 
 @end

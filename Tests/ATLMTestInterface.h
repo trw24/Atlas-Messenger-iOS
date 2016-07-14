@@ -20,7 +20,7 @@
 
 #import <Foundation/Foundation.h>
 #import <LayerKit/LayerKit.h>
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
 #import "ATLMLayerContentFactory.h"
 #import "ATLMAppDelegate.h"
 #import "ATLMTestUser.h"
@@ -36,9 +36,9 @@
 
 @interface ATLMTestInterface : NSObject
 
-+ (instancetype)testInterfaceWithApplicationController:(ATLMApplicationController *)applicationController;
++ (instancetype)testInterfaceWithApplicationController:(ATLMLayerController *)applicationController;
 
-@property (nonatomic) ATLMApplicationController *applicationController;
+@property (nonatomic) ATLMLayerController *applicationController;
 
 @property ATLMLayerContentFactory *contentFactory;
 

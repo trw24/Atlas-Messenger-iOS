@@ -21,7 +21,7 @@
 #import <KIF/KIF.h>
 #import <KIFViewControllerActions/KIFSystemTestActor+ViewControllerActions.h>
 
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
 #import "ATLMTestInterface.h"
 #import "ATLMTestUser.h"
 
@@ -52,7 +52,7 @@ extern NSString *const ATLMLeaveConversationText;
 {
     [super setUp];
 
-    ATLMApplicationController *applicationController =  [(ATLMAppDelegate *)[[UIApplication sharedApplication] delegate] applicationController];
+    ATLMLayerController *applicationController =  [(ATLMAppDelegate *)[[UIApplication sharedApplication] delegate] layerController];
     self.testInterface = [ATLMTestInterface testInterfaceWithApplicationController:applicationController];
     [self.testInterface connectLayerClient];
     [self.testInterface deauthenticateIfNeeded];

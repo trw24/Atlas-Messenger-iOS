@@ -48,16 +48,13 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     if (self) {
         _baseURL = baseURL;
         _layerAppID = layerAppID;
+                
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+        configuration.HTTPAdditionalHeaders = @{ @"Accept": @"application/json",
+                                                 @"X_LAYER_APP_ID": self.layerAppID.absoluteString };
+        _URLSession = [NSURLSession sessionWithConfiguration:configuration];
     }
     return self;
-}
-
-- (NSURLSession *)defaultURLSession
-{
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    configuration.HTTPAdditionalHeaders = @{ @"Accept": @"application/json",
-                                             @"X_LAYER_APP_ID": self.layerAppID.absoluteString };
-    return [NSURLSession sessionWithConfiguration:configuration];
 }
 
 - (void)authenticateWithCredentials:(NSDictionary *)credentials nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion

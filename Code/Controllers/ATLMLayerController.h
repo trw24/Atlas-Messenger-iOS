@@ -1,5 +1,5 @@
 //
-//  ATLMApplicationController.h
+//  ATLMLayerController.h
 //  Atlas Messenger
 //
 //  Created by Kevin Coleman on 6/12/14.
@@ -27,117 +27,61 @@ extern NSString * _Nonnull const ATLMConversationMetadataDidChangeNotification;
 extern NSString * _Nonnull const ATLMConversationParticipantsDidChangeNotification;
 extern NSString * _Nonnull const ATLMConversationDeletedNotification;
 
-extern NSString *_Nonnull const ATLMApplicationControllerErrorDomain;
+extern NSString *_Nonnull const ATLMLayerControllerErrorDomain;
 
-typedef NS_ENUM(NSUInteger, ATLMApplicationControllerError) {
-    ATLMApplicationControllerErrorAppIDAlreadySet                  = 1, // Layer appID already set on the application controller.
-    ATLMApplicationControllerErrorFailedHandlingRemoteNotification = 2, // Underlying Layer client failed to handle the remote notification.
+typedef NS_ENUM(NSUInteger, ATLMLayerControllerError) {
+    ATLMLayerControllerErrorAppIDAlreadySet                  = 1, // Layer appID already set on the application controller.
+    ATLMLayerControllerErrorFailedHandlingRemoteNotification = 2, // Underlying Layer client failed to handle the remote notification.
 };
 
-///-------------------------
-/// @name Application States
-///-------------------------
-
-typedef NS_ENUM(NSUInteger, ATLMApplicationState) {
-    /**
-     @abstract A state where the app doesn't have a Layer appID yet.
-     */
-    ATLMApplicationStateAppIDNotSet             = 1,
-    
-    /**
-     @abstract A state where the app has the appID, but no user credentials.
-     */
-    ATLMApplicationStateCredentialsRequired     = 2,
-    
-    /**
-     @abstract A state where the app is fully authenticated.
-     */
-    ATLMApplicationStateAuthenticated           = 3
-};
-
-@class ATLMApplicationController;
+@class ATLMLayerController;
 
 /**
- @abstract The `ATLMApplicationControllerDelegate` notifies the receiver about
+ @abstract The `ATLMLayerControllerDelegate` notifies the receiver about
    the application state changes so that the receiver can navigate the UI accordingly.
  */
-@protocol ATLMApplicationControllerDelegate <NSObject>
+@protocol ATLMLayerControllerDelegate <NSObject>
 
 @optional
-
-/**
- @abstract Notifies the receiver the application state has changed.
- @param applicationController The `ATLMApplicationController` instance performing the invocation.
- @param applicationState New application state.
- */
-- (void)applicationController:(nonnull ATLMApplicationController *)applicationController didChangeState:(ATLMApplicationState)applicationState;
 
 /**
  @abstract Notifies the receiver the application controller has finished handling
    the remote notification and hands all the objects associated with the remote
    notification.
- @param applicationController The `ATLMApplicationController` instance performing the invocation.
+ @param applicationController The `ATLMLayerController` instance performing the invocation.
  @param conversation The `LYRConversation` instance associated with the remote notification.
  @param conversation The `LYRMessage` instance associated with the remote notification.
  */
-- (void)applicationController:(nonnull ATLMApplicationController *)applicationController didFinishHandlingRemoteNotificationForConversation:(nullable LYRConversation *)conversation message:(nullable LYRMessage *)message responseText:(nullable NSString *)responseText;
-
-/**
- @abstract Notifies the receiver that the underlying Layer Client will attempt to establish a connection.
- @param applicationController The `ATLMApplicationController` instance performing the invocation.
- @param attemptNumber The number of attempts the underlying client has attempted to make.
- @param delayInterval The amount of time until the underlying Layer Client will make the next attempt.
- @param attemptLimit The maximum number of attempts the underlying Layer Client will make.
- */
-- (void)applicationController:(nonnull ATLMApplicationController *)applicationController willAttemptToConnect:(NSUInteger)attemptNumber afterDelay:(NSTimeInterval)delayInterval maximumNumberOfAttempts:(NSUInteger)attemptLimit;
-
-/**
- @abstract Notifies the receiver that the underlying Layer Client has successfully established a connection.
- @param applicationController The `ATLMApplicationController` instance performing the invocation.
- */
-- (void)applicationControllerDidConnect:(nonnull ATLMApplicationController *)applicationController;
-
-/**
- @abstract Notifies the receiver that the underlying Layer Client has disconnected.
- @param applicationController The `ATLMApplicationController` instance performing the invocation.
- */
-- (void)applicationControllerDidDisconnect:(nonnull ATLMApplicationController *)applicationController;
-
-/**
- @abstract Notifies the receiver that the underlying Layer Client has lost a connection.
- @param applicationController The `ATLMApplicationController` instance performing the invocation.
- @param error The error associated with the connection loss.
- */
-- (void)applicationController:(nonnull ATLMApplicationController *)applicationController didLoseConnectionWithError:(nonnull NSError *)error;
+- (void)layerController:(nonnull ATLMLayerController *)applicationController didFinishHandlingRemoteNotificationForConversation:(nullable LYRConversation *)conversation message:(nullable LYRMessage *)message responseText:(nullable NSString *)responseText;
 
 /**
  @abstract Notifies the receiver the application controller has hit an error.
- @param applicationController The `ATLMApplicationController` instance performing the invocation.
+ @param applicationController The `ATLMLayerController` instance performing the invocation.
  @param error The error instance the application controller has hit.
  */
-- (void)applicationController:(nonnull ATLMApplicationController *)applicationController didFailWithError:(nonnull NSError *)error;
+- (void)layerController:(nonnull ATLMLayerController *)applicationController didFailWithError:(nonnull NSError *)error;
 
 @end
 
 /**
- @abstract The `ATLMApplicationController` manages global resources needed by
+ @abstract The `ATLMLayerController` manages global resources needed by
    multiple view controller classes in the Atlas Messenger App. It also
    implements the `LYRClientDelegate` protocol. Only one instance should be
    instantiated and it should be passed to controllers that require it.
  */
-@interface ATLMApplicationController : NSObject <LYRClientDelegate>
+@interface ATLMLayerController : NSObject <LYRClientDelegate>
 
 ///--------------------------------
 /// @name Initializing a Controller
 ///--------------------------------
 
 /**
- @abstract Creates the `ATLMApplicationController` instance with the supplied provider.
+ @abstract Creates the `ATLMLayerController` instance with the supplied provider.
  @param layerAppID The application identifier for the Layer client.
  @param provider An object conforming to the `ATLMAuthenticating protocol.
  @param layerClientOptions The Layer client's options instance, which will be passed
    to the `LYRClient` during its initialization.
- @return Returns an instance of the `ATLMApplicationController` ready for use.
+ @return Returns an instance of the `ATLMLayerController` ready for use.
  @discussion The application controller creates an instance of the `LYRClient` once the
    appID is known.
  */
@@ -180,7 +124,7 @@ typedef NS_ENUM(NSUInteger, ATLMApplicationState) {
 /**
  @abstract The receiver in charge of handling application state changes and errors.
  */
-@property (nullable, nonatomic, weak) id<ATLMApplicationControllerDelegate> delegate;
+@property (nullable, nonatomic, weak) id<ATLMLayerControllerDelegate> delegate;
 
 /**
  @abstract The `LSAPIManager` object for the application.
@@ -191,11 +135,6 @@ typedef NS_ENUM(NSUInteger, ATLMApplicationState) {
  @abstract The `LYRClient` object for the application.
  */
 @property (nullable, nonatomic, readonly) LYRClient *layerClient;
-
-/**
- @abstract The state the application controller is currently in.
- */
-@property (assign, nonatomic, readonly) ATLMApplicationState state;
 
 /**
  @abstract Queries the underlying LayerKit client for the total count of `LYRMessage` objects whose `isUnread` property is true.
@@ -232,6 +171,5 @@ typedef NS_ENUM(NSUInteger, ATLMApplicationState) {
  @retrun An `LYRConversation` object or `nil` if none is found.
  */
 - (nullable LYRConversation *)existingConversationForParticipants:(nonnull NSSet *)participants;
-
 
 @end
