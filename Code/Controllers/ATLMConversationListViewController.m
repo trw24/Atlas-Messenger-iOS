@@ -177,9 +177,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 {
     ATLMSettingsViewController *settingsViewController = [[ATLMSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped layerClient:self.layerClient];
     settingsViewController.settingsDelegate = self;
-    
-    UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
-    [self presentViewController:controller animated:YES completion:nil];
+    [self.navigationController pushViewController:settingsViewController animated:YES];
 }
 
 - (void)composeButtonTapped
