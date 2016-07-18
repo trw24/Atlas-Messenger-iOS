@@ -39,7 +39,7 @@
 - (void)setUp
 {
     [super setUp];
-    ATLMApplicationController *applicationController =  [(ATLMAppDelegate *)[[UIApplication sharedApplication] delegate] applicationController];
+    ATLMLayerController *applicationController =  [(ATLMAppDelegate *)[[UIApplication sharedApplication] delegate] layerController];
     self.testInterface = [ATLMTestInterface testInterfaceWithApplicationController:applicationController];
 }
 

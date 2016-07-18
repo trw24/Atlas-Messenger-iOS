@@ -19,12 +19,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
 
 @interface ATLMAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic) UIWindow *window;
-
-@property (nonatomic) ATLMApplicationController *applicationController;
 
 @end

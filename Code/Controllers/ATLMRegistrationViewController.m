@@ -9,11 +9,11 @@
 #import "ATLMRegistrationViewController.h"
 #import "ATLLogoView.h"
 #import <Atlas/Atlas.h>
-#import "ATLMLayerClient.h"
-#import "ATLMAPIManager.h"
 #import "ATLMConstants.h"
 #import "ATLMUtilities.h"
 #import <SVProgressHUD/SVProgressHUD.h>
+#import "ATLMConstants.h"
+#import "ATLMErrors.h"  
 
 @interface ATLMRegistrationViewController () <UITextFieldDelegate>
 
@@ -104,43 +104,12 @@ CGFloat const ATLMfirstNameTextFieldBottomPadding = 20;
 - (void)registerAndAuthenticateUserWithFirstName:(NSString *)firstName lastName:(NSString *)lastName
 {
     [self.view endEditing:YES];
-    
-    if (self.applicationController.layerClient.authenticatedUser.userID) {
-        NSLog(@"Layer already authenticated as: %@", self.applicationController.layerClient.authenticatedUser);
-        return;
+
+    // Gather and send the credentials to the delegate.
+    NSDictionary *credentials = @{ ATLMFirstNameKey: firstName, ATLMLastNameKey: lastName };
+    if ([self.delegate respondsToSelector:@selector(registrationViewController:didSubmitCredentials:)]) {
+        [self.delegate registrationViewController:self didSubmitCredentials:credentials];
     }
-    
-    [SVProgressHUD showWithStatus:@"Authenticating with Layer"];
-    NSLog(@"Requesting Authentication Nonce");
-    [self.applicationController.layerClient requestAuthenticationNonceWithCompletion:^(NSString *nonce, NSError *error) {
-        NSLog(@"Got a nonce %@", nonce);
-        if (error) {
-            ATLMAlertWithError(error);
-            return;
-        }
-        NSLog(@"Registering user");
-        [self.applicationController.APIManager registerUserWithFirstName:firstName lastName:lastName nonce:nonce completion:^(NSString *identityToken, NSError *error) {
-            NSLog(@"User registered and got identity token: %@ (error=%@)", identityToken, error);
-            if (error) {
-                ATLMAlertWithError(error);
-                return;
-            }
-            NSLog(@"Authenticating Layer");
-            if (!identityToken) {
-                NSError *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMInvalidIdentityToken userInfo:@{NSLocalizedDescriptionKey : @"Failed to obtain a valid identity token"}];
-                ATLMAlertWithError(error);
-                return;
-            }
-            [self.applicationController.layerClient authenticateWithIdentityToken:identityToken completion:^(LYRIdentity *authenticatedUser, NSError *error) {
-                if (error) {
-                    ATLMAlertWithError(error);
-                    return;
-                }
-                NSLog(@"Layer authenticated as: %@", authenticatedUser);
-                [SVProgressHUD showSuccessWithStatus:@"Authenticated!"];
-            }];
-        }];
-    }];
 }
 
 - (void)configureLayoutConstraints
@@ -155,13 +124,11 @@ CGFloat const ATLMfirstNameTextFieldBottomPadding = 20;
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.firstNameTextField attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ATLMfirstNameTextFieldHeight]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.firstNameTextField attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.lastNameTextField attribute:NSLayoutAttributeTop multiplier:1.0 constant:-ATLMfirstNameTextFieldBottomPadding]];
 
-    
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.lastNameTextField attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.lastNameTextField attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:ATLMfirstNameTextFieldWidthRatio constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.lastNameTextField attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ATLMfirstNameTextFieldHeight]];
     self.lastNameTextFieldBottomConstraint = [NSLayoutConstraint constraintWithItem:self.lastNameTextField attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-ATLMfirstNameTextFieldBottomPadding];
     [self.view addConstraint:self.lastNameTextFieldBottomConstraint];
-    
 }
 
 @end

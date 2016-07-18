@@ -53,7 +53,7 @@ static CGFloat const ATLMAvatarDiameter = 72;
         _imageView.initialsColor = ATLGrayColor();
         _imageView.backgroundColor = ATLLightGrayColor();
         _imageView.layer.cornerRadius = ATLMAvatarDiameter / 2;
-        _imageView.avatarItem = user;
+        _imageView.avatarItem = (id<ATLAvatarItem>)user;
         [self addSubview:_imageView];
         
         _nameLabel = [[UILabel alloc] init];

@@ -19,11 +19,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ATLMUser.h"
+#import <LayerKit/LayerKit.h>
 
 @interface ATLMSettingsHeaderView : UIView
 
-+ (instancetype)headerViewWithUser:(ATLMUser *)user;
++ (instancetype)headerViewWithUser:(LYRIdentity *)user;
 
 - (void)updateConnectedStateWithString:(NSString *)string;
 

@@ -1,5 +1,5 @@
 //
-//  ASConstants.m
+//  ATLMConstants.m
 //  Atlas Messenger
 //
 //  Created by Kevin Coleman on 2/18/15.

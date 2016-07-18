@@ -7,11 +7,11 @@
 //
 
 #import "ATLMQRScannerController.h"
-#import <AVFoundation/AVFoundation.h>
 #import "ATLMOverlayView.h"
-#import "ATLMRegistrationViewController.h"
-#import "ATLMLayerClient.h"
 #import "ATLMUtilities.h"
+#import "ATLMErrors.h"
+
+#import <AVFoundation/AVFoundation.h>
 #import <ClusterPrePermissions/ClusterPrePermissions.h>
 
 @interface ATLMQRScannerController () <AVCaptureMetadataOutputObjectsDelegate, UIAlertViewDelegate>
@@ -64,10 +64,8 @@ NSString *const ATLMDidReceiveLayerAppID = @"ATLMDidRecieveLayerAppID";
     AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:&error];
     if (!input) {
-        if (!self.applicationController.layerClient.appID) {
-            NSError *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMDeviceTypeNotSupported userInfo:@{NSLocalizedDescriptionKey : @"Cannot scan QR Codes from the simulator"}];
+        NSError *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMDeviceTypeNotSupported userInfo:@{NSLocalizedDescriptionKey : @"Cannot scan QR Codes from the simulator"}];
             ATLMAlertWithError(error);
-        }
         return;
     }
     
@@ -91,24 +89,14 @@ NSString *const ATLMDidReceiveLayerAppID = @"ATLMDidRecieveLayerAppID";
 - (void)toggleQRCapture
 {
     if (!_isReading) {
-        [self startReading];
+        [self.captureSession startRunning];
     } else {
-        [self stopReading];
+        [self.captureSession stopRunning];
     }
     _isReading = !_isReading;
 }
 
-- (void)startReading
-{
-    [self.captureSession startRunning];
-}
-
--(void)stopReading
-{
-    [self.captureSession stopRunning];
-}
-
--(void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection
+- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection
 {
     if (metadataObjects != nil && [metadataObjects count] > 0) {
         AVMetadataMachineReadableCodeObject *metadataObj = [metadataObjects objectAtIndex:0];
@@ -117,7 +105,7 @@ NSString *const ATLMDidReceiveLayerAppID = @"ATLMDidRecieveLayerAppID";
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self toggleQRCapture];
                     self.applicationID = metadataObj.stringValue;
-                    [self setupLayerWithAppID:self.applicationID];
+                    [self notifyDelegateOfAppID:self.applicationID];
                 });
             }
             _isReading = NO;
@@ -125,35 +113,19 @@ NSString *const ATLMDidReceiveLayerAppID = @"ATLMDidRecieveLayerAppID";
     }
 }
 
-- (void)setupLayerWithAppID:(NSString *)appID
+- (void)notifyDelegateOfAppID:(NSString *)appID
 {
     NSURL *applicationID = [NSURL URLWithString:appID];
     if (applicationID) {
-        [[NSUserDefaults standardUserDefaults] setValue:appID forKey:ATLMLayerApplicationID];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        [[NSNotificationCenter defaultCenter] postNotificationName:ATLMDidReceiveLayerAppID object:appID];
-        [self presentRegistrationViewController];
+        if ([self.delegate respondsToSelector:@selector(scannerController:didScanLayerAppID:)]) {
+            [self.delegate scannerController:self didScanLayerAppID:applicationID];
+        }
     } else {
-        NSError *error = [[NSError alloc] initWithDomain:ATLMErrorDomain code:ATLMInvalidAppIDString userInfo:@{NSLocalizedDescriptionKey : @"There was an error scanning the QR code. Please try again"}];
-        UIAlertView *alertView = ATLMAlertWithError(error);
-        alertView.delegate = self;
+        NSError *error = [[NSError alloc] initWithDomain:ATLMErrorDomain code:ATLMInvalidAppIDString userInfo:@{ NSLocalizedDescriptionKey: @"There was an error scanning the QR code. Please try again." }];
+        if ([self.delegate respondsToSelector:@selector(scannerController:didFailWithError:)]) {
+            [self.delegate scannerController:self didFailWithError:error];
+        }
     }
-}
-
-- (void)presentRegistrationViewController
-{
-    if ([self.navigationController.viewControllers.lastObject isKindOfClass:[ATLMRegistrationViewController class]]) {
-        return;
-    }
-    ATLMRegistrationViewController *controller = [[ATLMRegistrationViewController alloc] init];
-    controller.applicationController = self.applicationController;
-    [self.navigationController pushViewController:controller animated:YES];
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    self.applicationID = nil;
-    [self toggleQRCapture];
 }
 
 @end

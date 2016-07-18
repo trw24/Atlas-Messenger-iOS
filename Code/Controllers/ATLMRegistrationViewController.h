@@ -19,16 +19,34 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
+
+@class ATLMRegistrationViewController;
 
 /**
- @abstract The `ATLMRegistrationViewController` presents a simple interface for registering a user with a user name. 
+ @abstract The `ATLMQRScannerControllerDelegate` notifies the receiver when
+   the scanner view controller detects a Layer App ID, or in case there was
+   a problem during detection.
+ */
+@protocol ATLMRegistrationViewControllerDelegate <NSObject>
+
+/**
+ @abstract
+ @param registrationViewController The sender that did the delegate invocation.
+ @param credentials The Layer appID the scanner detected.
+ */
+- (void)registrationViewController:(nonnull ATLMRegistrationViewController *)registrationViewController didSubmitCredentials:(nonnull NSDictionary *)credentials;
+
+@end
+
+/**
+ @abstract The `ATLMRegistrationViewController` presents a simple interface for registering a user with a user name.
  */
 @interface ATLMRegistrationViewController : UIViewController
 
 /**
- @abstract The controller object for the application.
+ @abstract The receiver of the appID, once the QC code scanner recognizes it.
  */
-@property (nonatomic) ATLMApplicationController *applicationController;
+@property (nullable, nonatomic, weak) id<ATLMRegistrationViewControllerDelegate> delegate;
 
 @end

@@ -19,12 +19,10 @@
 //
 
 #import "ATLMConversationListViewController.h"
-#import "ATLMUser.h"
 #import "ATLMConversationViewController.h"
 #import "ATLMSettingsViewController.h"
 #import "ATLMConversationDetailViewController.h"
 #import "ATLMNavigationController.h"
-#import "ATLMSplitViewController.h"
 #import "LYRIdentity+ATLParticipant.h"
 
 @interface ATLMConversationListViewController () <ATLConversationListViewControllerDelegate, ATLConversationListViewControllerDataSource, ATLMSettingsViewControllerDelegate, UIActionSheetDelegate>
@@ -36,6 +34,8 @@
 NSString *const ATLMConversationListTableViewAccessibilityLabel = @"Conversation List Table View";
 NSString *const ATLMSettingsButtonAccessibilityLabel = @"Settings Button";
 NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
+
+#pragma mark UIView overrides
 
 - (void)viewDidLoad
 {
@@ -138,12 +138,12 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
     NSMutableArray *firstNames = [NSMutableArray new];
     [participants enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
         id<ATLParticipant> participant = obj;
-        if (participant.firstName) {
+        if (participant.displayName) {
             // Put the last message sender's name first
             if ([conversation.lastMessage.sender.userID isEqualToString:participant.userID]) {
-                [firstNames insertObject:participant.firstName atIndex:0];
+                [firstNames insertObject:participant.displayName atIndex:0];
             } else {
-                [firstNames addObject:participant.firstName];
+                [firstNames addObject:participant.displayName];
             }
         }
     }];
@@ -158,30 +158,26 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 {
     ATLMConversationViewController *existingConversationViewController = [self existingConversationViewController];
     if (existingConversationViewController && existingConversationViewController.conversation == conversation) {
-        if (self.navigationController.topViewController == existingConversationViewController) return;
+        if (self.navigationController.topViewController == existingConversationViewController) {
+            return;
+        }
         [self.navigationController popToViewController:existingConversationViewController animated:YES];
         return;
     }
-    
     BOOL shouldShowAddressBar = (conversation.participants.count > 2 || !conversation.participants.count);
-    ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.applicationController.layerClient];
-    conversationViewController.applicationController = self.applicationController;
+    ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.layerClient];
     conversationViewController.displaysAddressBar = shouldShowAddressBar;
     conversationViewController.conversation = conversation;
-    
-    [self.applicationController.splitViewController setDetailViewController:conversationViewController];
+    [self.navigationController pushViewController:conversationViewController animated:YES];
 }
 
 #pragma mark - Actions
 
 - (void)settingsButtonTapped
 {
-    ATLMSettingsViewController *settingsViewController = [[ATLMSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
-    settingsViewController.applicationController = self.applicationController;
+    ATLMSettingsViewController *settingsViewController = [[ATLMSettingsViewController alloc] initWithStyle:UITableViewStyleGrouped layerClient:self.layerClient];
     settingsViewController.settingsDelegate = self;
-    
-    UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
-    [self.navigationController presentViewController:controller animated:YES completion:nil];
+    [self.navigationController pushViewController:settingsViewController animated:YES];
 }
 
 - (void)composeButtonTapped
@@ -200,13 +196,29 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 
 #pragma mark - ATLMSettingsViewControllerDelegate
 
+- (void)switchUserTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController
+{
+    // Nothing to do. 
+}
+
 - (void)logoutTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController
 {
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeBlack];
     [SVProgressHUD show];
-    if (self.applicationController.layerClient.isConnected) {
-        [self.applicationController.layerClient deauthenticateWithCompletion:^(BOOL success, NSError *error) {
+    __weak typeof(self) weakSelf = self;
+    if (self.layerClient.isConnected) {
+        if ([weakSelf.presentationDelegate respondsToSelector:@selector(conversationListViewControllerWillBeDismissed:)]) {
+            [weakSelf.presentationDelegate conversationListViewControllerWillBeDismissed:weakSelf];
+        }
+        [self.layerClient deauthenticateWithCompletion:^(BOOL success, NSError *error) {
             [SVProgressHUD dismiss];
+            [settingsViewController dismissViewControllerAnimated:YES completion:^{
+                // Inform the presentation delegate all subviews (from child view
+                // controllers) have been dismissed.
+                if ([weakSelf.presentationDelegate respondsToSelector:@selector(conversationListViewControllerWasDismissed:)]) {
+                    [weakSelf.presentationDelegate conversationListViewControllerWasDismissed:weakSelf];
+                }
+            }];
         }];
     } else {
         [SVProgressHUD showErrorWithStatus:@"Unable to logout. Layer is not connected"];
@@ -254,7 +266,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
         return;
     }
     
-    NSString *authenticatedUserID = self.applicationController.layerClient.authenticatedUser.userID;
+    NSString *authenticatedUserID = self.layerClient.authenticatedUser.userID;
     if (!authenticatedUserID) return;
     LYRConversation *conversation = notification.object;
     if ([[conversation.participants valueForKeyPath:@"userID"] containsObject:authenticatedUserID]) return;

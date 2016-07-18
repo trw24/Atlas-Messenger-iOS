@@ -18,16 +18,12 @@
 //  limitations under the License.
 //
 
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
+#import "ATLConversationViewController.h"
 
 /**
  @abstract Subclass of the `ATLMConversationViewController`. Presents a user interface for displaying and sending messages.
  */
 @interface ATLMConversationViewController : ATLConversationViewController <ATLConversationViewControllerDataSource, ATLConversationViewControllerDelegate>
-
-/**
- @abstract The controller object for the application.
- */
-@property (nonatomic) ATLMApplicationController *applicationController;
 
 @end

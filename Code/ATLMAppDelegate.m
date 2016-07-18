@@ -20,159 +20,88 @@
 
 #import <LayerKit/LayerKit.h>
 #import <Atlas/Atlas.h>
-#import <MessageUI/MessageUI.h>
-#import <sys/sysctl.h>
-#import <asl.h>
+#import <SVProgressHUD/SVProgressHUD.h>
 
 #import "ATLMAppDelegate.h"
 #import "ATLMNavigationController.h"
 #import "ATLMConversationListViewController.h"
-#import "ATLMSplitViewController.h"
 #import "ATLMSplashView.h"
-#import <SVProgressHUD/SVProgressHUD.h>
 #import "ATLMQRScannerController.h"
 #import "ATLMUtilities.h"
+#import "ATLMConstants.h"
+#import "ATLMAuthenticationProvider.h"
+#import "ATLMApplicationViewController.h"
 
-// TODO: Configure a Layer appID from https://developer.layer.com/dashboard/atlas/build
 static NSString *const ATLMLayerAppID = nil;
-static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
+static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas-Messenger.appID";
 
-@interface ATLMAppDelegate () <MFMailComposeViewControllerDelegate>
+@interface ATLMAppDelegate () <ATLMApplicationControllerDelegate, ATLMLayerControllerDelegate>
 
-@property (nonatomic) ATLMQRScannerController *scannerController;
-@property (nonatomic) UINavigationController *navigationController;
-@property (nonatomic) ATLMConversationListViewController *conversationListViewController;
-@property (nonatomic) ATLMSplashView *splashView;
-@property (nonatomic) ATLMLayerClient *layerClient;
-@property (nonatomic) ATLMSplitViewController *splitViewController;
+@property (nonnull, nonatomic) ATLMLayerController *layerController;
+@property (nonnull, nonatomic) ATLMApplicationViewController *applicationViewController;
 
 @end
 
 @implementation ATLMAppDelegate
 
+#pragma mark UIApplicationDelegate
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.applicationController = [ATLMApplicationController controllerWithPersistenceManager:[ATLMPersistenceManager defaultManager]];
+    [SVProgressHUD setMinimumDismissTimeInterval:3.0f];
     
-    // Set up window
-    [self configureWindow];
+    // Create the view controller that will also be the root view controller of the app.
+    self.applicationViewController = [ATLMApplicationViewController new];
+    self.applicationViewController.delegate = self;
     
-    // Setup notifications
-    [self registerNotificationObservers];
+    // Restore the appID from the user defaults (if available).
+    NSString *appIDString = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationIDUserDefaultsKey];
+    NSURL *appID = [NSURL URLWithString:appIDString];
+    if (appID) {
+        [self initializeLayerWithAppID:appID];
+    }
     
-    // Setup Layer
-    [self setupLayer];
-    
-    // Configure Atlas Messenger UI appearance
-    [self configureGlobalUserInterfaceAttributes];
-    
+    // Push Notifications follow authentication state
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(registerForRemoteNotifications) name:LYRClientDidAuthenticateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(unregisterForRemoteNotifications) name:LYRClientDidDeauthenticateNotification object:nil];
+
+    // Put the view controller on screen.
+    self.window = [UIWindow new];
+    self.window.frame = [[UIScreen mainScreen] bounds];
+    self.window.rootViewController = self.applicationViewController;
+    [self.window makeKeyAndVisible];
     return YES;
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application
+- (void)initializeLayerWithAppID:(nonnull NSURL *)appID
 {
-    [self resumeSession];
+    NSParameterAssert(appID);
+    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerAppID:appID];
+    
+    // Configure the Layer Client options.
+    LYRClientOptions *clientOptions = [LYRClientOptions new];
+    clientOptions.synchronizationPolicy = LYRClientSynchronizationPolicyPartialHistory;
+    clientOptions.partialHistoryMessageCount = 20;
+    
+    // Create the application controller.
+    self.layerController = [ATLMLayerController applicationControllerWithLayerAppID:appID clientOptions:clientOptions authenticationProvider:authenticationProvider];
+    self.layerController.delegate = self;    
+    
+    self.applicationViewController.layerController = self.layerController;
+    
+    // Persist the appID for subsequent launches
+    [[NSUserDefaults standardUserDefaults] setObject:[appID absoluteString] forKey:ATLMLayerApplicationIDUserDefaultsKey];
+}
+
+- (void)applicationController:(nonnull ATLMApplicationViewController *)applicationController didCollectLayerAppID:(nonnull NSURL *)appID
+{
+    [self initializeLayerWithAppID:appID];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    [self setApplicationBadgeNumber];
-}
-
-#pragma mark - Setup
-
-- (void)configureWindow
-{
-    self.splitViewController = [[ATLMSplitViewController alloc] init];
-    self.applicationController.splitViewController = self.splitViewController;
-    
-    self.window = [UIWindow new];
-    [self.window makeKeyAndVisible];
-    self.window.frame = [[UIScreen mainScreen] bounds];
-    self.window.rootViewController = self.splitViewController;
-
-    [self addSplashView];
-}
-
-- (void)setupLayer
-{
-    NSString *appID = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationID];
-    if (appID) {
-        // Only instantiate one instance of `LYRClient`
-        if (!self.layerClient) {
-            self.layerClient = [ATLMLayerClient clientWithAppID:[NSURL URLWithString:appID] options:@{ LYRClientOptionSynchronizationPolicy : @(LYRClientSynchronizationPolicyMessageCount), LYRClientOptionSynchronizationMessageCount: @(10) }];
-            self.layerClient.autodownloadMIMETypes = [NSSet setWithObjects:ATLMIMETypeImageJPEGPreview, ATLMIMETypeTextPlain, nil];
-        }
-        ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerClient:self.layerClient];
-        self.applicationController.layerClient = self.layerClient;
-        self.applicationController.APIManager = manager;
-        [self connectLayerIfNeeded];
-        if (![self resumeSession]) {
-            [self presentScannerViewController:YES withAuthenticationController:YES];
-        } else {
-            [self removeSplashView];
-        }
-    } else {
-        [self presentScannerViewController:YES withAuthenticationController:NO];
-    }
-}
-
-- (void)registerNotificationObservers
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLayerAppID:) name:ATLMDidReceiveLayerAppID object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidAuthenticate:) name:ATLMUserDidAuthenticateNotification object:nil];
-    [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(userDidAuthenticateWithLayer:) name:LYRClientDidAuthenticateNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidDeauthenticate:) name:ATLMUserDidDeauthenticateNotification object:nil];
-}
-
-#pragma mark - Session Management
-
-- (BOOL)resumeSession
-{
-    if (self.applicationController.layerClient.authenticatedUser) {
-        ATLMSession *session = [self.applicationController.persistenceManager persistedSessionWithError:nil];
-        if ([self.applicationController.APIManager resumeSession:session error:nil]) {
-            [self presentAuthenticatedLayerSession];
-            return YES;
-        }
-    }
-    return NO;
-}
-
-- (void)connectLayerIfNeeded
-{
-    if (!self.applicationController.layerClient.isConnected && !self.applicationController.layerClient.isConnecting) {
-        [self.applicationController.layerClient connectWithCompletion:^(BOOL success, NSError *error) {
-            NSLog(@"Layer Client Connected");
-        }];
-    }
-}
-
-#pragma mark - Push Notifications
-
-- (void)registerForRemoteNotifications:(UIApplication *)application
-{
-    // Registers for push on iOS 7 and iOS 8
-    if ([application respondsToSelector:@selector(registerForRemoteNotifications)]) {
-        NSSet *categories = nil;
-        if ([UIMutableUserNotificationAction instancesRespondToSelector:@selector(behavior)]) {
-            categories = [NSSet setWithObject:ATLDefaultUserNotificationCategory()];
-        }
-        
-        UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:categories];
-        [application registerUserNotificationSettings:notificationSettings];
-        [application registerForRemoteNotifications];
-    } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeBadge];
-#pragma GCC diagnostic pop
-    }
-}
-
-- (void)unregisterForRemoteNotifications:(UIApplication *)application
-{
-    [application unregisterForRemoteNotifications];
+    NSUInteger countOfUnreadMessages = [self.layerController countOfUnreadMessages];
+    [application setApplicationIconBadgeNumber:countOfUnreadMessages];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
@@ -182,222 +111,64 @@ static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-    NSError *error;
-    BOOL success = [self.applicationController.layerClient updateRemoteNotificationDeviceToken:deviceToken error:&error];
-    if (success) {
-        NSLog(@"Application did register for remote notifications");
-    } else {
-        NSLog(@"Error updating Layer device token for push:%@", error);
-    }
+    [self.layerController updateRemoteNotificationDeviceToken:deviceToken];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    NSLog(@"User Info: %@", userInfo);
-    BOOL userTappedRemoteNotification = application.applicationState == UIApplicationStateInactive;
-    __block LYRConversation *conversation = [self conversationFromRemoteNotification:userInfo];
-    if (userTappedRemoteNotification && conversation) {
-        [self navigateToViewForConversation:conversation];
-    } else if (userTappedRemoteNotification) {
-        [SVProgressHUD showWithStatus:@"Loading Conversation"];
-    }
-    
-    BOOL success = [self.applicationController.layerClient synchronizeWithRemoteNotification:userInfo completion:^(LYRConversation * _Nullable conversation, LYRMessage * _Nullable message, NSError * _Nullable error) {
-        if (conversation || message) {
+    [self.layerController handleRemoteNotification:userInfo responseInfo:nil completion:^(BOOL success, NSError * _Nullable error) {
+        if (success) {
             completionHandler(UIBackgroundFetchResultNewData);
         } else {
-            completionHandler(error ? UIBackgroundFetchResultFailed : UIBackgroundFetchResultNoData);
-        }
-        
-        // Try navigating once the synchronization completed
-        if (userTappedRemoteNotification && conversation) {
-            [SVProgressHUD dismiss];
-            [self navigateToViewForConversation:conversation];
+            NSLog(@"Failed to handle remote notification with error %@", error);
+            completionHandler(UIBackgroundFetchResultFailed);
         }
     }];
-    
-    if (!success) {
-        completionHandler(UIBackgroundFetchResultNoData);
-    }
-}
-
--(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
-{
-    return YES;
-}
-
-- (LYRConversation *)conversationFromRemoteNotification:(NSDictionary *)remoteNotification
-{
-    NSURL *conversationIdentifier = [NSURL URLWithString:[remoteNotification valueForKeyPath:@"layer.conversation_identifier"]];
-    return [self.applicationController.layerClient existingConversationForIdentifier:conversationIdentifier];
-}
-
-- (void)navigateToViewForConversation:(LYRConversation *)conversation
-{
-    if (![NSThread isMainThread]) {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Attempted to navigate UI from non-main thread" userInfo:nil];
-    }
-    [self.conversationListViewController selectConversation:conversation];
 }
 
 - (void)application:(UIApplication *)application handleActionWithIdentifier:(nullable NSString *)identifier forRemoteNotification:(nonnull NSDictionary *)userInfo withResponseInfo:(nonnull NSDictionary *)responseInfo completionHandler:(nonnull void (^)())completionHandler
 {
-    if ([identifier isEqualToString:ATLUserNotificationInlineReplyActionIdentifier]) {
-        NSString *responseText = responseInfo[UIUserNotificationActionResponseTypedTextKey];
-        if ([responseText length]) {
-            LYRConversation *conversation = [self conversationFromRemoteNotification:userInfo];
-            if (conversation) {
-                LYRMessagePart *messagePart = [LYRMessagePart messagePartWithText:responseText];
-                NSString *fullName = self.applicationController.layerClient.authenticatedUser.displayName;
-                NSString *pushText = [NSString stringWithFormat:@"%@: %@", fullName, responseText];
-                LYRMessage *message = ATLMessageForParts(self.applicationController.layerClient, @[ messagePart ], pushText, ATLMPushNotificationSoundName);
-                if (message) {
-                    NSError *error = nil;
-                    BOOL success = [conversation sendMessage:message error:&error];
-                    if (!success) {
-                        NSLog(@"Failed to send inline reply: %@", [error localizedDescription]);
-                    }
-                }
-            } else {
-                NSLog(@"Failed to complete inline reply: unable to find Conversation referenced by remote notification.");
-            }
-        }
-    }
-    completionHandler();
-}
-
-#pragma mark - Authentication Notification Handlers
-
-- (void)didReceiveLayerAppID:(NSNotification *)notification
-{
-    [self setupLayer];
-}
-
-- (void)userDidAuthenticateWithLayer:(NSNotification *)notification
-{
-    if (![NSThread isMainThread]) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self userDidAuthenticateWithLayer:notification];
-        });
+    if (![identifier isEqualToString:ATLUserNotificationInlineReplyActionIdentifier]) {
+        // Bail out, if the action identifier is not meant for us.
         return;
     }
-    [self presentAuthenticatedLayerSession];
-}
-
-- (void)userDidAuthenticate:(NSNotification *)notification
-{
-    NSError *error;
-    ATLMSession *session = self.applicationController.APIManager.authenticatedSession;
-    BOOL success = [self.applicationController.persistenceManager persistSession:session error:&error];
-    if (success) {
-        NSLog(@"Persisted authenticated user session: %@", session);
-    } else {
-        NSLog(@"Failed persisting authenticated user: %@. Error: %@", session, error);
-    }
-    [self registerForRemoteNotifications:[UIApplication sharedApplication]];
-}
-
-- (void)userDidDeauthenticate:(NSNotification *)notification
-{
-    NSError *error;
-    BOOL success = [self.applicationController.persistenceManager persistSession:nil error:&error];
-    if (success) {
-        NSLog(@"Cleared persisted user session");
-    } else {
-        NSLog(@"Failed clearing persistent user session: %@", error);
-        //TODO - Handle Error
-    }
-    [self addSplashView];
-    self.splashView.alpha = 0.0f;
-    
-    [UIView animateWithDuration:0.3f animations:^{
-        self.splashView.alpha = 1.0f;
-    } completion:^(BOOL finished) {
-        [self.splitViewController dismissViewControllerAnimated:YES completion:^{
-            self.conversationListViewController = nil;
-            [self.splitViewController resignFirstResponder];
-            [self.splitViewController setDetailViewController:[UIViewController new]];
-            [self setupLayer];
-        }];
-    }];
-
-    [self unregisterForRemoteNotifications:[UIApplication sharedApplication]];
-}
-
-#pragma mark - ScannerView
-
-- (void)presentScannerViewController:(BOOL)animated withAuthenticationController:(BOOL)withAuthenticationController
-{
-    self.scannerController = [ATLMQRScannerController new];
-    self.scannerController.applicationController = self.applicationController;
-    
-    self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.scannerController];
-    self.navigationController.navigationBarHidden = YES;
-    
-    [self.splitViewController presentViewController:self.navigationController animated:animated completion:^{
-        if (!withAuthenticationController) {
-            [self removeSplashView];
+    [self.layerController handleRemoteNotification:userInfo responseInfo:responseInfo completion:^(BOOL success, NSError * _Nullable error) {
+        if (success) {
+            completionHandler(UIBackgroundFetchResultNewData);
         } else {
-            [self.scannerController presentRegistrationViewController];
-            [self performSelector:@selector(removeSplashView) withObject:nil afterDelay:1.0f];
+            NSLog(@"Failed to handle remote notification with response with error %@", error);
+            completionHandler(UIBackgroundFetchResultFailed);
         }
     }];
 }
 
-#pragma mark - Conversations
-
-- (void)presentAuthenticatedLayerSession
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    if (self.navigationController) {
-        [self.splitViewController dismissViewControllerAnimated:YES completion:nil];
-    }
-    if (self.conversationListViewController) return;
-    self.conversationListViewController = [ATLMConversationListViewController conversationListViewControllerWithLayerClient:self.applicationController.layerClient];
-    self.conversationListViewController.applicationController = self.applicationController;
-    
-    ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.applicationController.layerClient];
-    conversationViewController.applicationController = self.applicationController;
-    conversationViewController.displaysAddressBar = YES;
-    
-    [self.splitViewController setMainViewController:self.conversationListViewController];
-    [self.splitViewController setDetailViewController:conversationViewController];
+    return YES;
 }
 
-#pragma mark - Splash View
+#pragma mark - Remote Notifications
 
-- (void)addSplashView
+- (void)registerForRemoteNotifications
 {
-    if (!self.splashView) {
-        self.splashView = [[ATLMSplashView alloc] initWithFrame:self.window.bounds];
-    }
-    [self.window addSubview:self.splashView];
+    NSSet *categories = [NSSet setWithObject:ATLDefaultUserNotificationCategory()];
+    UIUserNotificationType types = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+    UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:types
+                                                                                         categories:categories];
+    [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
 
-- (void)removeSplashView
+- (void)unregisterForRemoteNotifications
 {
-    [UIView animateWithDuration:0.5 animations:^{
-        self.splashView.alpha = 0.0;
-    } completion:^(BOOL finished) {
-        [self.splashView removeFromSuperview];
-        self.splashView = nil;
-    }];
+    [[UIApplication sharedApplication] unregisterForRemoteNotifications];
 }
 
-#pragma mark - UI Config
+#pragma mark - ATLMLayerControllerDelegate
 
-- (void)configureGlobalUserInterfaceAttributes
+- (void)layerController:(ATLMLayerController *)applicationController didFailWithError:(NSError *)error
 {
-    [[UINavigationBar appearance] setTintColor:ATLBlueColor()];
-    [[UINavigationBar appearance] setBarTintColor:ATLLightGrayColor()];
-    [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTintColor:ATLBlueColor()];
-}
-
-#pragma mark - Application Badge Setter
-
-- (void)setApplicationBadgeNumber
-{
-    NSUInteger countOfUnreadMessages = [self.applicationController.layerClient countOfUnreadMessages];
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:countOfUnreadMessages];
+    NSLog(@"Application controller=%@ has hit an error=%@", applicationController, error);
 }
 
 @end
