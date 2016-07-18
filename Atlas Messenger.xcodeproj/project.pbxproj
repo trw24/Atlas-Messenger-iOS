@@ -150,6 +150,7 @@
 		251D8DBF1A9688C40000BFA2 /* ATLMOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMOverlayView.m; sourceTree = "<group>"; };
 		259A576F1950EB83000E27B0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		259A577B1950EB92000E27B0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		25BB93551D3D70A200F90484 /* Atlas Messenger.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Atlas Messenger.entitlements"; sourceTree = "<group>"; };
 		3695BF0A769E21CC111D2D1E /* Pods-Atlas Messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas Messenger.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger.debug.xcconfig"; sourceTree = "<group>"; };
 		37E88B6E0DA524269545FDD7 /* Pods_Atlas_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Atlas_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AD4FCDEDFC401B99ACE83BE /* Pods-Atlas Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas Messenger.release.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger.release.xcconfig"; sourceTree = "<group>"; };
@@ -231,6 +232,7 @@
 		0A0C241A19477D8F00401B74 = {
 			isa = PBXGroup;
 			children = (
+				25BB93551D3D70A200F90484 /* Atlas Messenger.entitlements */,
 				259A57111950EB76000E27B0 /* Code */,
 				D648F5A41CEA2BF000614F28 /* Supporting Files */,
 				0A0C242419477D8F00401B74 /* Products */,
@@ -523,6 +525,8 @@
 				ORGANIZATIONNAME = "Layer, Inc.";
 				TargetAttributes = {
 					0A0C242219477D8F00401B74 = {
+						DevelopmentTeam = U46UP347QQ;
+						DevelopmentTeamName = "Layer, Inc.";
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -531,6 +535,9 @@
 								enabled = 0;
 							};
 							com.apple.Maps.iOS = {
+								enabled = 1;
+							};
+							com.apple.Push = {
 								enabled = 1;
 							};
 						};
@@ -844,6 +851,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Atlas Messenger.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -877,6 +885,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Atlas Messenger.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
