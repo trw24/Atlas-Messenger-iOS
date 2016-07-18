@@ -85,7 +85,7 @@ static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas
     
     // Create the application controller.
     self.layerController = [ATLMLayerController applicationControllerWithLayerAppID:appID clientOptions:clientOptions authenticationProvider:authenticationProvider];
-    self.layerController.delegate = self;
+    self.layerController.delegate = self;    
     
     self.applicationViewController.layerController = self.layerController;
     
