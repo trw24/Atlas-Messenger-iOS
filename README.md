@@ -25,7 +25,7 @@ To build Atlas Messenger, you need a few a few standard iOS Development Tools:
 1. [Xcode](https://developer.apple.com/xcode/) - Apple's suite of iOS and OS X development tools. Available on the [App Store](http://itunes.apple.com/us/app/xcode/id497799835).
 2. [CocoaPods](http://cocoapods.org/) - The dependency manager for Cocoa projects. CocoaPods is used to automate the build and configuration of Atlas Messenger. Available by executing `$ sudo gem install cocoapods` in your terminal.
 
-**Note:** We currently do not support any beta version of CocoaPods 1.0.0 due to a [breaking change](https://github.com/CocoaPods/CocoaPods/issues/4950#issuecomment-196289770). Please use Cocoapods 0.39.x.
+**Note:** Make sure to use CocoaPods >= 1.0.0.
 
 #### Cloning & Preparing the Project
 
