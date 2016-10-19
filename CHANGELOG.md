@@ -1,5 +1,12 @@
 # Atlas Messenger Changelog
 
+## 0.9.3
+
+### Bug Fixes
+
+* Fixed Atlas version string to reflect current installed version.
+* Added permissions key for allowing access to Photo Library.
+
 ## 0.9.2-pre1
 
 ### Enchancements
