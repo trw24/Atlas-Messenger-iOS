@@ -181,7 +181,7 @@ NSString *const ATLMConnecting = @"Connecting";
             switch (indexPath.row) {
                 case ATLMInfoTableRowAtlasVersion:
                     cell.textLabel.text = @"Atlas Version";
-                    cell.detailTextLabel.text = @"1.0.2";
+                    cell.detailTextLabel.text = ATLVersionString;
                     break;
 
                 case ATLMInfoTableRowLayerKitVersion:
