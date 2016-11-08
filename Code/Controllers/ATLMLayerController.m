@@ -41,10 +41,10 @@ NSString *const ATLMLayerControllerErrorDomain = @"ATLMLayerControllerErrorDomai
 
 + (nonnull instancetype)applicationControllerWithLayerAppID:(nonnull NSURL *)layerAppID clientOptions:(nullable LYRClientOptions *)clientOptions authenticationProvider:(nonnull id<ATLMAuthenticating>)authenticationProvider
 {
-    return [[self alloc] initWithWithLayerAppID:layerAppID clientOptions:clientOptions authenticationProvider:authenticationProvider];
+    return [[self alloc] initWithLayerAppID:layerAppID clientOptions:clientOptions authenticationProvider:authenticationProvider];
 }
 
-- (id)initWithWithLayerAppID:(nonnull NSURL *)layerAppID clientOptions:(nullable LYRClientOptions *)clientOptions authenticationProvider:(nonnull id<ATLMAuthenticating>)authenticationProvider
+- (id)initWithLayerAppID:(nonnull NSURL *)layerAppID clientOptions:(nullable LYRClientOptions *)clientOptions authenticationProvider:(nonnull id<ATLMAuthenticating>)authenticationProvider
 {
     self = [super init];
     if (self) {

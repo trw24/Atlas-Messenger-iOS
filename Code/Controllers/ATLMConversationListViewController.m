@@ -35,6 +35,22 @@ NSString *const ATLMConversationListTableViewAccessibilityLabel = @"Conversation
 NSString *const ATLMSettingsButtonAccessibilityLabel = @"Settings Button";
 NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 
++ (instancetype)conversationListViewControllerWithLayerController:(ATLMLayerController *)layerController
+{
+    NSAssert(layerController, @"Layer Controller cannot be nil");
+    return [[self alloc] initWithLayerController:layerController];
+}
+
+- (instancetype)initWithLayerController:(ATLMLayerController *)layerController
+{
+    NSAssert(layerController, @"Layer Controller cannot be nil");
+    self = [self initWithLayerClient:layerController.layerClient];
+    if (self)  {
+        _layerController = layerController;
+    }
+    return self;
+}
+
 #pragma mark UIView overrides
 
 - (void)viewDidLoad
@@ -93,12 +109,12 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
 }
 
 /**
- Atlas - Informs the delegate that a search has been performed. Atlas messenger queries for, and returns objects conforming to the `ATLParticipant` protocol whose `fullName` property contains the search text.
+ Atlas - Informs the delegate that a search has been performed. Atlas messenger queries for, and returns objects conforming to the `ATLParticipant` protocol whose `displayName` property contains the search text.
  */
 - (void)conversationListViewController:(ATLConversationListViewController *)conversationListViewController didSearchForText:(nonnull NSString *)searchText completion:(nonnull void (^)(NSSet<id<ATLParticipant>> * _Nonnull))completion
 {
     LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
-    query.predicate = [LYRPredicate predicateWithProperty:@"displayName" predicateOperator:LYRPredicateOperatorLike value:[searchText stringByAppendingString:@"%"]];
+    query.predicate = [LYRPredicate predicateWithProperty:@"displayName" predicateOperator:LYRPredicateOperatorLike value:[NSString stringWithFormat:@"%%%@%%", searchText]];
     [self.layerClient executeQuery:query completion:^(NSOrderedSet<id<ATLParticipant>> * _Nullable resultSet, NSError * _Nullable error) {
         if (resultSet) {
             completion(resultSet.set);
@@ -165,7 +181,7 @@ NSString *const ATLMComposeButtonAccessibilityLabel = @"Compose Button";
         return;
     }
     BOOL shouldShowAddressBar = (conversation.participants.count > 2 || !conversation.participants.count);
-    ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerClient:self.layerClient];
+    ATLMConversationViewController *conversationViewController = [ATLMConversationViewController conversationViewControllerWithLayerController:self.layerController];
     conversationViewController.displaysAddressBar = shouldShowAddressBar;
     conversationViewController.conversation = conversation;
     [self.navigationController pushViewController:conversationViewController animated:YES];

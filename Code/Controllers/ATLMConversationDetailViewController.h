@@ -58,7 +58,7 @@ extern NSString *const ATLMConversationMetadataNameKey;
 /// @name Initializing a Controller
 ///--------------------------------
 
-+ (instancetype)conversationDetailViewControllerWithConversation:(LYRConversation *)conversation;
++ (instancetype)conversationDetailViewControllerWithConversation:(LYRConversation *)conversation withLayerController:(ATLMLayerController *)layerController;
 
 /**
  @abstract The `ATLMConversationDetailViewControllerDelegate` object for the controller.

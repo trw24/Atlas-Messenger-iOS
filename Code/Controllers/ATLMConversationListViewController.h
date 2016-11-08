@@ -18,10 +18,11 @@
 //  limitations under the License.
 //
 
+#import "ATLMLayerController.h"
 #import <Atlas/Atlas.h>
 #import <SVProgressHUD/SVProgressHUD.h>
 
-
+NS_ASSUME_NONNULL_BEGIN
 @class ATLConversationListViewController;
 
 /**
@@ -55,6 +56,11 @@
 @interface ATLMConversationListViewController : ATLConversationListViewController
 
 /**
+ @abstract The controller object for the application.
+ */
+@property (nonatomic) ATLMLayerController *layerController;
+
+/**
  @abstract Determines if the view controller should display an `Info` item as
    the left bar button item of the navigation controller.
  */
@@ -66,6 +72,8 @@
  */
 @property (nullable, nonatomic, weak) id<ATLMConversationListViewControllerPresentationDelegate> presentationDelegate;
 
++ (instancetype)conversationListViewControllerWithLayerController:(nonnull ATLMLayerController *)layerController;
+
 /**
  @abstract Programmatically simulates the selection of an `LYRConversation`
    object in the conversations table view.
@@ -75,3 +83,4 @@
 - (void)selectConversation:(nonnull LYRConversation *)conversation;
 
 @end
+NS_ASSUME_NONNULL_END

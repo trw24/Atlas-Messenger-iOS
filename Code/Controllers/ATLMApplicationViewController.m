@@ -171,7 +171,7 @@ static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationV
     [self.registrationNavigationController dismissViewControllerAnimated:YES completion:nil];
     self.registrationNavigationController = nil;
     
-    self.conversationListViewController = [ATLMConversationListViewController conversationListViewControllerWithLayerClient:self.layerController.layerClient];
+    self.conversationListViewController = [ATLMConversationListViewController conversationListViewControllerWithLayerController:self.layerController];
     self.conversationListViewController.presentationDelegate = self;
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.conversationListViewController];
     [self presentViewController:navigationController animated:YES completion:nil];

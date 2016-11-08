@@ -138,6 +138,22 @@ NSString *const ATLMConversationViewControllerAccessibilityLabel = @"Conversatio
 NSString *const ATLMDetailsButtonAccessibilityLabel = @"Details Button";
 NSString *const ATLMDetailsButtonLabel = @"Details";
 
++ (instancetype)conversationViewControllerWithLayerController:(ATLMLayerController *)layerController
+{
+    NSAssert(layerController, @"Layer Controller cannot be nil");
+    return [[self alloc] initWithLayerController:layerController];
+}
+
+- (instancetype)initWithLayerController:(ATLMLayerController *)layerController
+{
+    NSAssert(layerController, @"Layer Controller cannot be nil");
+    self = [self initWithLayerClient:layerController.layerClient];
+    if (self)  {
+        _layerController = layerController;
+    }
+    return self;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -478,7 +494,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 
 - (void)detailsButtonTapped
 {
-    ATLMConversationDetailViewController *detailViewController = [ATLMConversationDetailViewController conversationDetailViewControllerWithConversation:self.conversation];
+    ATLMConversationDetailViewController *detailViewController = [ATLMConversationDetailViewController conversationDetailViewControllerWithConversation:self.conversation withLayerController:self.layerController];
     detailViewController.detailDelegate = self;
     [self.navigationController pushViewController:detailViewController animated:YES];
 }

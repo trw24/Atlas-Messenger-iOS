@@ -68,16 +68,17 @@ static NSString *const ATLMCenterContentCellIdentifier = @"ATLMCenterContentCell
 static NSString *const ATLMPlusIconName = @"AtlasResource.bundle/plus";
 static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
-+ (instancetype)conversationDetailViewControllerWithConversation:(LYRConversation *)conversation
++ (instancetype)conversationDetailViewControllerWithConversation:(LYRConversation *)conversation withLayerController:(ATLMLayerController *)layerController
 {
-    return [[self alloc] initWithConversation:conversation];
+    return [[self alloc] initWithConversation:conversation withLayerController:layerController];
 }
 
-- (id)initWithConversation:(LYRConversation *)conversation
+- (id)initWithConversation:(LYRConversation *)conversation withLayerController:(ATLMLayerController *)layerController
 {
     self = [super initWithStyle:UITableViewStyleGrouped];
     if (self) {
         _conversation = conversation;
+        _layerController = layerController;
     }
     return self;
 }
@@ -413,15 +414,11 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     
     [self.participants addObject:participant];
-    if (self.conversation.participants.count < 3) {
-        [self switchToConversationForParticipants];
-    } else {
-        NSError *error;
-        BOOL success = [self.conversation addParticipants:[NSSet setWithObject:participant.userID] error:&error];
-        if (!success) {
-            ATLMAlertWithError(error);
-            return;
-        }
+    NSError *error;
+    BOOL success = [self.conversation addParticipants:[NSSet setWithObject:participant.userID] error:&error];
+    if (!success) {
+        ATLMAlertWithError(error);
+        return;
     }
     [self.tableView reloadData];
 }
