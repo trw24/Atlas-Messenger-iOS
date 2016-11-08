@@ -1,5 +1,11 @@
 # Atlas Messenger Changelog
 
+## 0.9.4
+
+### Bug Fixes
+
+* Fixes an issue where the app would crash when modifying the participants of a conversation.
+
 ## 0.9.3
 
 ### Bug Fixes
