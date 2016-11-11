@@ -46,6 +46,7 @@
 		251D8DDA1A9688C50000BFA2 /* ATLMStyleValue1TableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DBD1A9688C40000BFA2 /* ATLMStyleValue1TableViewCell.m */; };
 		251D8DDB1A9688C50000BFA2 /* ATLMOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DBF1A9688C40000BFA2 /* ATLMOverlayView.m */; };
 		259A57741950EB83000E27B0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 259A576E1950EB83000E27B0 /* InfoPlist.strings */; };
+		AA92F69A1DD3E4F800D02304 /* dream-incubator-logo-blue.png in Resources */ = {isa = PBXBuildFile; fileRef = AA92F6991DD3E4F800D02304 /* dream-incubator-logo-blue.png */; };
 		B0AC4E1964E683729B0EB00E /* Pods_Atlas_MessengerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B8D992502060E4DAC6E2B228 /* Pods_Atlas_MessengerTests.framework */; };
 		D016D0FC1D20D9D900D9AA4F /* ATLMApplicationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D016D0FB1D20D9D900D9AA4F /* ATLMApplicationViewController.m */; };
 		D62611691A98091800F6E707 /* layer-logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D62611661A98091800F6E707 /* layer-logo@2x.png */; };
@@ -156,6 +157,7 @@
 		3AD4FCDEDFC401B99ACE83BE /* Pods-Atlas Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas Messenger.release.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger.release.xcconfig"; sourceTree = "<group>"; };
 		59B57CA3D5D45FA6FA0D8778 /* Pods-Atlas MessengerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas MessengerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7FC2AE76B8F67E2DF341D013 /* Pods-Atlas MessengerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas MessengerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests.release.xcconfig"; sourceTree = "<group>"; };
+		AA92F6991DD3E4F800D02304 /* dream-incubator-logo-blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dream-incubator-logo-blue.png"; sourceTree = "<group>"; };
 		B53937831A24F6AF00DE60F9 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		B8D992502060E4DAC6E2B228 /* Pods_Atlas_MessengerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Atlas_MessengerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA1D93E68E9105BA0139B1C2 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -377,6 +379,7 @@
 		259A576B1950EB83000E27B0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				AA92F6991DD3E4F800D02304 /* dream-incubator-logo-blue.png */,
 				D633684A1A9D614900FBFCD3 /* atlas-splashscreen-960.png */,
 				D633684B1A9D614900FBFCD3 /* atlas-splashscreen-1334.png */,
 				D633684C1A9D614900FBFCD3 /* atlas-splashscreen-1336.png */,
@@ -521,7 +524,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = LS;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Layer, Inc.";
 				TargetAttributes = {
 					0A0C242219477D8F00401B74 = {
@@ -578,6 +581,7 @@
 				D62611711A98153C00F6E707 /* layer-logo-gray.png in Resources */,
 				D633684F1A9D614900FBFCD3 /* atlas-splashscreen-1334.png in Resources */,
 				D62611721A98153C00F6E707 /* layer-logo-gray@3x.png in Resources */,
+				AA92F69A1DD3E4F800D02304 /* dream-incubator-logo-blue.png in Resources */,
 				0ABEFFAF196B7686006FFFF3 /* logo@2x.png in Resources */,
 				D62D17371A9C267C00E0EFAF /* Launch Screen.xib in Resources */,
 				D63368501A9D614900FBFCD3 /* atlas-splashscreen-1336.png in Resources */,
@@ -777,8 +781,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -820,8 +826,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
