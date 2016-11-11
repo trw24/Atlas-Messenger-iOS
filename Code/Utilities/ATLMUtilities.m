@@ -28,14 +28,14 @@ BOOL ATLMIsRunningTests(void)
 NSURL *ATLMRailsBaseURL(ATLMEnvironment environment)
 {
     if (ATLMIsRunningTests()){
-        return [NSURL URLWithString:@"http://layer-test-identity-provider.herokuapp.com"];
+        return [NSURL URLWithString:@"http://di-messenger.herokuapp.com"];
     } else {
         switch (environment) {
             case ATLMEnvironmentProduction:
-                return [NSURL URLWithString:@"https://layer-identity-provider.herokuapp.com"];
+                return [NSURL URLWithString:@"https://di-messenger.herokuapp.com"];
                 break;
             case ATLMEnvironmentStaging:
-                return [NSURL URLWithString:@"http://layer-test-identity-provider.herokuapp.com"];
+                return [NSURL URLWithString:@"http://di-messenger.herokuapp.com"];
                 break;
             default:
                 break;

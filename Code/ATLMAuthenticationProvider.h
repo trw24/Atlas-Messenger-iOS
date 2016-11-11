@@ -21,25 +21,35 @@
 #import <Foundation/Foundation.h>
 #import "ATLMAuthenticating.h"
 
-/*
- @abstract A key whose value should be the first name of an authenticating user.
- */
-extern NSString * _Nonnull const ATLMFirstNameKey;
+NS_ASSUME_NONNULL_BEGIN
+static NSString *ATLMIdentityProviderRoot = @"https://di-messenger.herokuapp.com";
 
 /*
- @abstract A key whose value should be the last name of an authenticating user.
+ @abstract A key whose value should be the email address of an authenticating user.
  */
-extern NSString * _Nonnull const ATLMLastNameKey;
+extern NSString * _Nonnull const ATLMEmailKey;
+
+/*
+ @abstract A key whose value should be the password of an authenticating user.
+ */
+extern NSString * _Nonnull const ATLMPasswordKey;
 
 /**
  @abstract The `ATLMAuthenticationProvider` conforms to the `ATLMAuthenticating` protocol. It provides for making requests to the Layer Identity Provider in order to request identity tokens needed of LayerKit authentication.
  */
 @interface ATLMAuthenticationProvider : NSObject <ATLMAuthenticating>
 
++ (instancetype)defaultProvider;
+
 /**
  @abstract The initializer for the `ATLMAuthenticationProvider`.
  @param baseURL The base url for the Layer Identity provider.
  */
-+ (nonnull instancetype)providerWithBaseURL:(nonnull NSURL *)baseURL layerAppID:(nonnull NSURL *)layerAppID;
++ (nonnull instancetype)providerWithBaseURL:(nonnull NSURL *)baseURL;
+
+- (void)authenticateWithCredentials:(NSDictionary *)credentials nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion;
+
+- (void)getUsersAuthenticatedUserCanChatWith:(NSString *)authenticatedUserID completion:(void (^)(NSArray *users, NSError *error))completion;
 
 @end
+NS_ASSUME_NONNULL_END

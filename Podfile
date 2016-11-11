@@ -3,13 +3,14 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 use_frameworks!
 
-target 'Atlas Messenger' do
+target 'DI Messenger' do
   pod 'Atlas', '~> 1.0.29'
   pod 'SVProgressHUD'
   pod 'ClusterPrePermissions', '~> 0.1'
+  pod 'RNCryptor', '~> 4.0.0-beta'
 end
 
-target 'Atlas MessengerTests' do
+target 'DI MessengerTests' do
   pod 'OCMock'
   pod 'Expecta'
   pod 'KIF'

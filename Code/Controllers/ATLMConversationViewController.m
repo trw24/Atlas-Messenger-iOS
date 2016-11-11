@@ -130,6 +130,8 @@ static ATLMDateProximity ATLMProximityToDate(NSDate *date)
 
 @interface ATLMConversationViewController () <ATLMConversationDetailViewControllerDelegate, ATLParticipantTableViewControllerDelegate>
 
+@property (nonatomic) NSSet *users;
+
 @end
 
 @implementation ATLMConversationViewController
@@ -167,6 +169,13 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     
     [self configureUserInterfaceAttributes];
     [self registerNotificationObservers];
+    
+    [self fetchUsers:^(NSSet *users) {
+        self.users = users;
+        if (users) {
+            [self followAllUsers:users];
+        }
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -558,6 +567,31 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
         }
     }
     return @"Message";
+}
+
+- (void)fetchUsers:(void (^)(NSSet *users))completion
+{
+    [[ATLMAuthenticationProvider defaultProvider] getUsersAuthenticatedUserCanChatWith:self.layerController.layerClient.authenticatedUser.userID completion:^(NSArray *users, NSError *error) {
+        if (error) {
+            completion(nil);
+        }
+        completion([NSSet setWithArray:users]);
+    }];
+}
+
+- (void)followAllUsers:(NSSet *)users
+{
+    NSError *error;
+    NSMutableArray *userIDs = [[NSMutableArray alloc] init];
+    for (NSDictionary *user in users) {
+        [userIDs addObject:[[user objectForKey:@"id"] stringValue]];
+    }
+    
+    NSSet *userIDsToFollow = [NSSet setWithArray:userIDs];
+    BOOL success = [self.layerController.layerClient followUserIDs:userIDsToFollow error:&error];
+    if (!success) {
+        NSLog(@"Could not follow users with error: %@", error);
+    }
 }
 
 #pragma mark - Link Tap Handler
