@@ -25,7 +25,7 @@
 
 NSString *const ATLMEmailKey = @"ATLMEmailKey";
 NSString *const ATLMPasswordKey = @"ATLMPasswordKey";
-NSString *const ATLMCredentialsKey = @"ATLMCredentialsKey";
+NSString *const ATLMCredentialsKey = @"DIMCredentialsKey";
 static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
 
 @interface ATLMAuthenticationProvider ();
@@ -103,8 +103,8 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
 
 - (void)refreshAuthenticationWithNonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
 {
-    NSDictionary *credentails = [[NSUserDefaults standardUserDefaults] objectForKey:ATLMCredentialsKey];
-    [self authenticateWithCredentials:credentails nonce:nonce completion:^(NSString * _Nonnull identityToken, NSError * _Nonnull error) {
+    NSDictionary *credentials = [[NSUserDefaults standardUserDefaults] objectForKey:ATLMCredentialsKey];
+    [self authenticateWithCredentials:credentials nonce:nonce completion:^(NSString * _Nonnull identityToken, NSError * _Nonnull error) {
         completion(identityToken, error);
     }];
 }

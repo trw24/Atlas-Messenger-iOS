@@ -4,7 +4,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
 target 'DI Messenger' do
-  pod 'Atlas', '~> 1.0.29'
+  pod 'Atlas', :git=>'https://github.com/layerhq/Atlas-iOS.git'
   pod 'SVProgressHUD'
   pod 'ClusterPrePermissions', '~> 0.1'
   pod 'RNCryptor', '~> 4.0.0-beta'
