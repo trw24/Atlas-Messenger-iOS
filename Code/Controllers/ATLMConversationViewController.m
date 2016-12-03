@@ -89,10 +89,7 @@ static ATLMDateProximity ATLMProximityToDate(NSDate *date)
 {
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *now = [NSDate date];
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    NSCalendarUnit calendarUnits = NSEraCalendarUnit | NSYearCalendarUnit | NSWeekOfMonthCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
-#pragma GCC diagnostic pop
+    NSCalendarUnit calendarUnits = NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitWeekOfMonth | NSCalendarUnitMonth | NSCalendarUnitDay;
     NSDateComponents *dateComponents = [calendar components:calendarUnits fromDate:date];
     NSDateComponents *todayComponents = [calendar components:calendarUnits fromDate:now];
     if (dateComponents.day == todayComponents.day &&
@@ -173,14 +170,6 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 {
     [super viewWillAppear:animated];
     [self configureTitle];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    if (!self.view.isFirstResponder) {
-        [self.view becomeFirstResponder];
-    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -385,13 +374,12 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
  */
 - (void)addressBarViewController:(ATLAddressBarViewController *)addressBarViewController didTapAddContactsButton:(UIButton *)addContactsButton
 {
+    LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
     NSSet *selectedParticipantIDs = [addressBarViewController.selectedParticipants valueForKey:@"userID"];
-    if (!selectedParticipantIDs) {
-        selectedParticipantIDs = [NSSet new];
+    if (selectedParticipantIDs) {
+        query.predicate = [LYRPredicate predicateWithProperty:@"userID" predicateOperator:LYRPredicateOperatorIsNotIn value:selectedParticipantIDs];
     }
     
-    LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
-    query.predicate = [LYRPredicate predicateWithProperty:@"userID" predicateOperator:LYRPredicateOperatorIsNotIn value:selectedParticipantIDs];
     NSError *error;
     NSOrderedSet *identities = [self.layerClient executeQuery:query error:&error];
     if (error) {
@@ -448,7 +436,15 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 - (void)participantTableViewController:(ATLParticipantTableViewController *)participantTableViewController didSearchWithString:(NSString *)searchText completion:(void (^)(NSSet *))completion
 {
     LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
-    query.predicate = [LYRPredicate predicateWithProperty:@"displayName" predicateOperator:LYRPredicateOperatorLike value:searchText];
+    LYRPredicate *searchPredicate = [LYRPredicate predicateWithProperty:@"displayName" predicateOperator:LYRPredicateOperatorLike value:[NSString stringWithFormat:@"%%%@%%", searchText]];
+    
+    if (self.conversation.participants) {
+        LYRPredicate *selectedPredicate = [LYRPredicate predicateWithProperty:@"userID" predicateOperator:LYRPredicateOperatorIsNotIn value:[self.conversation.participants valueForKey:@"userID"]];
+        query.predicate = [LYRCompoundPredicate compoundPredicateWithType:LYRCompoundPredicateTypeAnd subpredicates:@[ searchPredicate, selectedPredicate ]];
+    } else {
+        query.predicate = searchPredicate;
+    }
+
     [self.layerClient executeQuery:query completion:^(NSOrderedSet<id<ATLParticipant>> * _Nullable resultSet, NSError * _Nullable error) {
         if (resultSet) {
             completion(resultSet.set);

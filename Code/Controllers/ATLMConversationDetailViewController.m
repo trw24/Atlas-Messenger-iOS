@@ -384,10 +384,9 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 - (void)leaveConversation
 {
-    NSSet *participants = [NSSet setWithObject:self.layerController.layerClient.authenticatedUser.userID];
     NSError *error;
-    [self.conversation removeParticipants:participants error:&error];
-    if (error) {
+    BOOL success = [self.conversation leave:&error];
+    if (!success) {
         ATLMAlertWithError(error);
         return;
     } else {
@@ -398,8 +397,8 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 - (void)deleteConversation
 {
     NSError *error;
-    [self.conversation delete:LYRDeletionModeAllParticipants error:&error];
-    if (error) {
+    BOOL success = [self.conversation delete:LYRDeletionModeAllParticipants error:&error];
+    if (!success) {
         ATLMAlertWithError(error);
         return;
     } else {
@@ -426,7 +425,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 - (void)participantTableViewController:(ATLParticipantTableViewController *)participantTableViewController didSearchWithString:(NSString *)searchText completion:(void (^)(NSSet *))completion
 {
     LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
-    query.predicate = [LYRPredicate predicateWithProperty:@"displayName" predicateOperator:LYRPredicateOperatorLike value:searchText];
+    query.predicate = [LYRPredicate predicateWithProperty:@"displayName" predicateOperator:LYRPredicateOperatorLike value:[NSString stringWithFormat:@"%%%@%%", searchText]];
     [self.layerController.layerClient executeQuery:query completion:^(NSOrderedSet<id<LYRQueryable>> * _Nullable resultSet, NSError * _Nullable error) {
         if (resultSet) {
             completion(resultSet.set);

@@ -196,7 +196,7 @@ static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationV
             break;
         }
         default:
-            [NSException raise:NSInternalInconsistencyException format:@"Unhandled ATLMApplicationState value=%lu", (NSUInteger)self.state];
+            [NSException raise:NSInternalInconsistencyException format:@"Unhandled ATLMApplicationState value=%lu", (unsigned long)self.state];
             break;
     }
 }
