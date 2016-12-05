@@ -1,5 +1,16 @@
 # Atlas Messenger Changelog
 
+## 0.9.5
+
+### Enhancements
+
+* Searching within a conversation list has been updated to integrate with the latest Atlas changes for `ATLConversationListViewController`.
+* Added search capabilities within the participants list when adding participants from the conversation details view.
+
+### Bug Fixes
+
+* Fixed an issue where the keyboard would disappear when navigating from the conversation details view back to the conversation view.
+
 ## 0.9.4
 
 ### Bug Fixes
