@@ -1,7 +1,6 @@
 source "http://rubygems.org"
-ruby '2.1.2'
+ruby '2.2.2'
 
-gem "bundler", "~> 1.10.6"
 gem "rake", "~> 10.3.2"
 gem 'cocoapods', '~> 1.1.0.beta.1'
 gem 'xcpretty', '~> 0.2.2'
