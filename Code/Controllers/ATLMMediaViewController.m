@@ -100,8 +100,14 @@ static NSString *ATLMMediaViewControllerSymLinkedMediaTempPath = @"com.layer.atl
     UIBarButtonItem *shareBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(share:)];
     self.navigationItem.rightBarButtonItem = shareBarButtonItem;
     self.navigationItem.rightBarButtonItem.enabled = NO;
-    UIBarButtonItem *doneButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)];
-    self.navigationItem.leftBarButtonItem = doneButtonItem;
+    
+    // Only show the done button if this viewController is the root
+    // ViewController of its UINavigationController
+    UIViewController *rootViewController = [[self.navigationController viewControllers] firstObject];
+    if ([rootViewController isEqual:self]) {
+        UIBarButtonItem *doneButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)];
+        self.navigationItem.leftBarButtonItem = doneButtonItem;
+    }
     
     if (ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageJPEG) || ATLMessagePartForMIMEType(self.message, ATLMIMETypeImagePNG) || ATLMessagePartForMIMEType(self.message, ATLMIMETypeImageGIF)) {
         self.title = @"Image";

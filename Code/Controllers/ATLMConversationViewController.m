@@ -22,6 +22,7 @@
 #import "ATLMConversationViewController.h"
 #import "ATLMConversationDetailViewController.h"
 #import "ATLMMediaViewController.h"
+#import "ATLMLocationViewController.h"
 #import "ATLMUtilities.h"
 #import "ATLMParticipantTableViewController.h"
 #import "LYRIdentity+ATLParticipant.h"
@@ -242,13 +243,38 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
         [self presentMediaViewControllerWithMessage:message];
         return;
     }
+    
+    messagePart = ATLMessagePartForMIMEType(message, ATLMIMETypeLocation);
+    if (messagePart) {
+        [self presentLocationViewControllerWithMessage:message];
+        return;
+    }
+}
+
+- (void)presentLocationViewControllerWithMessage:(LYRMessage *)message
+{
+    ATLMLocationViewController *locationViewController = [[ATLMLocationViewController alloc] initWithMessage:message];
+    [self showViewController:locationViewController sender:self];
+    
+    locationViewController.mapView.scrollEnabled = NO;
 }
 
 - (void)presentMediaViewControllerWithMessage:(LYRMessage *)message
 {
     ATLMMediaViewController *imageViewController = [[ATLMMediaViewController alloc] initWithMessage:message];
-    UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:imageViewController];
-    [self.navigationController presentViewController:controller animated:YES completion:nil];
+    [self showViewController:imageViewController sender:self];
+}
+
+- (void)showViewController:(UIViewController *)viewController sender:(id)sender
+{
+    // If the `viewController` isn't a UINavigationController, and isn't already inside of a
+    // UINavigationController, modally present it inside of a UINavigationController
+    if (viewController.navigationController == nil && ![viewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+        [sender presentViewController:navigationController animated:true completion:nil];
+    } else { // Otherwise let `super` handle it
+        [super showViewController:viewController sender:sender];
+    }
 }
 
 #pragma mark - ATLConversationViewControllerDataSource
@@ -391,8 +417,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     controller.delegate = self;
     controller.allowsMultipleSelection = NO;
     
-    UINavigationController *navigationController =[[UINavigationController alloc] initWithRootViewController:controller];
-    [self.navigationController presentViewController:navigationController animated:YES completion:nil];
+    [self showViewController:controller sender:self];
 }
 
 /**

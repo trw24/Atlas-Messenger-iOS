@@ -1,5 +1,10 @@
 # Atlas Messenger Changelog
 
+## 0.9.6
+
+### Enhancements
+* Tapping on the location bubble now opens a full screen Map view.
+
 ## 0.9.5
 
 ### Enhancements
