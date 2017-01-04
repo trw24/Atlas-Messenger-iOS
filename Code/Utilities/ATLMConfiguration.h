@@ -1,8 +1,8 @@
 //
-//  main.m
+//  ATLMUtilities.h
 //  Atlas Messenger
 //
-//  Created by Kevin Coleman on 6/10/14.
+//  Created by JP McGlone 01/04/2017
 //  Copyright (c) 2014 Layer, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,13 +18,10 @@
 //  limitations under the License.
 //
 
-#import <UIKit/UIKit.h>
-#import "ATLMAppDelegate.h"
+#import <Foundation/Foundation.h>
 
-int main(int argc, char * argv[])
-{
-    @autoreleasepool {
-        Class appDelegateClass = NSClassFromString(@"ATLAppDelegate") ?: [ATLMAppDelegate class];
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass(appDelegateClass));
-    }
-}
+@interface ATLMConfiguration : NSObject
+
++ (NSString *)appID;
+
+@end

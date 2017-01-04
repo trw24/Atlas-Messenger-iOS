@@ -31,8 +31,8 @@
 #import "ATLMConstants.h"
 #import "ATLMAuthenticationProvider.h"
 #import "ATLMApplicationViewController.h"
+#import "ATLMConfiguration.h"
 
-static NSString *const ATLMLayerAppID = nil;
 static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas-Messenger.appID";
 
 @interface ATLMAppDelegate () <ATLMApplicationControllerDelegate, ATLMLayerControllerDelegate>
@@ -55,7 +55,8 @@ static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas
     self.applicationViewController.delegate = self;
     
     // Restore the appID from the user defaults (if available).
-    NSString *appIDString = ATLMLayerAppID ?: [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationIDUserDefaultsKey];
+    NSString *appIDString = [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationIDUserDefaultsKey] ?: [ATLMConfiguration appID];
+    
     NSURL *appID = [NSURL URLWithString:appIDString];
     if (appID) {
         [self initializeLayerWithAppID:appID];
