@@ -23,8 +23,10 @@
 
 static NSDictionary *_configuration;
 static NSString *_appID;
+static NSURL *_identityProviderURL;
 
-+ (void)parseConfigurationIfNeeded {
++ (void)parseConfigurationIfNeeded
+{
     if (_configuration == nil) {
         NSString* filePath = [[NSBundle mainBundle] pathForResource:@"Layerfile" ofType:nil];
         NSString *configurationJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
@@ -36,12 +38,24 @@ static NSString *_appID;
 {
     [self parseConfigurationIfNeeded];
     if (_appID == nil) {
-        id appID = _configuration[@"appID"];
+        id appID = _configuration[@"app_id"];
         if (appID != [NSNull null]) {
             _appID = appID;
         }
     }
     return _appID;
+}
+
++ (NSURL *)identityProviderURL
+{
+    [self parseConfigurationIfNeeded];
+    if (_identityProviderURL == nil) {
+        id identityProviderURLString = _configuration[@"identity_provider_url"];
+        if (identityProviderURLString != [NSNull null]) {
+            _identityProviderURL = [NSURL URLWithString:identityProviderURLString];
+        }
+    }
+    return _identityProviderURL;
 }
 
 @end

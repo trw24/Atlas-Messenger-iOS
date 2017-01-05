@@ -1,3 +1,4 @@
 {
-  "appID": null
+  "app_id": null,
+  "identity_provider_url": null
 }

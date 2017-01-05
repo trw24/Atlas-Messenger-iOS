@@ -43,8 +43,14 @@ namespace :configure do
 
   desc "Set the Layer AppID"  
   task :setAppID, [:appID] do |t, args|
-    set("appID", args[:appID])
+    set("app_id", args[:appID])
   end
+
+  desc "Set the Layer Idenity"
+    task :setIdenityProviderURL, [:identityProviderURL] do |t, args|
+    set("identity_provider_url", args[:identityProviderURL])
+  end
+
   desc "Clear the Layerfile"
   task :clear do
     File.open('Layerfile', 'w') { |file| file.write("{\n}") }

@@ -55,7 +55,7 @@ static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas
     self.applicationViewController.delegate = self;
     
     // Restore the appID from the user defaults (if available).
-    NSString *appIDString = [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationIDUserDefaultsKey] ?: [ATLMConfiguration appID];
+    NSString *appIDString = [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationIDUserDefaultsKey] ?: ATLMConfiguration.appID;
     
     NSURL *appID = [NSURL URLWithString:appIDString];
     if (appID) {
@@ -77,7 +77,7 @@ static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas
 - (void)initializeLayerWithAppID:(nonnull NSURL *)appID
 {
     NSParameterAssert(appID);
-    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerAppID:appID];
+    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:(ATLMConfiguration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction)) layerAppID:appID];
     
     // Configure the Layer Client options.
     LYRClientOptions *clientOptions = [LYRClientOptions new];
