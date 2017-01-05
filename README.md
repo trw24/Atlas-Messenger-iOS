@@ -49,7 +49,7 @@ Before running Atlas Messenger from source code you must configure the Layer App
 
 Run `rake configure:set["appID", "{YOUR_APP_ID}"]` to set the appID in your Layerfile, or set it manually by editing 'Layerfile' directly.
 
-Replace the `{YOUR_APP_ID}` with the appID you previously obtained from the [Atlas build](https://developer.layer.com/dashboard/atlas/build) page. Be sure to enclose it in standard Objective-C string quotes (`@""`). Once configured your code should now look something like:
+Replace the `{YOUR_APP_ID}` with the appID you previously obtained from the [Atlas keys](https://developer.layer.com/projects/keys) page. Be sure to enclose it in standard Objective-C string quotes (`@""`). Once configured your code should now look something like:
 
 Note: The current Atlas Messenger project is designed to only work with a special `Atlas Messenger` project.  To create this special App ID you must go to the [Atlas build](https://developer.layer.com/dashboard/atlas/build)  page. If you use a different App ID you will see a "Request failed: forbidden" error when you launch the app.
 
