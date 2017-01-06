@@ -267,13 +267,20 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 
 - (void)showViewController:(UIViewController *)viewController sender:(id)sender
 {
-    // If the `viewController` isn't a UINavigationController, and isn't already inside of a
-    // UINavigationController, modally present it inside of a UINavigationController
-    if (viewController.navigationController == nil && ![viewController isKindOfClass:[UINavigationController class]]) {
+    // If the `viewController` is a UINavigationController, present it.
+    // Do not attempt to push a navigation controller
+    if ([viewController isKindOfClass:[UINavigationController class]]) {
+        [sender presentViewController:viewController animated:true completion:nil];
+        return;
+    }
+    
+    // If `self` is in a navigation controller, push viewController
+    // Otherwise present it in a navigation controller
+    if (self.navigationController != nil) {
+        [self.navigationController pushViewController:viewController animated:true];
+    } else {
         UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
         [sender presentViewController:navigationController animated:true completion:nil];
-    } else { // Otherwise let `super` handle it
-        [super showViewController:viewController sender:sender];
     }
 }
 
