@@ -21,6 +21,8 @@
 #import <UIKit/UIKit.h>
 #import "ATLMLayerController.h"
 
+static NSString *const ATLMLayerAppID = @"layer:///apps/staging/b8e2ad34-1a6c-11e6-a85f-0b6b010000c0";
+
 @interface ATLMAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic) UIWindow *window;

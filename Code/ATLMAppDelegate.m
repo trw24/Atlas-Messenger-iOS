@@ -32,7 +32,6 @@
 #import "ATLMAuthenticationProvider.h"
 #import "ATLMApplicationViewController.h"
 
-static NSString *const ATLMLayerAppID = nil;
 static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas-Messenger.appID";
 
 @interface ATLMAppDelegate () <ATLMApplicationControllerDelegate, ATLMLayerControllerDelegate>
@@ -76,7 +75,7 @@ static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas
 - (void)initializeLayerWithAppID:(nonnull NSURL *)appID
 {
     NSParameterAssert(appID);
-    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:ATLMRailsBaseURL(ATLMEnvironmentProduction) layerAppID:appID];
+    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider defaultProvider];
     
     // Configure the Layer Client options.
     LYRClientOptions *clientOptions = [LYRClientOptions new];
