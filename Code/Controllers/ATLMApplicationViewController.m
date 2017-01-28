@@ -14,6 +14,7 @@
 #import "ATLMConversationViewController.h"
 #import "ATLMUtilities.h"
 #import "ATLMNavigationController.h"
+#import "UserCredentials.h"
 
 ///-------------------------
 /// @name Application States
@@ -216,7 +217,7 @@ static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationV
 
 #pragma mark - ATLMRegistrationViewControllerDelegate implementation
 
-- (void)registrationViewController:(ATLMRegistrationViewController *)registrationViewController didSubmitCredentials:(NSDictionary *)credentials
+- (void)registrationViewController:(ATLMRegistrationViewController *)registrationViewController didSubmitCredentials:(UserCredentials *)credentials
 {
     [self.layerController authenticateWithCredentials:credentials completion:^(LYRSession *_Nonnull session, NSError *_Nullable error) {
         if (session) {

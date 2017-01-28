@@ -22,17 +22,24 @@
 #import "ATLMAuthenticationProvider.h"
 #import "ATLMHTTPResponseSerializer.h"
 #import "ATLMConstants.h"
+#import "ATLMConfiguration.h"
+#import "ATLMUtilities.h"
 
-NSString *const ATLMFirstNameKey = @"ATLMFirstNameKey";
-NSString *const ATLMLastNameKey = @"ATLMLastNameKey";
-NSString *const ATLMCredentialsKey = @"ATLMCredentialsKey";
+static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas-Messenger.appID";
+
+NSString *const ATLMEmailKey = @"ATLMEmailKey";
+NSString *const ATLMPasswordKey = @"ATLMPasswordKey";
+NSString *const ATLMCredentialsKey = @"DIMCredentialsKey";
 static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
 
 @interface ATLMAuthenticationProvider ();
 
 @property (nonatomic) NSURL *baseURL;
 @property (nonatomic) NSURLSession *URLSession;
-@property (nonatomic, copy) NSURL *layerAppID;
+
+- (NSString *)authenticateEndpoint;
+- (NSString *)listUsersEndpoint;
+
 @end
 
 @implementation ATLMAuthenticationProvider
@@ -42,13 +49,27 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     return  [[self alloc] initWithBaseURL:baseURL layerAppID:layerAppID];
 }
 
++ (instancetype)defaultProvider;
+{
+    NSString *appIDString = [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationIDUserDefaultsKey];
+    NSURL *appIDURL = appIDString ? [NSURL URLWithString:appIDString] : ATLMConfiguration.appID;
+    
+    NSURL *identityProviderURL = (ATLMConfiguration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction));
+    
+    assert(appIDURL);
+    
+    [[NSUserDefaults standardUserDefaults] setObject:appIDURL.absoluteString forKey:ATLMLayerApplicationIDUserDefaultsKey];
+
+    return [ATLMAuthenticationProvider providerWithBaseURL:identityProviderURL layerAppID:appIDURL];
+}
+
 - (id)initWithBaseURL:(nonnull NSURL *)baseURL layerAppID:(NSURL *)layerAppID;
 {
     self = [super init];
     if (self) {
         _baseURL = baseURL;
         _layerAppID = layerAppID;
-                
+        
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
         configuration.HTTPAdditionalHeaders = @{ @"Accept": @"application/json",
                                                  @"X_LAYER_APP_ID": self.layerAppID.absoluteString };
@@ -57,26 +78,112 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     return self;
 }
 
-- (void)authenticateWithCredentials:(NSDictionary *)credentials nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
-{
-    NSString *firstName = credentials[ATLMFirstNameKey];
-    NSString *lastName = credentials[ATLMLastNameKey];
-    NSString *displayName = [NSString stringWithFormat:@"%@ %@", firstName, lastName];
+- (NSString *)authenticateEndpoint {
+    return @"/authenticate";
+}
+
+- (NSString *)listUsersEndpoint {
+    return @"/users.json";
+}
+
+//- (void)authenticateWithCredentials:(NSDictionary *)credentials nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
+//{
+//    NSString *appUUID = [[self.layerAppID pathComponents] lastObject];
+//    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
+//    NSURL *URL = [NSURL URLWithString:[self authenticateEndpoint] relativeToURL:self.baseURL];
+//
+//    NSMutableDictionary *parameters = [[NSMutableDictionary alloc] initWithDictionary:credentials];
+//    parameters[@"nonce"] = nonce;
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+//    request.HTTPMethod = @"POST";
+//    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:nil];
+//    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+//    [[self.URLSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+//        if (!response && error) {
+//            NSLog(@"Failed with error: %@", error);
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                completion(nil, error);
+//            });
+//            return;
+//        }
+//        
+//        NSError *serializationError;
+//        NSDictionary *userDetails;
+//        BOOL success = [ATLMHTTPResponseSerializer responseObject:&userDetails withData:data response:(NSHTTPURLResponse *)response error:&serializationError];
+//        if (success) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                NSLog(@"User JSON: %@", userDetails);
+//                NSString *identityToken = userDetails[ATLMAtlasIdentityTokenKey];
+//                completion(identityToken, nil);
+//            });
+//            [[NSUserDefaults standardUserDefaults] setValue:credentials forKey:ATLMCredentialsKey];
+//            [[NSUserDefaults standardUserDefaults] synchronize];
+//        } else {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                completion(nil, serializationError);
+//            });
+//        }
+//    }] resume];
+//}
+
+- (void)authenticateWithCredentials:(NSDictionary *)credentials nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion {
+    
     NSString *appUUID = [[self.layerAppID pathComponents] lastObject];
-    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
-    NSURL *URL = [NSURL URLWithString:urlString relativeToURL:self.baseURL];
-    NSDictionary *parameters = @{ @"nonce": nonce,
-                                  @"user":
-                                    @{ @"first_name": firstName,
-                                       @"last_name": lastName,
-                                       @"display_name": displayName } };
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+//    NSString *urlString = [NSString stringWithFormat:@"apps/%@/atlas_identities", appUUID];
+    NSURL *authenticateURL = [NSURL URLWithString:[self authenticateEndpoint] relativeToURL:self.baseURL];
+    NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:credentials];
+    [payload setObject:nonce forKey:@"nonce"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:authenticateURL];
     request.HTTPMethod = @"POST";
-    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:nil];
+    request.HTTPBody = [NSJSONSerialization dataWithJSONObject:payload options:0 error:nil];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [[self.URLSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (!response && error) {
-            NSLog(@"Failed with error: %@", error);
+    NSString *str = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
+    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion(nil, error);
+            });
+            return;
+        }
+        
+        [[NSUserDefaults standardUserDefaults] setValue:credentials forKey:ATLMCredentialsKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        // TODO: Basic response and content checks — status and length
+        NSError *serializationError;
+        NSDictionary *rawResponse = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:&serializationError];
+        if (serializationError) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion(nil, serializationError);
+            });
+        }
+        
+        NSString *identityToken = rawResponse[@"identity_token"];
+        // TODO: completion with error if identityToken is nil
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion(identityToken, nil);
+        });
+    }] resume];
+}
+
+- (void)refreshAuthenticationWithNonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
+{
+    NSDictionary *credentials = [[NSUserDefaults standardUserDefaults] objectForKey:ATLMCredentialsKey];
+    [self authenticateWithCredentials:credentials nonce:nonce completion:^(NSString * _Nonnull identityToken, NSError * _Nonnull error) {
+        completion(identityToken, error);
+    }];
+}
+
+- (void)getUsersAuthenticatedUserCanChatWith:(NSString *)authenticatedUserID completion:(void (^)(NSArray *users, NSError *error))completion {
+    NSURL *listUsersURL = [NSURL URLWithString:[self listUsersEndpoint] relativeToURL:self.baseURL];
+    NSURLComponents *components = [NSURLComponents componentsWithURL:listUsersURL resolvingAgainstBaseURL:YES];
+    [components setQuery:[NSString stringWithFormat:@"requester=%@", authenticatedUserID]];
+    listUsersURL = [components URL];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:listUsersURL];
+    request.HTTPMethod = @"GET";
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completion(nil, error);
             });
@@ -84,30 +191,17 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
         }
         
         NSError *serializationError;
-        NSDictionary *userDetails;
-        BOOL success = [ATLMHTTPResponseSerializer responseObject:&userDetails withData:data response:(NSHTTPURLResponse *)response error:&serializationError];
-        if (success) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"User JSON: %@", userDetails);
-                NSString *identityToken = userDetails[ATLMAtlasIdentityTokenKey];
-                completion(identityToken, nil);
-            });
-            [[NSUserDefaults standardUserDefaults] setValue:credentials forKey:ATLMCredentialsKey];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-        } else {
+        NSArray *usersList = (NSArray *)[[NSJSONSerialization JSONObjectWithData:data options:0 error:&serializationError] objectForKey:@"users"];
+        if (serializationError) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completion(nil, serializationError);
             });
+            return;
         }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion(usersList, nil);
+        });
     }] resume];
-}
-
-- (void)refreshAuthenticationWithNonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
-{
-    NSDictionary *credentails = [[NSUserDefaults standardUserDefaults] objectForKey:ATLMCredentialsKey];
-    [self authenticateWithCredentials:credentails nonce:nonce completion:^(NSString * _Nonnull identityToken, NSError * _Nonnull error) {
-        completion(identityToken, error);
-    }];
 }
 
 @end

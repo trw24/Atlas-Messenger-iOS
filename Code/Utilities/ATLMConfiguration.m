@@ -22,7 +22,7 @@
 @implementation ATLMConfiguration
 
 static NSDictionary *_configuration;
-static NSString *_appID;
+static NSURL *_appID;
 static NSURL *_identityProviderURL;
 
 + (void)load
@@ -30,18 +30,22 @@ static NSURL *_identityProviderURL;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSString* filePath = [[NSBundle mainBundle] pathForResource:@"LayerConfiguration.json" ofType:nil];
-        NSString *configurationJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-        _configuration = [NSJSONSerialization JSONObjectWithData:[configurationJSON dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
+        if (filePath != nil) {
+            NSString *configurationJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+            if (configurationJSON != nil) {
+                _configuration = [NSJSONSerialization JSONObjectWithData:[configurationJSON dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
+            }
+        }
     });
 }
 
-+ (NSString *)appID
++ (NSURL *)appID
 {
     [self load];
     if (_appID == nil) {
-        id appID = _configuration[@"app_id"];
-        if (appID != [NSNull null]) {
-            _appID = appID;
+        id appIDString = _configuration[@"app_id"];
+        if (appIDString != [NSNull null]) {
+            _appID = [NSURL URLWithString:appIDString];
         }
     }
     return _appID;

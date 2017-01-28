@@ -22,7 +22,7 @@
 
 @interface ATLMConfiguration : NSObject
 
-+ (NSString *)appID;
++ (NSURL *)appID;
 + (NSURL *)identityProviderURL;
 
 

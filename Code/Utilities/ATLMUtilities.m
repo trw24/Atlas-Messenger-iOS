@@ -32,13 +32,13 @@ NSURL *ATLMRailsBaseURL(ATLMEnvironment environment)
     } else {
         switch (environment) {
             case ATLMEnvironmentProduction:
-                return [NSURL URLWithString:@"https://layer-identity-provider.herokuapp.com"];
-                break;
+            return [NSURL URLWithString:@"https://layer-identity-provider.herokuapp.com"];
+            break;
             case ATLMEnvironmentStaging:
-                return [NSURL URLWithString:@"http://layer-test-identity-provider.herokuapp.com"];
-                break;
+            return [NSURL URLWithString:@"http://layer-test-identity-provider.herokuapp.com"];
+            break;
             default:
-                break;
+            break;
         }
     }
 }

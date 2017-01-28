@@ -33,7 +33,6 @@
 #import "ATLMApplicationViewController.h"
 #import "ATLMConfiguration.h"
 
-static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas-Messenger.appID";
 
 @interface ATLMAppDelegate () <ATLMApplicationControllerDelegate, ATLMLayerControllerDelegate>
 
@@ -54,13 +53,7 @@ static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas
     self.applicationViewController = [ATLMApplicationViewController new];
     self.applicationViewController.delegate = self;
     
-    // Restore the appID from the user defaults (if available).
-    NSString *appIDString = [[NSUserDefaults standardUserDefaults] valueForKey:ATLMLayerApplicationIDUserDefaultsKey] ?: ATLMConfiguration.appID;
-    
-    NSURL *appID = [NSURL URLWithString:appIDString];
-    if (appID) {
-        [self initializeLayerWithAppID:appID];
-    }
+    [self initializeLayer];
     
     // Push Notifications follow authentication state
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(registerForRemoteNotifications) name:LYRClientDidAuthenticateNotification object:nil];
@@ -74,10 +67,8 @@ static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas
     return YES;
 }
 
-- (void)initializeLayerWithAppID:(nonnull NSURL *)appID
-{
-    NSParameterAssert(appID);
-    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:(ATLMConfiguration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction)) layerAppID:appID];
+- (void)configureClientWithAuthenticationProvider:(ATLMAuthenticationProvider *)authenticationProvider {
+    NSURL *appID = authenticationProvider.layerAppID;
     
     // Configure the Layer Client options.
     LYRClientOptions *clientOptions = [LYRClientOptions new];
@@ -86,12 +77,24 @@ static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas
     
     // Create the application controller.
     self.layerController = [ATLMLayerController applicationControllerWithLayerAppID:appID clientOptions:clientOptions authenticationProvider:authenticationProvider];
-    self.layerController.delegate = self;    
+    self.layerController.delegate = self;
     
     self.applicationViewController.layerController = self.layerController;
-    
-    // Persist the appID for subsequent launches
-    [[NSUserDefaults standardUserDefaults] setObject:[appID absoluteString] forKey:ATLMLayerApplicationIDUserDefaultsKey];
+}
+
+- (void)initializeLayerWithAppID:(NSURL *)appID
+{
+    assert(appID);
+    NSURL *identityProviderURL = (ATLMConfiguration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction));
+
+    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:identityProviderURL layerAppID:appID];
+    [self configureClientWithAuthenticationProvider:authenticationProvider];
+}
+
+- (void)initializeLayer
+{
+    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider defaultProvider];
+    [self configureClientWithAuthenticationProvider:authenticationProvider];
 }
 
 - (void)applicationController:(nonnull ATLMApplicationViewController *)applicationController didCollectLayerAppID:(nonnull NSURL *)appID
