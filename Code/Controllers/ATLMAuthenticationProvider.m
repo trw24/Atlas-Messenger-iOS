@@ -78,16 +78,18 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     return self;
 }
 
-- (NSString *)authenticateEndpoint {
+- (NSString *)authenticateEndpoint
+{
     return @"/authenticate";
 }
 
-- (NSString *)listUsersEndpoint {
+- (NSString *)listUsersEndpoint
+{
     return @"/users.json";
 }
 
-- (void)authenticateWithCredentials:(NSDictionary *)credentials nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion {
-    
+- (void)authenticateWithCredentials:(NSDictionary *)credentials nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
+{
     NSString *appUUID = [[self.layerAppID pathComponents] lastObject];
     NSURL *authenticateURL = [NSURL URLWithString:[self authenticateEndpoint] relativeToURL:self.baseURL];
     NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:credentials];

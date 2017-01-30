@@ -599,12 +599,12 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 
 - (void)fetchUsers:(void (^)(NSSet *users))completion
 {
-//    [[ATLMAuthenticationProvider defaultProvider] getUsersAuthenticatedUserCanChatWith:self.layerController.layerClient.authenticatedUser.userID completion:^(NSArray *users, NSError *error) {
-//        if (error) {
-//            completion(nil);
-//        }
-//        completion([NSSet setWithArray:users]);
-//    }];
+    [[ATLMAuthenticationProvider defaultProvider] getUsersAuthenticatedUserCanChatWith:self.layerController.layerClient.authenticatedUser.userID completion:^(NSArray *users, NSError *error) {
+        if (error) {
+            completion(nil);
+        }
+        completion([NSSet setWithArray:users]);
+    }];
 }
 
 - (void)followAllUsers:(NSSet *)users
