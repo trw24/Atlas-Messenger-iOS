@@ -25,23 +25,19 @@ static NSDictionary *_configuration;
 static NSURL *_appID;
 static NSURL *_identityProviderURL;
 
-+ (void)load
++ (void)initialize
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSString* filePath = [[NSBundle mainBundle] pathForResource:@"LayerConfiguration.json" ofType:nil];
-        if (filePath != nil) {
-            NSString *configurationJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-            if (configurationJSON != nil) {
-                _configuration = [NSJSONSerialization JSONObjectWithData:[configurationJSON dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
-            }
+    NSString* filePath = [[NSBundle mainBundle] pathForResource:@"LayerConfiguration.json" ofType:nil];
+    if (filePath != nil) {
+        NSString *configurationJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+        if (configurationJSON != nil) {
+            _configuration = [NSJSONSerialization JSONObjectWithData:[configurationJSON dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
         }
-    });
+    }
 }
 
 + (NSURL *)appID
 {
-    [self load];
     if (_appID == nil) {
         id appIDString = _configuration[@"app_id"];
         if (appIDString != [NSNull null]) {
@@ -53,7 +49,6 @@ static NSURL *_identityProviderURL;
 
 + (NSURL *)identityProviderURL
 {
-    [self load];
     if (_identityProviderURL == nil) {
         id identityProviderURLString = _configuration[@"identity_provider_url"];
         if (identityProviderURLString != [NSNull null]) {
