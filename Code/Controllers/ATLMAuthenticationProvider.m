@@ -113,7 +113,6 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
         }
         
         NSString *identityToken = rawResponse[@"identity_token"];
-        // TODO: completion with error if identityToken is nil
         dispatch_async(dispatch_get_main_queue(), ^{
             completion(identityToken, nil);
         });
