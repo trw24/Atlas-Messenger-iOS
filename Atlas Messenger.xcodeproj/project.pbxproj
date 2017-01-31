@@ -54,7 +54,6 @@
 		8D0DE4B5C52306FEB3743E1D /* Pods_Atlas_MessengerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C124C10D567303BE8476B5F /* Pods_Atlas_MessengerTests.framework */; };
 		AA1DC2791E3C05060034CFD5 /* ATLMLocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1DC2781E3C05060034CFD5 /* ATLMLocationViewController.m */; };
 		AA441A931DD4D94D00F93295 /* UserCredentials.m in Sources */ = {isa = PBXBuildFile; fileRef = AA441A921DD4D94D00F93295 /* UserCredentials.m */; };
-		AA92F69A1DD3E4F800D02304 /* dream-incubator-logo-blue.png in Resources */ = {isa = PBXBuildFile; fileRef = AA92F6991DD3E4F800D02304 /* dream-incubator-logo-blue.png */; };
 		D016D0FC1D20D9D900D9AA4F /* ATLMApplicationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D016D0FB1D20D9D900D9AA4F /* ATLMApplicationViewController.m */; };
 		D62611691A98091800F6E707 /* layer-logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D62611661A98091800F6E707 /* layer-logo@2x.png */; };
 		D626116A1A98091800F6E707 /* layer-logo.png in Resources */ = {isa = PBXBuildFile; fileRef = D62611671A98091800F6E707 /* layer-logo.png */; };
@@ -158,8 +157,8 @@
 		259A577B1950EB92000E27B0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		25BB93551D3D70A200F90484 /* Atlas Messenger.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Atlas Messenger.entitlements"; sourceTree = "<group>"; };
 		3C124C10D567303BE8476B5F /* Pods_Atlas_MessengerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Atlas_MessengerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		408588471E3C097700C7831C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = main.m; sourceTree = "<group>"; };
-		408588491E3C09B400C7831C /* ATLMAuthenticating.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLMAuthenticating.h; path = ATLMAuthenticating.h; sourceTree = "<group>"; };
+		408588471E3C097700C7831C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		408588491E3C09B400C7831C /* ATLMAuthenticating.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLMAuthenticating.h; sourceTree = "<group>"; };
 		4085884A1E3C09F800C7831C /* ATLMAuthenticationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLMAuthenticationProvider.h; sourceTree = "<group>"; };
 		4085884B1E3C09F800C7831C /* ATLMAuthenticationProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ATLMAuthenticationProvider.m; sourceTree = "<group>"; };
 		4085884C1E3C0A1500C7831C /* ATLMConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMConfiguration.h; sourceTree = "<group>"; };
@@ -171,7 +170,6 @@
 		AA1DC2781E3C05060034CFD5 /* ATLMLocationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMLocationViewController.m; sourceTree = "<group>"; };
 		AA441A921DD4D94D00F93295 /* UserCredentials.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserCredentials.m; sourceTree = "<group>"; };
 		AA441A941DD4D96900F93295 /* UserCredentials.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserCredentials.h; sourceTree = "<group>"; };
-		AA92F6991DD3E4F800D02304 /* dream-incubator-logo-blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dream-incubator-logo-blue.png"; sourceTree = "<group>"; };
 		B53937831A24F6AF00DE60F9 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		CA1D93E68E9105BA0139B1C2 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE5393AE6B2B3F019ABE5C99 /* Pods-Atlas MessengerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas MessengerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -285,7 +283,6 @@
 				0A0C244519477D8F00401B74 /* XCTest.framework */,
 				0AADB5C91947C8710083732B /* libz.dylib */,
 			);
-			name = Frameworks;
 			path = Frameworks;
 			sourceTree = "<group>";
 		};
@@ -293,7 +290,6 @@
 			isa = PBXGroup;
 			children = (
 			);
-			name = Icons;
 			path = Icons;
 			sourceTree = "<group>";
 		};
@@ -395,7 +391,6 @@
 				D633684C1A9D614900FBFCD3 /* atlas-splashscreen-1336.png */,
 				D633684D1A9D614900FBFCD3 /* atlas-splashscreen-2208.png */,
 				D633684A1A9D614900FBFCD3 /* atlas-splashscreen-960.png */,
-				AA92F6991DD3E4F800D02304 /* dream-incubator-logo-blue.png */,
 				D626116E1A98153C00F6E707 /* layer-logo-gray.png */,
 				D62611701A98153C00F6E707 /* layer-logo-gray@2x.png */,
 				D626116F1A98153C00F6E707 /* layer-logo-gray@3x.png */,
@@ -459,7 +454,6 @@
 				D61B10841A6F2D99009BFA9C /* ATLMPersistenceManagerTest.m */,
 				D61B10861A6F2D99009BFA9C /* ATLMSettingsViewControllerTest.m */,
 			);
-			name = Controllers;
 			path = Controllers;
 			sourceTree = "<group>";
 		};
@@ -468,7 +462,6 @@
 			children = (
 				D61B10851A6F2D99009BFA9C /* ATLMPushNotificationTest.m */,
 			);
-			name = "Push Notification";
 			path = "Push Notification";
 			sourceTree = "<group>";
 		};
@@ -482,7 +475,6 @@
 				D61B10891A6F2D99009BFA9C /* ATLMTestUser.h */,
 				D61B108A1A6F2D99009BFA9C /* ATLMTestUser.m */,
 			);
-			name = Utilities;
 			path = Utilities;
 			sourceTree = "<group>";
 		};
@@ -491,7 +483,6 @@
 			children = (
 				408588471E3C097700C7831C /* main.m */,
 			);
-			name = "Supporting Files";
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
@@ -500,7 +491,6 @@
 			children = (
 				408588491E3C09B400C7831C /* ATLMAuthenticating.h */,
 			);
-			name = Protocols;
 			path = Protocols;
 			sourceTree = "<group>";
 		};
@@ -615,7 +605,6 @@
 				408588511E3C0B7800C7831C /* LayerConfiguration.json in Resources */,
 				D633684F1A9D614900FBFCD3 /* atlas-splashscreen-1334.png in Resources */,
 				D62611721A98153C00F6E707 /* layer-logo-gray@3x.png in Resources */,
-				AA92F69A1DD3E4F800D02304 /* dream-incubator-logo-blue.png in Resources */,
 				0ABEFFAF196B7686006FFFF3 /* logo@2x.png in Resources */,
 				D62D17371A9C267C00E0EFAF /* Launch Screen.xib in Resources */,
 				D63368501A9D614900FBFCD3 /* atlas-splashscreen-1336.png in Resources */,
