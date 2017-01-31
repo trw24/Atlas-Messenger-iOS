@@ -60,7 +60,7 @@ NSString *const ATLMLayerControllerErrorDomain = @"ATLMLayerControllerErrorDomai
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)authenticateWithCredentials:(UserCredentials *)credentials completion:(void (^)(LYRSession *session, NSError *error))completion
+- (void)authenticateWithCredentials:(ATLMUserCredentials *)credentials completion:(void (^)(LYRSession *session, NSError *error))completion
 {
     [self.layerClient requestAuthenticationNonceWithCompletion:^(NSString * _Nullable nonce, NSError * _Nullable error) {
         if (!nonce) {

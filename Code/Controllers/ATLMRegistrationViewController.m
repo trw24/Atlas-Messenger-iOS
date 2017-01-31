@@ -13,7 +13,7 @@
 #import "ATLMUtilities.h"
 #import <SVProgressHUD/SVProgressHUD.h>
 #import "ATLMConstants.h"
-#import "ATLMErrors.h"  
+#import "ATLMErrors.h"
 
 @interface ATLMRegistrationViewController () <UITextFieldDelegate>
 
@@ -42,31 +42,31 @@ CGFloat const ATLMEmailTextFieldBottomPadding = 20;
     [self.view addSubview:self.logoView];
     
     self.emailTextField = [[UITextField alloc] init];
-    self.emailTextField .translatesAutoresizingMaskIntoConstraints = NO;
-    self.emailTextField .delegate = self;
-    self.emailTextField .placeholder = @"Email Address";
-    self.emailTextField .textAlignment = NSTextAlignmentCenter;
-    self.emailTextField .layer.borderColor = [UIColor lightGrayColor].CGColor;
-    self.emailTextField .layer.borderWidth = 0.5;
-    self.emailTextField .layer.cornerRadius = 2;
-    self.emailTextField .font = [UIFont systemFontOfSize:22];
-    self.emailTextField .returnKeyType = UIReturnKeyNext;
-    self.emailTextField .keyboardType = UIKeyboardTypeEmailAddress;
-    self.emailTextField .autocapitalizationType = UITextAutocapitalizationTypeNone;
+    self.emailTextField.translatesAutoresizingMaskIntoConstraints = NO;
+    self.emailTextField.delegate = self;
+    self.emailTextField.placeholder = @"Email Address";
+    self.emailTextField.textAlignment = NSTextAlignmentCenter;
+    self.emailTextField.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    self.emailTextField.layer.borderWidth = 0.5;
+    self.emailTextField.layer.cornerRadius = 2;
+    self.emailTextField.font = [UIFont systemFontOfSize:22];
+    self.emailTextField.returnKeyType = UIReturnKeyNext;
+    self.emailTextField.keyboardType = UIKeyboardTypeEmailAddress;
+    self.emailTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     [self.view addSubview:self.emailTextField ];
     
     self.passwordTextField = [[UITextField alloc] init];
-    self.passwordTextField .translatesAutoresizingMaskIntoConstraints = NO;
-    self.passwordTextField .delegate = self;
-    self.passwordTextField .placeholder = @"Password";
-    self.passwordTextField .textAlignment = NSTextAlignmentCenter;
-    self.passwordTextField .layer.borderColor = [UIColor lightGrayColor].CGColor;
-    self.passwordTextField .layer.borderWidth = 0.5;
-    self.passwordTextField .layer.cornerRadius = 2;
-    self.passwordTextField .font = [UIFont systemFontOfSize:22];
-    self.passwordTextField .returnKeyType = UIReturnKeyGo;
-    self.passwordTextField .autocapitalizationType = UITextAutocapitalizationTypeNone;
-    self.passwordTextField .secureTextEntry = YES;
+    self.passwordTextField.translatesAutoresizingMaskIntoConstraints = NO;
+    self.passwordTextField.delegate = self;
+    self.passwordTextField.placeholder = @"Password";
+    self.passwordTextField.textAlignment = NSTextAlignmentCenter;
+    self.passwordTextField.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    self.passwordTextField.layer.borderWidth = 0.5;
+    self.passwordTextField.layer.cornerRadius = 2;
+    self.passwordTextField.font = [UIFont systemFontOfSize:22];
+    self.passwordTextField.returnKeyType = UIReturnKeyGo;
+    self.passwordTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    self.passwordTextField.secureTextEntry = YES;
     [self.view addSubview:self.passwordTextField ];
     
     [self configureLayoutConstraints];
@@ -107,9 +107,9 @@ CGFloat const ATLMEmailTextFieldBottomPadding = 20;
 - (void)registerAndAuthenticateUserWithEmail:(NSString *)email withPassword:(NSString *)password
 {
     [self.view endEditing:YES];
-
+    
     // Gather and send the credentials to the delegate.
-    UserCredentials *credentials = [UserCredentials credentialsWithEmail:email password:password];
+    ATLMUserCredentials *credentials = [ATLMUserCredentials credentialsWithEmail:email password:password];
     if ([self.delegate respondsToSelector:@selector(registrationViewController:didSubmitCredentials:)]) {
         [self.delegate registrationViewController:self didSubmitCredentials:credentials];
     }
@@ -126,7 +126,7 @@ CGFloat const ATLMEmailTextFieldBottomPadding = 20;
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.emailTextField attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:ATLMEmailTextFieldWidthRatio constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.emailTextField attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ATLMEmailTextFieldHeight]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.emailTextField attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.passwordTextField attribute:NSLayoutAttributeTop multiplier:1.0 constant:-ATLMEmailTextFieldBottomPadding]];
-
+    
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.passwordTextField attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.passwordTextField attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:ATLMEmailTextFieldWidthRatio constant:0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.passwordTextField attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ATLMEmailTextFieldHeight]];

@@ -1,12 +1,12 @@
 //
-//  UserCredentials.m
+//  ATLMUserCredentials.m
 //  Atlas Messenger
 //
 //  Created by Daniel Maness on 11/10/16.
 //  Copyright © 2016 Layer, Inc. All rights reserved.
 //
 
-#import "UserCredentials.h"
+#import "ATLMUserCredentials.h"
 @import RNCryptor_objc;
 
 static NSString *defaultsEmailKey = @"DEFAULTS_EMAIL";
@@ -14,15 +14,15 @@ static NSString *defaultsPasswordKey = @"DEFAULTS_PASSWORD";
 // https://xkcd.com/221/
 static NSString *encryptionSecret = @"rsRJk2wMKUWkFDkGYyEncw";
 
-@implementation UserCredentials
-+ (UserCredentials *)credentialsWithEmail:(NSString *)email password:(NSString *)password {
-    UserCredentials *creds = [self new];
+@implementation ATLMUserCredentials
++ (ATLMUserCredentials *)credentialsWithEmail:(NSString *)email password:(NSString *)password {
+    ATLMUserCredentials *creds = [self new];
     creds.email = email;
     creds.password = password;
     return creds;
 }
 
-+ (UserCredentials * _Nullable)savedCredentials {
++ (ATLMUserCredentials * _Nullable)savedCredentials {
     NSString *savedEmail = [[NSUserDefaults standardUserDefaults] stringForKey:defaultsEmailKey];
     NSData *encryptedPassword = [[NSUserDefaults standardUserDefaults] objectForKey:defaultsPasswordKey];
     

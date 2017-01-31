@@ -37,9 +37,6 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
 @property (nonatomic) NSURL *baseURL;
 @property (nonatomic) NSURLSession *URLSession;
 
-- (NSString *)authenticateEndpoint;
-- (NSString *)listUsersEndpoint;
-
 @end
 
 @implementation ATLMAuthenticationProvider
@@ -88,7 +85,6 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
 
 - (void)authenticateWithCredentials:(NSDictionary *)credentials nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
 {
-    NSString *appUUID = [[self.layerAppID pathComponents] lastObject];
     NSURL *authenticateURL = [NSURL URLWithString:[self authenticateEndpoint] relativeToURL:self.baseURL];
     NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:credentials];
     [payload setObject:nonce forKey:@"nonce"];
@@ -96,7 +92,6 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     request.HTTPMethod = @"POST";
     request.HTTPBody = [NSJSONSerialization dataWithJSONObject:payload options:0 error:nil];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    NSString *str = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
     [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
             dispatch_async(dispatch_get_main_queue(), ^{

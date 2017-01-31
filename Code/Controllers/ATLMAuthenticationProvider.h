@@ -41,6 +41,10 @@ extern NSString * _Nonnull const ATLMPasswordKey;
 
 @property (nonatomic, copy, readonly) NSURL *layerAppID;
 
+/**
+ @abstract A default provider for `ATLMAuthenticationProvider` that attempts to
+ use cached results, or pulls from LayerConfiguration.json if that's setup properly
+ */
 + (instancetype)defaultProvider;
 
 /**

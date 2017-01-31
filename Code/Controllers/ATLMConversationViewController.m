@@ -612,7 +612,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     NSError *error;
     NSMutableArray *userIDs = [[NSMutableArray alloc] init];
     for (NSDictionary *user in users) {
-        [userIDs addObject:[[user objectForKey:@"id"] stringValue]];
+        [userIDs addObject:[user[@"id"] stringValue]];
     }
     
     NSSet *userIDsToFollow = [NSSet setWithArray:userIDs];

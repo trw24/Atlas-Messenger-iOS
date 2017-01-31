@@ -20,7 +20,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ATLMLayerController.h"
-#import "UserCredentials.h"
+#import "ATLMUserCredentials.h"
 
 @class ATLMRegistrationViewController;
 
@@ -36,7 +36,7 @@
  @param registrationViewController The sender that did the delegate invocation.
  @param credentials The Layer appID the scanner detected.
  */
-- (void)registrationViewController:(nonnull ATLMRegistrationViewController *)registrationViewController didSubmitCredentials:(nonnull UserCredentials *)credentials;
+- (void)registrationViewController:(nonnull ATLMRegistrationViewController *)registrationViewController didSubmitCredentials:(nonnull ATLMUserCredentials *)credentials;
 
 @end
 

@@ -1,5 +1,5 @@
 //
-//  UserCredentials.h
+//  ATLMUserCredentials.h
 //  Atlas Messenger
 //
 //  Created by Daniel Maness on 11/10/16.
@@ -8,12 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-@interface UserCredentials : NSObject
+@interface ATLMUserCredentials : NSObject
 @property (strong, nonatomic) NSString *_Nonnull email;
 @property (strong, nonatomic) NSString *_Nonnull password;
 
-+ (UserCredentials *_Nonnull)credentialsWithEmail:(NSString *_Nonnull)email password:(NSString *_Nonnull)password;
-+ (UserCredentials * _Nullable)savedCredentials;
++ (ATLMUserCredentials *_Nonnull)credentialsWithEmail:(NSString *_Nonnull)email password:(NSString *_Nonnull)password;
++ (ATLMUserCredentials * _Nullable)savedCredentials;
 - (void)saveAndOverwriteExisting;
 - (NSDictionary * _Nonnull)asDictionary;
 @end
