@@ -55,12 +55,10 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     NSURL *appIDURL = appIDString ? [NSURL URLWithString:appIDString] : ATLMConfiguration.appID;
     
     NSURL *identityProviderURL = (ATLMConfiguration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction));
-    
-    assert(appIDURL);
-    
+        
     [[NSUserDefaults standardUserDefaults] setObject:appIDURL.absoluteString forKey:ATLMLayerApplicationIDUserDefaultsKey];
 
-    return [ATLMAuthenticationProvider providerWithBaseURL:identityProviderURL layerAppID:appIDURL];
+    return appIDURL && identityProviderURL ? [ATLMAuthenticationProvider providerWithBaseURL:identityProviderURL layerAppID:appIDURL] : nil;
 }
 
 - (id)initWithBaseURL:(nonnull NSURL *)baseURL layerAppID:(NSURL *)layerAppID;

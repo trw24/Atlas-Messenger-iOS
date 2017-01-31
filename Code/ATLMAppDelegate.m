@@ -94,7 +94,10 @@
 - (void)initializeLayer
 {
     ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider defaultProvider];
-    [self configureClientWithAuthenticationProvider:authenticationProvider];
+    // Only initialize if there is a provider. Failing this lets us go to the QR code flow
+    if (authenticationProvider) {
+        [self configureClientWithAuthenticationProvider:authenticationProvider];
+    }
 }
 
 - (void)applicationController:(nonnull ATLMApplicationViewController *)applicationController didCollectLayerAppID:(nonnull NSURL *)appID
