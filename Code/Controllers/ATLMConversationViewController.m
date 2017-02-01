@@ -26,6 +26,7 @@
 #import "ATLMUtilities.h"
 #import "ATLMParticipantTableViewController.h"
 #import "LYRIdentity+ATLParticipant.h"
+#import "ATLSignatureInputView.h"
 
 static NSDateFormatter *ATLMShortTimeFormatter()
 {
@@ -249,6 +250,46 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
         [self presentLocationViewControllerWithMessage:message];
         return;
     }
+
+    // capture selection directly from the table view inside the message bubble?
+    messagePart = ATLMessagePartForMIMEType(message, ATLMIMETypeList);
+    if (messagePart) {
+//        [self presentListViewControllerWithMessage:message];
+        return;
+    }
+
+    // just use a custom input view and become first responder to show it?
+    messagePart = ATLMessagePartForMIMEType(message, ATLMIMETypeSignature);
+    if (messagePart) {
+        // option 1: present a new view controller to capture signature
+//        [self presentSignatureViewControllerWithMessage:message];
+
+        // option 2: present a custom input view to capture signature
+        UIView *view = [[ATLSignatureInputView alloc] initWithDelegate:self];
+        ATLConversationView *convoView = self.view;
+        convoView.inputView = view;
+
+        UIResponder *responder = self;
+        do {
+            NSLog(@"%@", responder);
+        } while ((responder = [responder nextResponder]));
+
+        UIResponder *currentFirstResponder = [UIResponder atl_currentFirstResponder];
+
+        [convoView becomeFirstResponder];
+
+        return;
+    }
+}
+
+#pragma mark - ATLSignatureInputViewDelegate
+
+- (void)signatureInputView:(ATLSignatureInputView *)signatureInputView didCaptureSignature:(UIImage *)signature
+{
+    LYRMessagePart *signaturePart = [LYRMessagePart messagePartWithMIMEType:ATLMIMETypeImageJPEG data:UIImageJPEGRepresentation(signature, 1)];
+    LYRMessage *message = [self.layerClient newMessageWithParts:@[signaturePart] options:nil error:nil];
+    [self.conversation sendMessage:message error:nil];
+    [self.view resignFirstResponder];
 }
 
 - (void)presentLocationViewControllerWithMessage:(LYRMessage *)message
