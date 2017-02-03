@@ -19,11 +19,11 @@
 //
 #import "ATLMConfiguration.h"
 
-@implementation ATLMConfiguration
-
-static NSDictionary *_configuration;
-static NSURL *_appID;
-static NSURL *_identityProviderURL;
+@implementation ATLMConfiguration {
+    NSDictionary *_configuration;
+    NSURL *_appID;
+    NSURL *_identityProviderURL;
+}
 
 + (instancetype)sharedConfiguration
 {

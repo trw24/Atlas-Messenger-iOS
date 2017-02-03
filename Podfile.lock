@@ -6,7 +6,7 @@ PODS:
   - KIF (3.5.1):
     - KIF/Core (= 3.5.1)
   - KIF/Core (3.5.1)
-  - KIFViewControllerActions (1.0.1):
+  - KIFViewControllerActions (1.0.2):
     - KIF (>= 2.0.0)
   - LayerKit (0.24.0)
   - LYRCountDownLatch (0.9.0)
@@ -19,24 +19,33 @@ DEPENDENCIES:
   - ClusterPrePermissions (~> 0.1)
   - Expecta
   - KIF
-  - KIFViewControllerActions
+  - KIFViewControllerActions (from `https://github.com/blakewatters/KIFViewControllerActions.git`)
   - LYRCountDownLatch
   - OCMock
   - RNCryptor-objc
   - SVProgressHUD
+
+EXTERNAL SOURCES:
+  KIFViewControllerActions:
+    :git: https://github.com/blakewatters/KIFViewControllerActions.git
+
+CHECKOUT OPTIONS:
+  KIFViewControllerActions:
+    :commit: f9bb47771e29adfa0873aff9bc3652587613608e
+    :git: https://github.com/blakewatters/KIFViewControllerActions.git
 
 SPEC CHECKSUMS:
   Atlas: 291d97b97d9f0be83b40a3ca8529dee77292900c
   ClusterPrePermissions: 168c127a658e423062550dd9c56fe26042a58bce
   Expecta: e1c022fcd33910b6be89c291d2775b3fe27a89fe
   KIF: 082eb65279e51c3092923802849eb796a04982ab
-  KIFViewControllerActions: fc3a8e1352a6609624bda1fe6cfad410d0e88552
+  KIFViewControllerActions: 923795dc4bd4ca5657841ce7455ce67447693861
   LayerKit: ef028036b5623d2daf2f590c688fd790cd90340c
   LYRCountDownLatch: 72a444f729ca5a8c6157c0b58f335a44e6702b48
   OCMock: 35ae71d6a8fcc1b59434d561d1520b9dd4f15765
   RNCryptor-objc: 6d18b2e4297c8f4a71a295492366313a3245d0ae
   SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
 
-PODFILE CHECKSUM: 9fa9c07e37e520de84423356c1a64e3ced9f79b9
+PODFILE CHECKSUM: fcdcfb1e5ccb8956b6ef20220352efd55d6e12d1
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.2.0

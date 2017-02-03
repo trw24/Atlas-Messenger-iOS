@@ -50,6 +50,8 @@
 		4085884E1E3C0A1500C7831C /* ATLMConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 4085884D1E3C0A1500C7831C /* ATLMConfiguration.m */; };
 		4085884F1E3C0A9000C7831C /* ATLMAuthenticationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 4085884B1E3C09F800C7831C /* ATLMAuthenticationProvider.m */; };
 		408588511E3C0B7800C7831C /* LayerConfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 408588501E3C0B7800C7831C /* LayerConfiguration.json */; };
+		409121181E4511E500CB0BBE /* ATLMConfigurationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 409121171E4511E500CB0BBE /* ATLMConfigurationTests.m */; };
+		4091211A1E45127200CB0BBE /* TestLayerConfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 409121191E45127200CB0BBE /* TestLayerConfiguration.json */; };
 		7925DBD62EDE367FF4BEEA9E /* Pods_Atlas_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CB8675E27A4241996DD5C53 /* Pods_Atlas_Messenger.framework */; };
 		8D0DE4B5C52306FEB3743E1D /* Pods_Atlas_MessengerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C124C10D567303BE8476B5F /* Pods_Atlas_MessengerTests.framework */; };
 		AA1DC2791E3C05060034CFD5 /* ATLMLocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1DC2781E3C05060034CFD5 /* ATLMLocationViewController.m */; };
@@ -61,19 +63,8 @@
 		D62611711A98153C00F6E707 /* layer-logo-gray.png in Resources */ = {isa = PBXBuildFile; fileRef = D626116E1A98153C00F6E707 /* layer-logo-gray.png */; };
 		D62611721A98153C00F6E707 /* layer-logo-gray@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D626116F1A98153C00F6E707 /* layer-logo-gray@3x.png */; };
 		D62611731A98153C00F6E707 /* layer-logo-gray@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D62611701A98153C00F6E707 /* layer-logo-gray@2x.png */; };
-		D62729F41A9E81D50035092E /* ATLMConversationDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D8C1A9688C40000BFA2 /* ATLMConversationDetailViewController.m */; };
 		D62D17351A9C22E100E0EFAF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D62D17341A9C22E100E0EFAF /* Images.xcassets */; };
 		D62D17371A9C267C00E0EFAF /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D62D17361A9C267C00E0EFAF /* Launch Screen.xib */; };
-		D6306DFB1A6F30B200E16E85 /* ATLMAPIManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B107B1A6F2D99009BFA9C /* ATLMAPIManagerTest.m */; };
-		D6306DFC1A6F30B200E16E85 /* ATLMLayerControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B107C1A6F2D99009BFA9C /* ATLMLayerControllerTest.m */; };
-		D6306DFE1A6F30B200E16E85 /* ATLMConversationDetailViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B107E1A6F2D99009BFA9C /* ATLMConversationDetailViewControllerTest.m */; };
-		D6306DFF1A6F30B200E16E85 /* ATLMConversationListViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B107F1A6F2D99009BFA9C /* ATLMConversationListViewControllerTest.m */; };
-		D6306E001A6F30B200E16E85 /* ATLMConversationViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B10801A6F2D99009BFA9C /* ATLMConversationViewControllerTest.m */; };
-		D6306E021A6F30B200E16E85 /* ATLMPersistenceManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B10841A6F2D99009BFA9C /* ATLMPersistenceManagerTest.m */; };
-		D6306E031A6F30B200E16E85 /* ATLMSettingsViewControllerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B10861A6F2D99009BFA9C /* ATLMSettingsViewControllerTest.m */; };
-		D6306E041A6F30BE00E16E85 /* ATLMLayerContentFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B10821A6F2D99009BFA9C /* ATLMLayerContentFactory.m */; };
-		D6306E051A6F30BE00E16E85 /* ATLMTestInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B10881A6F2D99009BFA9C /* ATLMTestInterface.m */; };
-		D6306E061A6F30BE00E16E85 /* ATLMTestUser.m in Sources */ = {isa = PBXBuildFile; fileRef = D61B108A1A6F2D99009BFA9C /* ATLMTestUser.m */; };
 		D633684E1A9D614900FBFCD3 /* atlas-splashscreen-960.png in Resources */ = {isa = PBXBuildFile; fileRef = D633684A1A9D614900FBFCD3 /* atlas-splashscreen-960.png */; };
 		D633684F1A9D614900FBFCD3 /* atlas-splashscreen-1334.png in Resources */ = {isa = PBXBuildFile; fileRef = D633684B1A9D614900FBFCD3 /* atlas-splashscreen-1334.png */; };
 		D63368501A9D614900FBFCD3 /* atlas-splashscreen-1336.png in Resources */ = {isa = PBXBuildFile; fileRef = D633684C1A9D614900FBFCD3 /* atlas-splashscreen-1336.png */; };
@@ -164,6 +155,8 @@
 		4085884C1E3C0A1500C7831C /* ATLMConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMConfiguration.h; sourceTree = "<group>"; };
 		4085884D1E3C0A1500C7831C /* ATLMConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMConfiguration.m; sourceTree = "<group>"; };
 		408588501E3C0B7800C7831C /* LayerConfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LayerConfiguration.json; sourceTree = "<group>"; };
+		409121171E4511E500CB0BBE /* ATLMConfigurationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMConfigurationTests.m; sourceTree = "<group>"; };
+		409121191E45127200CB0BBE /* TestLayerConfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestLayerConfiguration.json; sourceTree = "<group>"; };
 		4AA482CB1DF5A67BD50604F2 /* Pods-Atlas MessengerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas MessengerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests.release.xcconfig"; sourceTree = "<group>"; };
 		6CB8675E27A4241996DD5C53 /* Pods_Atlas_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Atlas_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA1DC2771E3C05060034CFD5 /* ATLMLocationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMLocationViewController.h; sourceTree = "<group>"; };
@@ -468,12 +461,14 @@
 		D61B109A1A6F2DB6009BFA9C /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				409121171E4511E500CB0BBE /* ATLMConfigurationTests.m */,
 				D61B10811A6F2D99009BFA9C /* ATLMLayerContentFactory.h */,
 				D61B10821A6F2D99009BFA9C /* ATLMLayerContentFactory.m */,
 				D61B10871A6F2D99009BFA9C /* ATLMTestInterface.h */,
 				D61B10881A6F2D99009BFA9C /* ATLMTestInterface.m */,
 				D61B10891A6F2D99009BFA9C /* ATLMTestUser.h */,
 				D61B108A1A6F2D99009BFA9C /* ATLMTestUser.m */,
+				409121191E45127200CB0BBE /* TestLayerConfiguration.json */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -620,6 +615,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4091211A1E45127200CB0BBE /* TestLayerConfiguration.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -758,17 +754,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D62729F41A9E81D50035092E /* ATLMConversationDetailViewController.m in Sources */,
-				D6306E041A6F30BE00E16E85 /* ATLMLayerContentFactory.m in Sources */,
-				D6306E051A6F30BE00E16E85 /* ATLMTestInterface.m in Sources */,
-				D6306E061A6F30BE00E16E85 /* ATLMTestUser.m in Sources */,
-				D6306DFB1A6F30B200E16E85 /* ATLMAPIManagerTest.m in Sources */,
-				D6306DFC1A6F30B200E16E85 /* ATLMLayerControllerTest.m in Sources */,
-				D6306DFE1A6F30B200E16E85 /* ATLMConversationDetailViewControllerTest.m in Sources */,
-				D6306DFF1A6F30B200E16E85 /* ATLMConversationListViewControllerTest.m in Sources */,
-				D6306E001A6F30B200E16E85 /* ATLMConversationViewControllerTest.m in Sources */,
-				D6306E021A6F30B200E16E85 /* ATLMPersistenceManagerTest.m in Sources */,
-				D6306E031A6F30B200E16E85 /* ATLMSettingsViewControllerTest.m in Sources */,
+				409121181E4511E500CB0BBE /* ATLMConfigurationTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
