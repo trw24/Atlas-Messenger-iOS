@@ -45,7 +45,7 @@
         ATLMLayerClient *client = [ATLMLayerClient clientWithAppID:appID];
         _applicationController.layerClient = client;
         
-        ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:(ATLMConfiguration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction)) layerClient:client];
+        ATLMAPIManager *manager = [ATLMAPIManager managerWithBaseURL:(ATLMConfiguration.sharedConfiguration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction)) layerClient:client];
         _applicationController.APIManager = manager;
         
         _contentFactory = [ATLMLayerContentFactory layerContentFactoryWithLayerClient:applicationController.layerClient];

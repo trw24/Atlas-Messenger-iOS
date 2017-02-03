@@ -85,7 +85,7 @@
 - (void)initializeLayerWithAppID:(NSURL *)appID
 {
     assert(appID);
-    NSURL *identityProviderURL = (ATLMConfiguration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction));
+    NSURL *identityProviderURL = (ATLMConfiguration.sharedConfiguration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction));
 
     ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:identityProviderURL layerAppID:appID];
     [self configureClientWithAuthenticationProvider:authenticationProvider];

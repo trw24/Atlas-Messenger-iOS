@@ -25,18 +25,32 @@ static NSDictionary *_configuration;
 static NSURL *_appID;
 static NSURL *_identityProviderURL;
 
-+ (void)initialize
++ (instancetype)sharedConfiguration
 {
-    NSString* filePath = [[NSBundle mainBundle] pathForResource:@"LayerConfiguration.json" ofType:nil];
-    if (filePath != nil) {
-        NSString *configurationJSON = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-        if (configurationJSON != nil) {
-            _configuration = [NSJSONSerialization JSONObjectWithData:[configurationJSON dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
-        }
-    }
+    static id _sharedConfiguration;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"LayerConfiguration.json" withExtension:nil];
+        _sharedConfiguration = [[self alloc] initWithFileURL:fileURL];
+    });
+    return _sharedConfiguration;
 }
 
-+ (NSURL *)appID
+- (instancetype)initWithFileURL: (NSURL *)fileURL
+{
+    self = [super init];
+    if (self) {
+        if (fileURL != nil) {
+            NSString *configurationJSON = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
+            if (configurationJSON != nil) {
+                _configuration = [NSJSONSerialization JSONObjectWithData:[configurationJSON dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
+            }
+        }
+    }
+    return self;
+}
+
+- (NSURL *)appID
 {
     if (_appID == nil) {
         id appIDString = _configuration[@"app_id"];
@@ -47,7 +61,7 @@ static NSURL *_identityProviderURL;
     return _appID;
 }
 
-+ (NSURL *)identityProviderURL
+- (NSURL *)identityProviderURL
 {
     if (_identityProviderURL == nil) {
         id identityProviderURLString = _configuration[@"identity_provider_url"];
