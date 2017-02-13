@@ -23,7 +23,7 @@
 
 @interface ATLMSettingsHeaderView ()
 
-@property (nonatomic) ATLMUser *user;
+@property (nonatomic) LYRIdentity *user;
 @property (nonatomic) ATLAvatarImageView *imageView;
 @property (nonatomic) UILabel *nameLabel;
 @property (nonatomic) UILabel *connectionStateLabel;
@@ -35,12 +35,12 @@
 
 static CGFloat const ATLMAvatarDiameter = 72;
 
-+ (instancetype)headerViewWithUser:(ATLMUser *)user
++ (instancetype)headerViewWithUser:(LYRIdentity *)user
 {
     return [[self alloc] initHeaderViewWithUser:user];
 }
 
-- (id)initHeaderViewWithUser:(ATLMUser *)user
+- (id)initHeaderViewWithUser:(LYRIdentity *)user
 {
     self = [super init];
     if (self) {
@@ -53,12 +53,12 @@ static CGFloat const ATLMAvatarDiameter = 72;
         _imageView.initialsColor = ATLGrayColor();
         _imageView.backgroundColor = ATLLightGrayColor();
         _imageView.layer.cornerRadius = ATLMAvatarDiameter / 2;
-        _imageView.avatarItem = user;
+        _imageView.avatarItem = (id<ATLAvatarItem>)user;
         [self addSubview:_imageView];
         
         _nameLabel = [[UILabel alloc] init];
         _nameLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        _nameLabel.text = user.fullName;
+        _nameLabel.text = user.displayName;
         _nameLabel.font = [UIFont systemFontOfSize:16];
         _nameLabel.textColor = ATLGrayColor();
         _nameLabel.textAlignment = NSTextAlignmentCenter;

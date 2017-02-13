@@ -19,12 +19,12 @@
 //
 
 #import "ATLMConversationDetailViewController.h"
-#import "ATLMParticipantDataSource.h"
 #import "ATLMUtilities.h"
 #import "ATLMCenterTextTableViewCell.h"
 #import "ATLMInputTableViewCell.h"
 #import <SVProgressHUD/SVProgressHUD.h>
 #import "ATLMParticipantTableViewController.h"
+#import "LYRIdentity+ATLParticipant.h"
 
 typedef NS_ENUM(NSInteger, ATLMConversationDetailTableSection) {
     ATLMConversationDetailTableSectionMetadata,
@@ -42,10 +42,9 @@ typedef NS_ENUM(NSInteger, ATLMActionSheetTag) {
 @interface ATLMConversationDetailViewController () <ATLParticipantTableViewControllerDelegate, UITextFieldDelegate, UIActionSheetDelegate>
 
 @property (nonatomic) LYRConversation *conversation;
-@property (nonatomic) NSMutableArray *participantIdentifiers;
+@property (nonatomic) NSMutableArray *participants;
 @property (nonatomic) NSIndexPath *indexPathToRemove;
 @property (nonatomic) CLLocationManager *locationManager;
-@property (nonatomic) ATLMParticipantDataSource *participantDataSource;
 
 @end
 
@@ -69,16 +68,17 @@ static NSString *const ATLMCenterContentCellIdentifier = @"ATLMCenterContentCell
 static NSString *const ATLMPlusIconName = @"AtlasResource.bundle/plus";
 static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
-+ (instancetype)conversationDetailViewControllerWithConversation:(LYRConversation *)conversation
++ (instancetype)conversationDetailViewControllerWithConversation:(LYRConversation *)conversation withLayerController:(ATLMLayerController *)layerController
 {
-    return [[self alloc] initWithConversation:conversation];
+    return [[self alloc] initWithConversation:conversation withLayerController:layerController];
 }
 
-- (id)initWithConversation:(LYRConversation *)conversation
+- (id)initWithConversation:(LYRConversation *)conversation withLayerController:(ATLMLayerController *)layerController
 {
     self = [super initWithStyle:UITableViewStyleGrouped];
     if (self) {
         _conversation = conversation;
+        _layerController = layerController;
     }
     return self;
 }
@@ -96,8 +96,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     [self.tableView registerClass:[ATLMInputTableViewCell class] forCellReuseIdentifier:ATLMInputCellIdentifier];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:ATLMDefaultCellIdentifier];
     
-    self.participantDataSource = [ATLMParticipantDataSource participantDataSourceWithPersistenceManager:self.applicationController.persistenceManager];
-    self.participantIdentifiers = [self filteredParticipantIdentifiers];
+    self.participants = [self filteredParticipants];
     
     [self configureAppearance];
     [self registerNotificationObservers];
@@ -122,7 +121,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
             return 1;
             
         case ATLMConversationDetailTableSectionParticipants:
-            return self.participantIdentifiers.count + 1; // Add a row for the `Add Participant` cell.
+            return self.participants.count + 1; // Add a row for the `Add Participant` cell.
             
         case ATLMConversationDetailTableSectionLocation:
             return 1;
@@ -145,7 +144,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
         }
             
         case ATLMConversationDetailTableSectionParticipants:
-            if (indexPath.row < self.participantIdentifiers.count) {
+            if (indexPath.row < self.participants.count) {
                 ATLParticipantTableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:ATLMParticipantCellIdentifier forIndexPath:indexPath];
                 [self configureParticipantCell:cell atIndexPath:indexPath];
                 return cell;
@@ -201,7 +200,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
         if (self.conversation.participants.count < 3) {
             return NO;
         }
-        BOOL canEdit = indexPath.row < self.participantIdentifiers.count;
+        BOOL canEdit = indexPath.row < self.participants.count;
         return canEdit;
     }
     return NO;
@@ -223,7 +222,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 {
     switch ((ATLMConversationDetailTableSection)indexPath.section) {
         case ATLMConversationDetailTableSectionParticipants:
-            if (indexPath.row == self.participantIdentifiers.count) {
+            if (indexPath.row == self.participants.count) {
                 [self presentParticipantPicker];
             }
             break;
@@ -271,8 +270,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 - (void)configureParticipantCell:(ATLParticipantTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *participantIdentifier = [self.participantIdentifiers objectAtIndex:indexPath.row];
-    id<ATLParticipant> participant = [self.participantDataSource participantForIdentifier:participantIdentifier];
+     id<ATLParticipant> participant = [self.participants objectAtIndex:indexPath.row];
     if ([self blockedParticipantAtIndexPath:indexPath]) {
         cell.accessoryView.accessibilityLabel = @"Blocked";
         cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:ATLMBlockIconName]];
@@ -309,14 +307,17 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
         }
     }
 }
-
+ 
 #pragma mark - Actions
 
 - (void)presentParticipantPicker
 {
-    self.participantDataSource.excludedIdentifiers = self.conversation.participants;
+    LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
+    query.predicate = [LYRPredicate predicateWithProperty:@"userID" predicateOperator:LYRPredicateOperatorIsNotIn value:[self.conversation.participants valueForKey:@"userID"]];
+    NSError *error;
+    NSOrderedSet *identities = [self.layerController.layerClient executeQuery:query error:&error];
     
-    ATLMParticipantTableViewController  *controller = [ATLMParticipantTableViewController participantTableViewControllerWithParticipants:self.participantDataSource.participants sortType:ATLParticipantPickerSortTypeFirstName];
+    ATLMParticipantTableViewController  *controller = [ATLMParticipantTableViewController participantTableViewControllerWithParticipants:identities.set sortType:ATLParticipantPickerSortTypeFirstName];
     controller.delegate = self;
     controller.allowsMultipleSelection = NO;
     
@@ -326,31 +327,30 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 - (void)removeParticipantAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *participantIdentifier = self.participantIdentifiers[indexPath.row];
+    id<ATLParticipant>participant = self.participants[indexPath.row];
     NSError *error;
-    BOOL success = [self.conversation removeParticipants:[NSSet setWithObject:participantIdentifier] error:&error];
+    BOOL success = [self.conversation removeParticipants:[NSSet setWithObject:[participant userID]] error:&error];
     if (!success) {
         ATLMAlertWithError(error);
         return;
     }
-    [self.participantIdentifiers removeObjectAtIndex:indexPath.row];
+    [self.participants removeObjectAtIndex:indexPath.row];
     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
 }
 
 - (void)blockParticipantAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *identifier = [self.participantIdentifiers objectAtIndex:indexPath.row];
+    id<ATLParticipant>participant = [self.participants objectAtIndex:indexPath.row];
     LYRPolicy *policy =  [self blockedParticipantAtIndexPath:indexPath];
-    
     if (policy) {
         NSError *error;
-        [self.applicationController.layerClient removePolicy:policy error:&error];
+        [self.layerController.layerClient removePolicies:[NSSet setWithObject:policy] error:&error];
         if (error) {
             ATLMAlertWithError(error);
             return;
         }
     } else {
-        [self blockParticipantWithIdentifier:identifier];
+        [self blockParticipantWithIdentifier:[participant userID]];
     }
     [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
@@ -361,7 +361,7 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     blockPolicy.sentByUserID = identitifer;
     
     NSError *error;
-    [self.applicationController.layerClient addPolicy:blockPolicy error:&error];
+    [self.layerController.layerClient addPolicies:[NSSet setWithObject:blockPolicy] error:&error];
     if (error) {
         ATLMAlertWithError(error);
         return;
@@ -384,10 +384,9 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 - (void)leaveConversation
 {
-    NSSet *participants = [NSSet setWithObject:self.applicationController.layerClient.authenticatedUserID];
     NSError *error;
-    [self.conversation removeParticipants:participants error:&error];
-    if (error) {
+    BOOL success = [self.conversation leave:&error];
+    if (!success) {
         ATLMAlertWithError(error);
         return;
     } else {
@@ -398,8 +397,8 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 - (void)deleteConversation
 {
     NSError *error;
-    [self.conversation delete:LYRDeletionModeAllParticipants error:&error];
-    if (error) {
+    BOOL success = [self.conversation delete:LYRDeletionModeAllParticipants error:&error];
+    if (!success) {
         ATLMAlertWithError(error);
         return;
     } else {
@@ -412,26 +411,27 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 - (void)participantTableViewController:(ATLParticipantTableViewController *)participantTableViewController didSelectParticipant:(id<ATLParticipant>)participant
 {
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-    self.participantDataSource.excludedIdentifiers = nil;
     
-    [self.participantIdentifiers addObject:participant.participantIdentifier];
-    if (self.conversation.participants.count < 3) {
-        [self switchToConversationForParticipants];
-    } else {
-        NSError *error;
-        BOOL success = [self.conversation addParticipants:[NSSet setWithObject:participant.participantIdentifier] error:&error];
-        if (!success) {
-            ATLMAlertWithError(error);
-            return;
-        }
+    [self.participants addObject:participant];
+    NSError *error;
+    BOOL success = [self.conversation addParticipants:[NSSet setWithObject:participant.userID] error:&error];
+    if (!success) {
+        ATLMAlertWithError(error);
+        return;
     }
     [self.tableView reloadData];
 }
 
 - (void)participantTableViewController:(ATLParticipantTableViewController *)participantTableViewController didSearchWithString:(NSString *)searchText completion:(void (^)(NSSet *))completion
 {
-    [self.participantDataSource participantsMatchingSearchText:searchText completion:^(NSSet *participants) {
-        completion(participants);
+    LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
+    query.predicate = [LYRPredicate predicateWithProperty:@"displayName" predicateOperator:LYRPredicateOperatorLike value:[NSString stringWithFormat:@"%%%@%%", searchText]];
+    [self.layerController.layerClient executeQuery:query completion:^(NSOrderedSet<id<LYRQueryable>> * _Nullable resultSet, NSError * _Nullable error) {
+        if (resultSet) {
+            completion(resultSet.set);
+        } else {
+            completion([NSSet set]);
+        }
     }];
 }
 
@@ -439,10 +439,10 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 - (void)switchToConversationForParticipants
 {
-    NSSet *participants = [NSSet setWithArray:self.participantIdentifiers];
-    LYRConversation *conversation = [self.applicationController.layerClient existingConversationForParticipants:participants];
+    NSSet *participantIdentifiers = [self.participants valueForKey:@"userID"];
+    LYRConversation *conversation = [self.layerController existingConversationForParticipants:participantIdentifiers];
     if (!conversation) {
-        conversation = [self.applicationController.layerClient newConversationWithParticipants:participants options:nil error:nil];
+        conversation = [self.layerController.layerClient newConversationWithParticipants:participantIdentifiers options:nil error:nil];
     }
     [self.detailDelegate conversationDetailViewController:self didChangeConversation:conversation];
     self.conversation = conversation;
@@ -450,9 +450,9 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 - (LYRPolicy *)blockedParticipantAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSOrderedSet *policies = self.applicationController.layerClient.policies;
-    NSString *participant = self.participantIdentifiers[indexPath.row];
-    NSPredicate *policyPredicate = [NSPredicate predicateWithFormat:@"SELF.sentByUserID = %@", participant];
+    NSOrderedSet *policies = self.layerController.layerClient.policies;
+    id<ATLParticipant>participant = self.participants[indexPath.row];
+    NSPredicate *policyPredicate = [NSPredicate predicateWithFormat:@"SELF.sentByUserID = %@", [participant userID]];
     NSOrderedSet *filteredPolicies = [policies filteredOrderedSetUsingPredicate:policyPredicate];
     if (filteredPolicies.count) {
         return filteredPolicies.firstObject;
@@ -504,35 +504,30 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
     if (!notification.object) return;
     if (![notification.object isEqual:self.conversation]) return;
     
-    self.participantDataSource.excludedIdentifiers = nil;
-    
     [self.tableView beginUpdates];
     
-    NSSet *existingIdentifiers = [NSSet setWithArray:self.participantIdentifiers];
+    NSSet *existingParticipants = [NSSet setWithArray:self.participants];
     
     NSMutableArray *deletedIndexPaths = [NSMutableArray new];
     NSMutableIndexSet *deletedIndexSet = [NSMutableIndexSet new];
-    NSMutableSet *deletedIdentifiers = [existingIdentifiers mutableCopy];
-    [deletedIdentifiers minusSet:self.conversation.participants];
-    for (NSString *deletedIdentifier in deletedIdentifiers) {
-        NSUInteger row = [self.participantIdentifiers indexOfObject:deletedIdentifier];
+    NSMutableSet *deletedParticipants = [existingParticipants mutableCopy];
+    [deletedParticipants minusSet:self.conversation.participants];
+    for (LYRIdentity *deletedIdentity in deletedParticipants) {
+        NSUInteger row = [self.participants indexOfObject:deletedIdentity];
         [deletedIndexSet addIndex:row];
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:ATLMConversationDetailTableSectionParticipants];
         [deletedIndexPaths addObject:indexPath];
     }
-    [self.participantIdentifiers removeObjectsAtIndexes:deletedIndexSet];
+    [self.participants removeObjectsAtIndexes:deletedIndexSet];
     [self.tableView deleteRowsAtIndexPaths:deletedIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
     
     NSMutableArray *insertedIndexPaths = [NSMutableArray new];
-    NSMutableSet *insertedIdentifiers = [self.conversation.participants mutableCopy];
-    NSString *authenticatedUserID = self.applicationController.layerClient.authenticatedUserID;
-    if (authenticatedUserID) [insertedIdentifiers removeObject:authenticatedUserID];
-    [insertedIdentifiers minusSet:existingIdentifiers];
-    for (NSString *identifier in insertedIdentifiers) {
-        ATLMUser *user = [self.applicationController.persistenceManager userForIdentifier:identifier];
-        if (!user) continue;
-        [self.participantIdentifiers addObject:identifier];
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.participantIdentifiers.count - 1 inSection:ATLMConversationDetailTableSectionParticipants];
+    NSMutableSet *insertedParticipants = [self.conversation.participants mutableCopy];
+    [insertedParticipants removeObject:self.layerController.layerClient.authenticatedUser];
+    [insertedParticipants minusSet:existingParticipants];
+    for (LYRIdentity *identity in insertedParticipants) {
+        [self.participants addObject:identity];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.participants.count - 1 inSection:ATLMConversationDetailTableSectionParticipants];
         [insertedIndexPaths addObject:indexPath];
     }
     [self.tableView insertRowsAtIndexPaths:insertedIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -541,13 +536,11 @@ static NSString *const ATLMBlockIconName = @"AtlasResource.bundle/block";
 
 #pragma mark - Helpers
 
-- (NSMutableArray *)filteredParticipantIdentifiers
+- (NSMutableArray *)filteredParticipants
 {
-    NSMutableSet *participantIdentifiers = [self.conversation.participants.allObjects mutableCopy];
-    [participantIdentifiers removeObject:self.applicationController.layerClient.authenticatedUserID];
-    NSMutableSet *knownParticipants = [[self.applicationController.persistenceManager usersForIdentifiers:participantIdentifiers] mutableCopy];
-    NSSet *knownParticipantIdentifiers = [knownParticipants valueForKey:@"participantIdentifier"];
-    return [[knownParticipantIdentifiers allObjects] mutableCopy];
+    NSMutableArray *participants = [[self.conversation.participants allObjects] mutableCopy];
+    [participants removeObject:self.layerController.layerClient.authenticatedUser];
+    return participants;
 }
 
 - (void)configureAppearance

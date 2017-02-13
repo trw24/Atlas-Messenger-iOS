@@ -22,7 +22,7 @@
 #import <KIFViewControllerActions/KIFViewControllerActions.h>
 #import <XCTest/XCTest.h>
 
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
 #import "ATLMTestInterface.h"
 #import "ATLMTestUser.h"
 
@@ -49,7 +49,7 @@ extern NSString *const ATLMessageInputToolbarAccessibilityLabel;
 - (void)setUp
 {
     [super setUp];
-    ATLMApplicationController *applicationController =  [(ATLMAppDelegate *)[[UIApplication sharedApplication] delegate] applicationController];
+    ATLMLayerController *applicationController =  [(ATLMAppDelegate *)[[UIApplication sharedApplication] delegate] layerController];
     self.testInterface = [ATLMTestInterface testInterfaceWithApplicationController:applicationController];
     [self.testInterface connectLayerClient];
     [self.testInterface deauthenticateIfNeeded];

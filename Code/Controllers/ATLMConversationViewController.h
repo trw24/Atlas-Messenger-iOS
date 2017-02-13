@@ -18,9 +18,10 @@
 //  limitations under the License.
 //
 
-#import <Atlas/Atlas.h>
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
+#import "ATLConversationViewController.h"
 
+NS_ASSUME_NONNULL_BEGIN
 /**
  @abstract Subclass of the `ATLMConversationViewController`. Presents a user interface for displaying and sending messages.
  */
@@ -29,6 +30,12 @@
 /**
  @abstract The controller object for the application.
  */
-@property (nonatomic) ATLMApplicationController *applicationController;
++ (instancetype)conversationViewControllerWithLayerController:(nonnull ATLMLayerController *)layerController;
+
+/**
+ @abstract The controller object for the application.
+ */
+@property (nonnull, nonatomic) ATLMLayerController *layerController;
 
 @end
+NS_ASSUME_NONNULL_END

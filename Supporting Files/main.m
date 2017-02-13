@@ -1,8 +1,8 @@
 //
-//  ATLMSettingsHeaderView.h
+//  main.m
 //  Atlas Messenger
 //
-//  Created by Kevin Coleman on 10/23/14.
+//  Created by Kevin Coleman on 6/10/14.
 //  Copyright (c) 2014 Layer, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,12 +19,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <LayerKit/LayerKit.h>
+#import "ATLMAppDelegate.h"
 
-@interface ATLMSettingsHeaderView : UIView
-
-+ (instancetype)headerViewWithUser:(LYRIdentity *)user;
-
-- (void)updateConnectedStateWithString:(NSString *)string;
-
-@end
+int main(int argc, char * argv[])
+{
+    @autoreleasepool {
+        Class appDelegateClass = NSClassFromString(@"ATLAppDelegate") ?: [ATLMAppDelegate class];
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass(appDelegateClass));
+    }
+}

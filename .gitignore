@@ -6,4 +6,5 @@ xcuserdata
 *.xcworkspace/xcuserdata/*.xcuserdatad
 *.xcworkspace/xcshareddata/xcschemes/*.xcscheme
 *.xcworkspace/xcshareddata/*.xccheckout
+*.xcworkspace/xcshareddata/*.xcscmblueprint
 xcodebuild.log

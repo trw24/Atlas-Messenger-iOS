@@ -68,13 +68,49 @@ NSString *const ATLMDisconnected = @"Disconnected";
 NSString *const ATLMLostConnection = @"Lost Connection";
 NSString *const ATLMConnecting = @"Connecting";
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id)initWithStyle:(UITableViewStyle)style layerClient:(nonnull LYRClient *)layerClient
 {
     self = [super initWithStyle:style];
     if (self) {
         self.title = ATLMSettingsViewControllerTitle;
+        _layerClient = layerClient;
     }
     return self;
+}
+
+- (nullable instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil layerClient:(nonnull LYRClient *)layerClient
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.title = ATLMSettingsViewControllerTitle;
+        _layerClient = layerClient;
+    }
+    return self;
+}
+
+- (nullable instancetype)initWithCoder:(nonnull NSCoder *)aDecoder layerClient:(nonnull LYRClient *)layerClient
+{
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        self.title = ATLMSettingsViewControllerTitle;
+        _layerClient = layerClient;
+    }
+    return self;
+}
+
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Failed to call the designated initializer. Use initWithStyle:layerClient:" userInfo:nil];
+}
+
+- (id)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil
+{
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Failed to call the designated initializer. Use initWithNibName:bundle:layerClient:" userInfo:nil];
+}
+
+- (id)initWithCoder:(nonnull NSCoder *)aDecoder
+{
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Failed to call the designated initializer. Use initWithCoder:layerClient:" userInfo:nil];
 }
 
 - (void)viewDidLoad
@@ -91,10 +127,10 @@ NSString *const ATLMConnecting = @"Connecting";
     doneButton.accessibilityLabel = @"Done";
     self.navigationItem.rightBarButtonItem = doneButton;
     
-    self.headerView = [ATLMSettingsHeaderView headerViewWithUser:self.applicationController.APIManager.authenticatedSession.user];
+    self.headerView = [ATLMSettingsHeaderView headerViewWithUser:self.layerClient.authenticatedUser];
     self.headerView.frame = CGRectMake(0, 0, 320, 148);
     self.headerView.accessibilityLabel = ATLMSettingsHeaderAccessibilityLabel;
-    if (self.applicationController.layerClient.isConnected){
+    if (self.layerClient.isConnected){
         [self.headerView updateConnectedStateWithString:ATLMConnected];
     } else {
         [self.headerView updateConnectedStateWithString:ATLMDisconnected];
@@ -145,7 +181,7 @@ NSString *const ATLMConnecting = @"Connecting";
             switch (indexPath.row) {
                 case ATLMInfoTableRowAtlasVersion:
                     cell.textLabel.text = @"Atlas Version";
-                    cell.detailTextLabel.text = @"1.0.2";
+                    cell.detailTextLabel.text = ATLVersionString;
                     break;
 
                 case ATLMInfoTableRowLayerKitVersion:
@@ -155,7 +191,7 @@ NSString *const ATLMConnecting = @"Connecting";
                     
                 case ATLMInfoTableRowAppIDRow:
                     cell.textLabel.text = @"App ID";
-                    cell.detailTextLabel.text = [self.applicationController.layerClient.appID absoluteString];
+                    cell.detailTextLabel.text = [self.layerClient.appID absoluteString];
                     cell.detailTextLabel.font = [UIFont systemFontOfSize:10];
                     break;
                     
@@ -264,7 +300,7 @@ NSString *const ATLMConnecting = @"Connecting";
 
 - (void)logOut
 {
-    if (self.applicationController.layerClient.isConnected) {
+    if (self.layerClient.isConnected) {
         [self.settingsDelegate logoutTappedInSettingsViewController:self];
     } else {
         [SVProgressHUD showErrorWithStatus:@"Cannot Logout. Layer is not connected"];

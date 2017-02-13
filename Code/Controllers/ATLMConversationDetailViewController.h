@@ -19,9 +19,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Atlas/Atlas.h>
 #import <CoreLocation/CoreLocation.h>
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
 
 extern NSString *const ATLMConversationDetailViewControllerTitle;
 extern NSString *const ATLMConversationMetadataNameKey;
@@ -59,7 +58,7 @@ extern NSString *const ATLMConversationMetadataNameKey;
 /// @name Initializing a Controller
 ///--------------------------------
 
-+(instancetype)conversationDetailViewControllerWithConversation:(LYRConversation *)conversation;
++ (instancetype)conversationDetailViewControllerWithConversation:(LYRConversation *)conversation withLayerController:(ATLMLayerController *)layerController;
 
 /**
  @abstract The `ATLMConversationDetailViewControllerDelegate` object for the controller.
@@ -69,6 +68,6 @@ extern NSString *const ATLMConversationMetadataNameKey;
 /**
  @abstract The controller object for the application.
  */
-@property (nonatomic) ATLMApplicationController *applicationController;
+@property (nonatomic) ATLMLayerController *layerController;
 
 @end

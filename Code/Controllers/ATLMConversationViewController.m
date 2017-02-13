@@ -18,13 +18,14 @@
 //  limitations under the License.
 //
 
+@import Atlas.ATLParticipantPresenting;
 #import "ATLMConversationViewController.h"
-#import "ATLMParticipantDataSource.h"
 #import "ATLMConversationDetailViewController.h"
 #import "ATLMMediaViewController.h"
+#import "ATLMLocationViewController.h"
 #import "ATLMUtilities.h"
 #import "ATLMParticipantTableViewController.h"
-#import "ATLMSplitViewController.h"
+#import "LYRIdentity+ATLParticipant.h"
 
 static NSDateFormatter *ATLMShortTimeFormatter()
 {
@@ -89,10 +90,7 @@ static ATLMDateProximity ATLMProximityToDate(NSDate *date)
 {
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDate *now = [NSDate date];
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    NSCalendarUnit calendarUnits = NSEraCalendarUnit | NSYearCalendarUnit | NSWeekOfMonthCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
-#pragma GCC diagnostic pop
+    NSCalendarUnit calendarUnits = NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitWeekOfMonth | NSCalendarUnitMonth | NSCalendarUnitDay;
     NSDateComponents *dateComponents = [calendar components:calendarUnits fromDate:date];
     NSDateComponents *todayComponents = [calendar components:calendarUnits fromDate:now];
     if (dateComponents.day == todayComponents.day &&
@@ -130,8 +128,6 @@ static ATLMDateProximity ATLMProximityToDate(NSDate *date)
 
 @interface ATLMConversationViewController () <ATLMConversationDetailViewControllerDelegate, ATLParticipantTableViewControllerDelegate>
 
-@property (nonatomic) ATLMParticipantDataSource *participantDataSource;
-
 @end
 
 @implementation ATLMConversationViewController
@@ -139,6 +135,22 @@ static ATLMDateProximity ATLMProximityToDate(NSDate *date)
 NSString *const ATLMConversationViewControllerAccessibilityLabel = @"Conversation View Controller";
 NSString *const ATLMDetailsButtonAccessibilityLabel = @"Details Button";
 NSString *const ATLMDetailsButtonLabel = @"Details";
+
++ (instancetype)conversationViewControllerWithLayerController:(ATLMLayerController *)layerController
+{
+    NSAssert(layerController, @"Layer Controller cannot be nil");
+    return [[self alloc] initWithLayerController:layerController];
+}
+
+- (instancetype)initWithLayerController:(ATLMLayerController *)layerController
+{
+    NSAssert(layerController, @"Layer Controller cannot be nil");
+    self = [self initWithLayerClient:layerController.layerClient];
+    if (self)  {
+        _layerController = layerController;
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
@@ -153,23 +165,12 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     
     [self configureUserInterfaceAttributes];
     [self registerNotificationObservers];
-    
-    self.participantDataSource = [ATLMParticipantDataSource participantDataSourceWithPersistenceManager:self.applicationController.persistenceManager];
-    self.participantDataSource.excludedIdentifiers = [NSSet setWithObject:self.layerClient.authenticatedUserID];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     [self configureTitle];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    if (!self.view.isFirstResponder) {
-        [self.view becomeFirstResponder];
-    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -242,26 +243,55 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
         [self presentMediaViewControllerWithMessage:message];
         return;
     }
+    
+    messagePart = ATLMessagePartForMIMEType(message, ATLMIMETypeLocation);
+    if (messagePart) {
+        [self presentLocationViewControllerWithMessage:message];
+        return;
+    }
+}
+
+- (void)presentLocationViewControllerWithMessage:(LYRMessage *)message
+{
+    ATLMLocationViewController *locationViewController = [[ATLMLocationViewController alloc] initWithMessage:message];
+    [self showViewController:locationViewController sender:self];
+    
+    locationViewController.mapView.scrollEnabled = NO;
 }
 
 - (void)presentMediaViewControllerWithMessage:(LYRMessage *)message
 {
     ATLMMediaViewController *imageViewController = [[ATLMMediaViewController alloc] initWithMessage:message];
-    UINavigationController *controller = [[UINavigationController alloc] initWithRootViewController:imageViewController];
-    [self.navigationController presentViewController:controller animated:YES completion:nil];
+    [self showViewController:imageViewController sender:self];
+}
+
+- (void)showViewController:(UIViewController *)viewController sender:(id)sender
+{
+    // If the `viewController` is a UINavigationController, present it.
+    // Do not attempt to push a navigation controller
+    if ([viewController isKindOfClass:[UINavigationController class]]) {
+        [sender presentViewController:viewController animated:true completion:nil];
+        return;
+    }
+    
+    // If `self` is in a navigation controller, push viewController
+    // Otherwise present it in a navigation controller
+    if (self.navigationController != nil) {
+        [self.navigationController pushViewController:viewController animated:true];
+    } else {
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+        [sender presentViewController:navigationController animated:true completion:nil];
+    }
 }
 
 #pragma mark - ATLConversationViewControllerDataSource
 
 /**
- Atlas - Returns an object conforming to the `ATLParticipant` protocol whose `participantIdentifier` property matches the supplied identifier.
+ Atlas - Returns an object conforming to the `ATLParticipant` protocol whose `userID` property matches the supplied identity.
  */
-- (id<ATLParticipant>)conversationViewController:(ATLConversationViewController *)conversationViewController participantForIdentifier:(NSString *)participantIdentifier
+- (id<ATLParticipant>)conversationViewController:(ATLConversationViewController *)conversationViewController participantForIdentity:(nonnull LYRIdentity *)identity
 {
-    if (participantIdentifier) {
-        return [self.applicationController.persistenceManager userForIdentifier:participantIdentifier];
-    }
-    return nil;
+    return identity;
 }
 
 /**
@@ -303,8 +333,8 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 - (NSAttributedString *)conversationViewController:(ATLConversationViewController *)conversationViewController attributedStringForDisplayOfRecipientStatus:(NSDictionary *)recipientStatus
 {
     NSMutableDictionary *mutableRecipientStatus = [recipientStatus mutableCopy];
-    if ([mutableRecipientStatus valueForKey:self.applicationController.layerClient.authenticatedUserID]) {
-        [mutableRecipientStatus removeObjectForKey:self.applicationController.layerClient.authenticatedUserID];
+    if ([mutableRecipientStatus valueForKey:self.layerClient.authenticatedUser.userID]) {
+        [mutableRecipientStatus removeObjectForKey:self.layerClient.authenticatedUser.userID];
     }
     
     NSString *statusString = [NSString new];
@@ -345,7 +375,7 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     } else {
         __block NSString *blockStatusString = [NSString new];
         [mutableRecipientStatus enumerateKeysAndObjectsUsingBlock:^(NSString *userID, NSNumber *statusNumber, BOOL *stop) {
-            if ([userID isEqualToString:self.applicationController.layerClient.authenticatedUserID]) return;
+            if ([userID isEqualToString:self.layerClient.authenticatedUser.userID]) return;
             LYRRecipientStatus status = statusNumber.integerValue;
             switch (status) {
                 case LYRRecipientStatusInvalid:
@@ -377,17 +407,24 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
  */
 - (void)addressBarViewController:(ATLAddressBarViewController *)addressBarViewController didTapAddContactsButton:(UIButton *)addContactsButton
 {
-    NSMutableSet *excludedIdentifiers = [self.participantDataSource.excludedIdentifiers mutableCopy];
-    [excludedIdentifiers addObjectsFromArray:[[addressBarViewController.selectedParticipants valueForKey:@"participantIdentifier"] allObjects]];
-    self.participantDataSource.excludedIdentifiers = excludedIdentifiers;
+    LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
+    NSSet *selectedParticipantIDs = [addressBarViewController.selectedParticipants valueForKey:@"userID"];
+    if (selectedParticipantIDs) {
+        query.predicate = [LYRPredicate predicateWithProperty:@"userID" predicateOperator:LYRPredicateOperatorIsNotIn value:selectedParticipantIDs];
+    }
     
-    ATLMParticipantTableViewController  *controller = [ATLMParticipantTableViewController participantTableViewControllerWithParticipants:self.participantDataSource.participants sortType:ATLParticipantPickerSortTypeFirstName];
+    NSError *error;
+    NSOrderedSet *identities = [self.layerClient executeQuery:query error:&error];
+    if (error) {
+        ATLMAlertWithError(error);
+    }
+    
+    ATLMParticipantTableViewController *controller = [ATLMParticipantTableViewController participantTableViewControllerWithParticipants:identities.set sortType:ATLParticipantPickerSortTypeFirstName];
     controller.blockedParticipantIdentifiers = [self.layerClient.policies valueForKey:@"sentByUserID"];
     controller.delegate = self;
     controller.allowsMultipleSelection = NO;
     
-    UINavigationController *navigationController =[[UINavigationController alloc] initWithRootViewController:controller];
-    [self.navigationController presentViewController:navigationController animated:YES completion:nil];
+    [self showViewController:controller sender:self];
 }
 
 /**
@@ -395,8 +432,14 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
  */
 - (void)addressBarViewController:(ATLAddressBarViewController *)addressBarViewController searchForParticipantsMatchingText:(NSString *)searchText completion:(void (^)(NSArray *participants))completion
 {
-    [self.participantDataSource participantsMatchingSearchText:searchText completion:^(NSSet *participants) {
-        completion([participants allObjects]);
+    LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
+    query.predicate = [LYRPredicate predicateWithProperty:@"displayName" predicateOperator:LYRPredicateOperatorLike value:[searchText stringByAppendingString:@"%"]];
+    [self.layerClient executeQuery:query completion:^(NSOrderedSet<id<ATLParticipant>> * _Nullable resultSet, NSError * _Nullable error) {
+        if (resultSet) {
+            completion(resultSet.array);
+        } else {
+            completion([NSArray array]);
+        }
     }];
 }
 
@@ -424,8 +467,22 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
  */
 - (void)participantTableViewController:(ATLParticipantTableViewController *)participantTableViewController didSearchWithString:(NSString *)searchText completion:(void (^)(NSSet *))completion
 {
-    [self.participantDataSource participantsMatchingSearchText:searchText completion:^(NSSet *participants) {
-        completion(participants);
+    LYRQuery *query = [LYRQuery queryWithQueryableClass:[LYRIdentity class]];
+    LYRPredicate *searchPredicate = [LYRPredicate predicateWithProperty:@"displayName" predicateOperator:LYRPredicateOperatorLike value:[NSString stringWithFormat:@"%%%@%%", searchText]];
+    
+    if (self.conversation.participants) {
+        LYRPredicate *selectedPredicate = [LYRPredicate predicateWithProperty:@"userID" predicateOperator:LYRPredicateOperatorIsNotIn value:[self.conversation.participants valueForKey:@"userID"]];
+        query.predicate = [LYRCompoundPredicate compoundPredicateWithType:LYRCompoundPredicateTypeAnd subpredicates:@[ searchPredicate, selectedPredicate ]];
+    } else {
+        query.predicate = searchPredicate;
+    }
+
+    [self.layerClient executeQuery:query completion:^(NSOrderedSet<id<ATLParticipant>> * _Nullable resultSet, NSError * _Nullable error) {
+        if (resultSet) {
+            completion(resultSet.set);
+        } else {
+            completion([NSSet set]);
+        }
     }];
 }
 
@@ -465,9 +522,8 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
 
 - (void)detailsButtonTapped
 {
-    ATLMConversationDetailViewController *detailViewController = [ATLMConversationDetailViewController conversationDetailViewControllerWithConversation:self.conversation];
+    ATLMConversationDetailViewController *detailViewController = [ATLMConversationDetailViewController conversationDetailViewControllerWithConversation:self.conversation withLayerController:self.layerController];
     detailViewController.detailDelegate = self;
-    detailViewController.applicationController = self.applicationController;
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
 
@@ -503,20 +559,21 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
         return @"New Message";
     }
     
-    NSMutableSet *otherParticipantIDs = [self.conversation.participants mutableCopy];
-    if (self.layerClient.authenticatedUserID) [otherParticipantIDs removeObject:self.layerClient.authenticatedUserID];
+    NSMutableSet *otherParticipants = [self.conversation.participants mutableCopy];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userID != %@", self.layerClient.authenticatedUser.userID];
+    [otherParticipants filterUsingPredicate:predicate];
     
-    if (otherParticipantIDs.count == 0) {
+    if (otherParticipants.count == 0) {
         return @"Personal";
-    } else if (otherParticipantIDs.count == 1) {
-        NSString *otherParticipantID = [otherParticipantIDs anyObject];
-        id<ATLParticipant> participant = [self conversationViewController:self participantForIdentifier:otherParticipantID];
+    } else if (otherParticipants.count == 1) {
+        LYRIdentity *otherIdentity = [otherParticipants anyObject];
+        id<ATLParticipant> participant = [self conversationViewController:self participantForIdentity:otherIdentity];
         return participant ? participant.firstName : @"Message";
-    } else if (otherParticipantIDs.count > 1) {
+    } else if (otherParticipants.count > 1) {
         NSUInteger participantCount = 0;
         id<ATLParticipant> knownParticipant;
-        for (NSString *participantIdentifier in otherParticipantIDs) {
-            id<ATLParticipant> participant = [self conversationViewController:self participantForIdentifier:participantIdentifier];
+        for (LYRIdentity *identity in otherParticipants) {
+            id<ATLParticipant> participant = [self conversationViewController:self participantForIdentity:identity];
             if (participant) {
                 participantCount += 1;
                 knownParticipant = participant;

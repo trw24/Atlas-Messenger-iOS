@@ -1,5 +1,34 @@
 # Atlas Messenger Changelog
 
+## 0.9.6
+
+### Enhancements
+* Tapping on the location bubble now opens a full screen Map view.
+
+## 0.9.5
+
+### Enhancements
+
+* Searching within a conversation list has been updated to integrate with the latest Atlas changes for `ATLConversationListViewController`.
+* Added search capabilities within the participants list when adding participants from the conversation details view.
+
+### Bug Fixes
+
+* Fixed an issue where the keyboard would disappear when navigating from the conversation details view back to the conversation view.
+
+## 0.9.4
+
+### Bug Fixes
+
+* Fixes an issue where the app would crash when modifying the participants of a conversation.
+
+## 0.9.3
+
+### Bug Fixes
+
+* Fixed Atlas version string to reflect current installed version.
+* Added permissions key for allowing access to Photo Library.
+
 ## 0.9.2-pre1
 
 ### Enchancements

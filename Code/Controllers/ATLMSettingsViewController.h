@@ -19,21 +19,21 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ATLMApplicationController.h"
+#import "ATLMLayerController.h"
 
 @class ATLMSettingsViewController;
 
-NSString *const ATLMSettingsViewControllerTitle;
-NSString *const ATLMSettingsTableViewAccessibilityIdentifier;
-NSString *const ATLMSettingsHeaderAccessibilityLabel;
+extern NSString * _Nonnull const ATLMSettingsViewControllerTitle;
+extern NSString * _Nonnull const ATLMSettingsTableViewAccessibilityIdentifier;
+extern NSString * _Nonnull const ATLMSettingsHeaderAccessibilityLabel;
 
-extern NSString *const ATLMDefaultCellIdentifier;
-extern NSString *const ATLMCenterTextCellIdentifier;
+extern NSString * _Nonnull const ATLMDefaultCellIdentifier;
+extern NSString * _Nonnull const ATLMCenterTextCellIdentifier;
 
-NSString *const ATLMConnected;
-NSString *const ATLMDisconnected;
-NSString *const ATLMLostConnection;
-NSString *const ATLMConnecting;
+extern NSString * _Nonnull const ATLMConnected;
+extern NSString * _Nonnull const ATLMDisconnected;
+extern NSString * _Nonnull const ATLMLostConnection;
+extern NSString * _Nonnull const ATLMConnecting;
 
 /**
  @abstract The `ATLMSettingsViewControllerDelegate` protocol informs the receiver of events that have occurred within the controller.
@@ -44,13 +44,19 @@ NSString *const ATLMConnecting;
  @abstract Informs the receiver that a logout button has been tapped in the controller.
  @param settingsViewController The controller in which the selection occurred.
  */
-- (void)logoutTappedInSettingsViewController:(ATLMSettingsViewController *)settingsViewController;
+- (void)logoutTappedInSettingsViewController:(nonnull ATLMSettingsViewController *)settingsViewController;
+
+/**
+ @abstract Informs the receiver that a switch user button has been tapped in the controller.
+ @param settingsViewController The controller in which the selection occurred.
+ */
+- (void)switchUserTappedInSettingsViewController:(nonnull ATLMSettingsViewController *)settingsViewController;
 
 /**
  @abstract Informs the receiver that the user wants to dismiss the controller.
  @param settingsViewController The controller in which the selection occurred.
  */
-- (void)settingsViewControllerDidFinish:(ATLMSettingsViewController *)settingsViewController;
+- (void)settingsViewControllerDidFinish:(nonnull ATLMSettingsViewController *)settingsViewController;
 
 @end
 
@@ -59,14 +65,18 @@ NSString *const ATLMConnecting;
  */
 @interface ATLMSettingsViewController : UITableViewController
 
+- (nullable instancetype)initWithStyle:(UITableViewStyle)style layerClient:(nonnull LYRClient *)layerClient;
+- (nullable instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil layerClient:(nonnull LYRClient *)layerClient;
+- (nullable instancetype)initWithCoder:(nonnull NSCoder *)aDecoder layerClient:(nonnull LYRClient *)layerClient;
+
 /**
  @abstract The controller object for the application.
  */
-@property (nonatomic) ATLMApplicationController *applicationController;
+@property (nonnull, nonatomic, readonly) LYRClient *layerClient;
 
 /**
  @abstract The `ATLMSettingsViewControllerDelegate` object for the controller.
  */
-@property (nonatomic) id<ATLMSettingsViewControllerDelegate> settingsDelegate;
+@property (nullable, nonatomic, weak) id<ATLMSettingsViewControllerDelegate> settingsDelegate;
 
 @end
