@@ -45,7 +45,6 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     return  [[self alloc] initWithBaseURL:baseURL layerAppID:layerAppID];
 }
 
-
 - (instancetype)initWithConfiguration:(ATLMConfiguration *)configuration
 {
     NSURL *appIDURL = configuration.appID;
@@ -129,36 +128,6 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     [self authenticateWithCredentials:credentials nonce:nonce completion:^(NSString * _Nonnull identityToken, NSError * _Nonnull error) {
         completion(identityToken, error);
     }];
-}
-
-- (void)fetchUsersAuthenticatedUserCanChatWith:(NSString *)authenticatedUserID completion:(void (^)(NSArray *users, NSError *error))completion {
-    NSURL *listUsersURL = [NSURL URLWithString:[self.class listUsersEndpoint] relativeToURL:self.baseURL];
-    NSURLComponents *components = [NSURLComponents componentsWithURL:listUsersURL resolvingAgainstBaseURL:YES];
-    [components setQuery:[NSString stringWithFormat:@"requester=%@", authenticatedUserID]];
-    listUsersURL = [components URL];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:listUsersURL];
-    request.HTTPMethod = @"GET";
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (error) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completion(nil, error);
-            });
-            return;
-        }
-        
-        NSError *serializationError;
-        NSArray *usersList = (NSArray *)[[NSJSONSerialization JSONObjectWithData:data options:0 error:&serializationError] objectForKey:@"users"];
-        if (serializationError) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completion(nil, serializationError);
-            });
-            return;
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completion(usersList, nil);
-        });
-    }] resume];
 }
 
 @end

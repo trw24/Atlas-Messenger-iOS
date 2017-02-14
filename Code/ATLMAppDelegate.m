@@ -40,9 +40,7 @@
 
 @end
 
-@implementation ATLMAppDelegate {
-    ATLMConfiguration *_layerConfiguration;
-}
+@implementation ATLMAppDelegate 
 
 #pragma mark UIApplicationDelegate
 
