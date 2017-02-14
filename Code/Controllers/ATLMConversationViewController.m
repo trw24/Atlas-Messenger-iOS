@@ -590,21 +590,6 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     return @"Message";
 }
 
-- (void)followAllUsers:(NSSet *)users
-{
-    NSError *error;
-    NSMutableArray *userIDs = [[NSMutableArray alloc] init];
-    for (NSDictionary *user in users) {
-        [userIDs addObject:[user[@"id"] stringValue]];
-    }
-    
-    NSSet *userIDsToFollow = [NSSet setWithArray:userIDs];
-    BOOL success = [self.layerController.layerClient followUserIDs:userIDsToFollow error:&error];
-    if (!success) {
-        NSLog(@"Could not follow users with error: %@", error);
-    }
-}
-
 #pragma mark - Link Tap Handler
 
 - (void)userDidTapLink:(NSNotification *)notification
