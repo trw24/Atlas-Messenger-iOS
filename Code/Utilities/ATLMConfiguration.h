@@ -22,11 +22,11 @@
 
 @interface ATLMConfiguration : NSObject
 
-@property (nonatomic) NSURL *appID;
-@property (nonatomic) NSURL *identityProviderURL;
+@property (nonatomic, readonly, nonnull) NSURL *appID;
+@property (nonatomic, readonly, nonnull) NSURL *identityProviderURL;
 
-+ (instancetype)sharedConfiguration;
++ (nonnull instancetype)sharedConfiguration;
 
-- (instancetype)initWithFileURL: (NSURL *_Nonnull)fileURL;
+- (nonnull instancetype)initWithFileURL: (nonnull NSURL *)fileURL;
 
 @end

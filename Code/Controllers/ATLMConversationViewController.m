@@ -167,13 +167,6 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
     
     [self configureUserInterfaceAttributes];
     [self registerNotificationObservers];
-    
-    [self fetchUsers:^(NSSet *users) {
-        self.users = users;
-        if (users) {
-            [self followAllUsers:users];
-        }
-    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -595,16 +588,6 @@ NSString *const ATLMDetailsButtonLabel = @"Details";
         }
     }
     return @"Message";
-}
-
-- (void)fetchUsers:(void (^)(NSSet *users))completion
-{
-    [[ATLMAuthenticationProvider defaultProvider] fetchUsersAuthenticatedUserCanChatWith:self.layerController.layerClient.authenticatedUser.userID completion:^(NSArray *users, NSError *error) {
-        if (error) {
-            completion(nil);
-        }
-        completion([NSSet setWithArray:users]);
-    }];
 }
 
 - (void)followAllUsers:(NSSet *)users

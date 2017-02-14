@@ -26,7 +26,6 @@
 #import "ATLMNavigationController.h"
 #import "ATLMConversationListViewController.h"
 #import "ATLMSplashView.h"
-#import "ATLMQRScannerController.h"
 #import "ATLMUtilities.h"
 #import "ATLMConstants.h"
 #import "ATLMAuthenticationProvider.h"

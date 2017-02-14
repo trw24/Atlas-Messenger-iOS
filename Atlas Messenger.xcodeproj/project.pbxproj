@@ -32,7 +32,6 @@
 		251D8DC71A9688C50000BFA2 /* ATLMNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D941A9688C40000BFA2 /* ATLMNavigationController.m */; };
 		251D8DC81A9688C50000BFA2 /* ATLMParticipantTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D961A9688C40000BFA2 /* ATLMParticipantTableViewController.m */; };
 		251D8DCA1A9688C50000BFA2 /* ATLMSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D9A1A9688C40000BFA2 /* ATLMSettingsViewController.m */; };
-		251D8DCB1A9688C50000BFA2 /* ATLMQRScannerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D9C1A9688C40000BFA2 /* ATLMQRScannerController.m */; };
 		251D8DCC1A9688C50000BFA2 /* ATLMRegistrationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8D9E1A9688C40000BFA2 /* ATLMRegistrationViewController.m */; };
 		251D8DCF1A9688C50000BFA2 /* ATLMConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA61A9688C40000BFA2 /* ATLMConstants.m */; };
 		251D8DD01A9688C50000BFA2 /* ATLMErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D8DA81A9688C40000BFA2 /* ATLMErrors.m */; };
@@ -118,8 +117,6 @@
 		251D8D961A9688C40000BFA2 /* ATLMParticipantTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMParticipantTableViewController.m; sourceTree = "<group>"; };
 		251D8D991A9688C40000BFA2 /* ATLMSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMSettingsViewController.h; sourceTree = "<group>"; };
 		251D8D9A1A9688C40000BFA2 /* ATLMSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMSettingsViewController.m; sourceTree = "<group>"; };
-		251D8D9B1A9688C40000BFA2 /* ATLMQRScannerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMQRScannerController.h; sourceTree = "<group>"; };
-		251D8D9C1A9688C40000BFA2 /* ATLMQRScannerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMQRScannerController.m; sourceTree = "<group>"; };
 		251D8D9D1A9688C40000BFA2 /* ATLMRegistrationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMRegistrationViewController.h; sourceTree = "<group>"; };
 		251D8D9E1A9688C40000BFA2 /* ATLMRegistrationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMRegistrationViewController.m; sourceTree = "<group>"; };
 		251D8DA51A9688C40000BFA2 /* ATLMConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMConstants.h; sourceTree = "<group>"; };
@@ -309,8 +306,6 @@
 				251D8D941A9688C40000BFA2 /* ATLMNavigationController.m */,
 				251D8D951A9688C40000BFA2 /* ATLMParticipantTableViewController.h */,
 				251D8D961A9688C40000BFA2 /* ATLMParticipantTableViewController.m */,
-				251D8D9B1A9688C40000BFA2 /* ATLMQRScannerController.h */,
-				251D8D9C1A9688C40000BFA2 /* ATLMQRScannerController.m */,
 				251D8D9D1A9688C40000BFA2 /* ATLMRegistrationViewController.h */,
 				251D8D9E1A9688C40000BFA2 /* ATLMRegistrationViewController.m */,
 				251D8D991A9688C40000BFA2 /* ATLMSettingsViewController.h */,
@@ -739,7 +734,6 @@
 				251D8DD41A9688C50000BFA2 /* ATLMUtilities.m in Sources */,
 				AA441A931DD4D94D00F93295 /* ATLMUserCredentials.m in Sources */,
 				251D8DD01A9688C50000BFA2 /* ATLMErrors.m in Sources */,
-				251D8DCB1A9688C50000BFA2 /* ATLMQRScannerController.m in Sources */,
 				251D8DD11A9688C50000BFA2 /* ATLMHTTPResponseSerializer.m in Sources */,
 				251D8DD71A9688C50000BFA2 /* ATLMInputTableViewCell.m in Sources */,
 				4085884E1E3C0A1500C7831C /* ATLMConfiguration.m in Sources */,
