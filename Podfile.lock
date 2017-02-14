@@ -11,7 +11,6 @@ PODS:
   - LayerKit (0.24.0)
   - LYRCountDownLatch (0.9.0)
   - OCMock (3.4)
-  - RNCryptor-objc (3.0.2)
   - SVProgressHUD (2.1.2)
 
 DEPENDENCIES:
@@ -22,7 +21,6 @@ DEPENDENCIES:
   - KIFViewControllerActions (from `https://github.com/blakewatters/KIFViewControllerActions.git`)
   - LYRCountDownLatch
   - OCMock
-  - RNCryptor-objc
   - SVProgressHUD
 
 EXTERNAL SOURCES:
@@ -43,9 +41,8 @@ SPEC CHECKSUMS:
   LayerKit: ef028036b5623d2daf2f590c688fd790cd90340c
   LYRCountDownLatch: 72a444f729ca5a8c6157c0b58f335a44e6702b48
   OCMock: 35ae71d6a8fcc1b59434d561d1520b9dd4f15765
-  RNCryptor-objc: 6d18b2e4297c8f4a71a295492366313a3245d0ae
   SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
 
-PODFILE CHECKSUM: fcdcfb1e5ccb8956b6ef20220352efd55d6e12d1
+PODFILE CHECKSUM: 83be1528b86f0635c1c22284e7d5c2b8c7130d46
 
 COCOAPODS: 1.1.1
