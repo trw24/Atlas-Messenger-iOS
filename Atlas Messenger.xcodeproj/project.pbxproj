@@ -539,7 +539,6 @@
 				ORGANIZATIONNAME = "Layer, Inc.";
 				TargetAttributes = {
 					0A0C242219477D8F00401B74 = {
-						DevelopmentTeam = U46UP347QQ;
 						DevelopmentTeamName = "Layer, Inc.";
 						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
@@ -871,7 +870,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Atlas Messenger.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = U46UP347QQ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SRCROOT)/Libraries",
@@ -909,7 +908,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Atlas Messenger.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = U46UP347QQ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SRCROOT)/Libraries",
