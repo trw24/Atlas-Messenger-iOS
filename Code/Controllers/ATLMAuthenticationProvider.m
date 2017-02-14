@@ -25,7 +25,6 @@
 #import "ATLMConfiguration.h"
 #import "ATLMUtilities.h"
 
-static NSString *const ATLMLayerApplicationIDUserDefaultsKey = @"com.layer.Atlas-Messenger.appID";
 
 NSString *const ATLMEmailKey = @"ATLMEmailKey";
 NSString *const ATLMPasswordKey = @"ATLMPasswordKey";
@@ -46,16 +45,14 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     return  [[self alloc] initWithBaseURL:baseURL layerAppID:layerAppID];
 }
 
-+ (instancetype)defaultProvider;
-{
-    ATLMConfiguration *configuration = ATLMConfiguration.sharedConfiguration;
-    NSURL *appIDURL = configuration.appID;
-    
-    NSURL *identityProviderURL = (configuration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction));
-        
-    [[NSUserDefaults standardUserDefaults] setObject:appIDURL.absoluteString forKey:ATLMLayerApplicationIDUserDefaultsKey];
 
-    return appIDURL && identityProviderURL ? [ATLMAuthenticationProvider providerWithBaseURL:identityProviderURL layerAppID:appIDURL] : nil;
+- (instancetype)initWithConfiguration:(ATLMConfiguration *)configuration
+{
+    NSURL *appIDURL = configuration.appID;
+    NSURL *identityProviderURL = (configuration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction));
+    
+    self = [self initWithBaseURL:identityProviderURL layerAppID:appIDURL];
+    return self;
 }
 
 - (instancetype)initWithBaseURL:(nonnull NSURL *)baseURL layerAppID:(NSURL *)layerAppID;

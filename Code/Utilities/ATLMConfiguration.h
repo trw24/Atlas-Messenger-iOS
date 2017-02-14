@@ -25,8 +25,6 @@
 @property (nonatomic, readonly, nonnull) NSURL *appID;
 @property (nonatomic, readonly, nonnull) NSURL *identityProviderURL;
 
-+ (nonnull instancetype)sharedConfiguration;
-
 - (nonnull instancetype)initWithFileURL: (nonnull NSURL *)fileURL;
 
 @end

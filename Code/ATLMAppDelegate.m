@@ -33,14 +33,16 @@
 #import "ATLMConfiguration.h"
 
 
-@interface ATLMAppDelegate () <ATLMApplicationControllerDelegate, ATLMLayerControllerDelegate>
+@interface ATLMAppDelegate () <ATLMLayerControllerDelegate>
 
 @property (nonnull, nonatomic) ATLMLayerController *layerController;
 @property (nonnull, nonatomic) ATLMApplicationViewController *applicationViewController;
 
 @end
 
-@implementation ATLMAppDelegate
+@implementation ATLMAppDelegate {
+    ATLMConfiguration *_layerConfiguration;
+}
 
 #pragma mark UIApplicationDelegate
 
@@ -50,7 +52,6 @@
     
     // Create the view controller that will also be the root view controller of the app.
     self.applicationViewController = [ATLMApplicationViewController new];
-    self.applicationViewController.delegate = self;
     
     [self initializeLayer];
     
@@ -82,30 +83,17 @@
     self.applicationViewController.layerController = self.layerController;
 }
 
-- (void)initializeLayerWithAppID:(NSURL *)appID
-{
-    if (!appID) {
-        [NSException raise:NSInvalidArgumentException format:@"Will not initialize Layer client without the appID"];
-    }
-    
-    NSURL *identityProviderURL = (ATLMConfiguration.sharedConfiguration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction));
-
-    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:identityProviderURL layerAppID:appID];
-    [self configureClientWithAuthenticationProvider:authenticationProvider];
-}
-
 - (void)initializeLayer
 {
-    ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider defaultProvider];
+    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"LayerConfiguration.json" withExtension:nil];
+    ATLMConfiguration *configuration = [[ATLMConfiguration alloc] initWithFileURL:fileURL];
+    
+    ATLMAuthenticationProvider *authenticationProvider = [[ATLMAuthenticationProvider alloc] initWithConfiguration:configuration];
+    
     // Only initialize if there is a provider. Failing this lets us go to the QR code flow
     if (authenticationProvider) {
         [self configureClientWithAuthenticationProvider:authenticationProvider];
     }
-}
-
-- (void)applicationController:(nonnull ATLMApplicationViewController *)applicationController didCollectLayerAppID:(nonnull NSURL *)appID
-{
-    [self initializeLayerWithAppID:appID];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

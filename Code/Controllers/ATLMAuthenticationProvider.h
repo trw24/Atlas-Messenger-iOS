@@ -20,6 +20,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ATLMAuthenticating.h"
+#import "ATLMConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 static NSString *ATLMIdentityProviderRoot = @"https://di-messenger.herokuapp.com";
@@ -42,10 +43,9 @@ extern NSString * _Nonnull const ATLMPasswordKey;
 @property (nonatomic, copy, readonly) NSURL *layerAppID;
 
 /**
- @abstract A default provider for `ATLMAuthenticationProvider` that attempts to
- use cached results, or pulls from LayerConfiguration.json if that's setup properly
+ @abstract Initializes a `ATLMAuthenticationProvider` with a `ATLMConfiguration`
  */
-+ (instancetype)defaultProvider;
+- (instancetype)initWithConfiguration:(ATLMConfiguration *)configuration;
 
 /**
  @abstract The initializer for the `ATLMAuthenticationProvider`.

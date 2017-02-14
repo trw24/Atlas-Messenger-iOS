@@ -24,17 +24,6 @@ NSString *const ATLMConfigurationIdentityProviderURLKey = @"identity_provider_ur
 
 @implementation ATLMConfiguration
 
-+ (instancetype)sharedConfiguration
-{
-    static id _sharedConfiguration;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"LayerConfiguration.json" withExtension:nil];
-        _sharedConfiguration = [[self alloc] initWithFileURL:fileURL];
-    });
-    return _sharedConfiguration;
-}
-
 - (instancetype)initWithFileURL: (NSURL *)fileURL
 {
     if (!fileURL) {
