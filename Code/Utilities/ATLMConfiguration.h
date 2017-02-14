@@ -27,6 +27,6 @@
 
 + (instancetype)sharedConfiguration;
 
-- (instancetype)initWithFileURL: (NSURL *)fileURL;
+- (instancetype)initWithFileURL: (NSURL *_Nonnull)fileURL;
 
 @end

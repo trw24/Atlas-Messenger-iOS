@@ -53,9 +53,12 @@ extern NSString * _Nonnull const ATLMPasswordKey;
  */
 + (nonnull instancetype)providerWithBaseURL:(nonnull NSURL *)baseURL layerAppID:(nonnull NSURL *)layerAppID;
 
-- (void)authenticateWithCredentials:(NSDictionary *)credentials nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion;
-
-- (void)getUsersAuthenticatedUserCanChatWith:(NSString *)authenticatedUserID completion:(void (^)(NSArray *users, NSError *error))completion;
+/**
+ @abstract Gets and caches all the users from the identity provider so that you can start conversations with them
+ @param authenticatedUserID The id of the authenticatedUser
+ @param completion Gets called when fetching the users is completed
+ */
+- (void)fetchUsersAuthenticatedUserCanChatWith:(NSString *)authenticatedUserID completion:(void (^)(NSArray *users, NSError *error))completion;
 
 @end
 NS_ASSUME_NONNULL_END

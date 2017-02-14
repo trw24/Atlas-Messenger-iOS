@@ -59,7 +59,7 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     return appIDURL && identityProviderURL ? [ATLMAuthenticationProvider providerWithBaseURL:identityProviderURL layerAppID:appIDURL] : nil;
 }
 
-- (id)initWithBaseURL:(nonnull NSURL *)baseURL layerAppID:(NSURL *)layerAppID;
+- (instancetype)initWithBaseURL:(nonnull NSURL *)baseURL layerAppID:(NSURL *)layerAppID;
 {
     self = [super init];
     if (self) {
@@ -74,19 +74,26 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     return self;
 }
 
-- (NSString *)authenticateEndpoint
+- (instancetype)init
+{
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                   reason:@"Failed to call designated initializer. Call the designated initializer on the subclass instead."
+                                 userInfo:nil];
+}
+
++ (NSString *)authenticateEndpoint
 {
     return @"/authenticate";
 }
 
-- (NSString *)listUsersEndpoint
++ (NSString *)listUsersEndpoint
 {
     return @"/users.json";
 }
 
 - (void)authenticateWithCredentials:(NSDictionary *)credentials nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
 {
-    NSURL *authenticateURL = [NSURL URLWithString:[self authenticateEndpoint] relativeToURL:self.baseURL];
+    NSURL *authenticateURL = [NSURL URLWithString:[self.class authenticateEndpoint] relativeToURL:self.baseURL];
     NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:credentials];
     [payload setObject:nonce forKey:@"nonce"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:authenticateURL];
@@ -128,8 +135,8 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
     }];
 }
 
-- (void)getUsersAuthenticatedUserCanChatWith:(NSString *)authenticatedUserID completion:(void (^)(NSArray *users, NSError *error))completion {
-    NSURL *listUsersURL = [NSURL URLWithString:[self listUsersEndpoint] relativeToURL:self.baseURL];
+- (void)fetchUsersAuthenticatedUserCanChatWith:(NSString *)authenticatedUserID completion:(void (^)(NSArray *users, NSError *error))completion {
+    NSURL *listUsersURL = [NSURL URLWithString:[self.class listUsersEndpoint] relativeToURL:self.baseURL];
     NSURLComponents *components = [NSURLComponents componentsWithURL:listUsersURL resolvingAgainstBaseURL:YES];
     [components setQuery:[NSString stringWithFormat:@"requester=%@", authenticatedUserID]];
     listUsersURL = [components URL];

@@ -50,6 +50,13 @@
     return self;
 }
 
+- (instancetype)init
+{
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                   reason:@"Failed to call designated initializer. Call the designated initializer on the subclass instead."
+                                 userInfo:nil];
+}
+
 - (NSURL *)appID
 {
     if (_appID == nil) {

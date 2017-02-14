@@ -67,7 +67,8 @@
     return YES;
 }
 
-- (void)configureClientWithAuthenticationProvider:(ATLMAuthenticationProvider *)authenticationProvider {
+- (void)configureClientWithAuthenticationProvider:(ATLMAuthenticationProvider *)authenticationProvider
+{
     NSURL *appID = authenticationProvider.layerAppID;
     
     // Configure the Layer Client options.
@@ -84,7 +85,10 @@
 
 - (void)initializeLayerWithAppID:(NSURL *)appID
 {
-    assert(appID);
+    if (!appID) {
+        [NSException raise:NSInvalidArgumentException format:@"Will not initialize Layer client without the appID"];
+    }
+    
     NSURL *identityProviderURL = (ATLMConfiguration.sharedConfiguration.identityProviderURL ?: ATLMRailsBaseURL(ATLMEnvironmentProduction));
 
     ATLMAuthenticationProvider *authenticationProvider = [ATLMAuthenticationProvider providerWithBaseURL:identityProviderURL layerAppID:appID];

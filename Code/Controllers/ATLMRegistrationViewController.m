@@ -109,7 +109,7 @@ CGFloat const ATLMEmailTextFieldBottomPadding = 20;
     [self.view endEditing:YES];
     
     // Gather and send the credentials to the delegate.
-    ATLMUserCredentials *credentials = [ATLMUserCredentials credentialsWithEmail:email password:password];
+    ATLMUserCredentials *credentials = [[ATLMUserCredentials alloc] initWithEmail:email password:password];
     if ([self.delegate respondsToSelector:@selector(registrationViewController:didSubmitCredentials:)]) {
         [self.delegate registrationViewController:self didSubmitCredentials:credentials];
     }
