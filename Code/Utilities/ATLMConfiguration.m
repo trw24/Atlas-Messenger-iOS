@@ -43,6 +43,7 @@ NSString *const ATLMConfigurationIdentityProviderURLKey = @"identity_provider_ur
                 [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because the configuration was nil"];
             }
             
+            // App ID
             NSString *appIDString = configuration[ATLMConfigurationAppIDKey];
             if (!appIDString) {
                 [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because app_id in the configuration was not set"];
@@ -57,9 +58,19 @@ NSString *const ATLMConfigurationIdentityProviderURLKey = @"identity_provider_ur
                 [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because app_id in the configuration was not a valid URL"];
             }
             
-            _identityProviderURL = configuration[ATLMConfigurationIdentityProviderURLKey];
-            if (!_identityProviderURL) {
+            // Identity Provider
+            NSString *identityProviderURLString = configuration[ATLMConfigurationIdentityProviderURLKey];
+            if (!identityProviderURLString) {
+                [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because identity_provider_url in the configuration was not set"];
+            }
+            
+            if ((id)identityProviderURLString == [NSNull null]) {
                 [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because identity_provider_url in the configuration was null"];
+            }
+            
+            _identityProviderURL = [NSURL URLWithString:identityProviderURLString];
+            if (!_identityProviderURL) {
+                [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because identity_provider_url in the configuration was not a valid URL"];
             }
         }
     }
