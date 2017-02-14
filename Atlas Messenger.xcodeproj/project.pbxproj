@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		027EEF2681949B23ED57612F /* Pods_Atlas_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 570542A1D290A808CA991363 /* Pods_Atlas_Messenger.framework */; };
 		0A0C242719477D8F00401B74 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A0C242619477D8F00401B74 /* Foundation.framework */; };
 		0A0C242919477D8F00401B74 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A0C242819477D8F00401B74 /* CoreGraphics.framework */; };
 		0A0C242B19477D8F00401B74 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A0C242A19477D8F00401B74 /* UIKit.framework */; };
@@ -51,8 +52,7 @@
 		408588511E3C0B7800C7831C /* LayerConfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 408588501E3C0B7800C7831C /* LayerConfiguration.json */; };
 		409121181E4511E500CB0BBE /* ATLMConfigurationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 409121171E4511E500CB0BBE /* ATLMConfigurationTests.m */; };
 		4091211A1E45127200CB0BBE /* TestLayerConfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 409121191E45127200CB0BBE /* TestLayerConfiguration.json */; };
-		7925DBD62EDE367FF4BEEA9E /* Pods_Atlas_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CB8675E27A4241996DD5C53 /* Pods_Atlas_Messenger.framework */; };
-		8D0DE4B5C52306FEB3743E1D /* Pods_Atlas_MessengerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C124C10D567303BE8476B5F /* Pods_Atlas_MessengerTests.framework */; };
+		6FFD30AA46429D42BC135254 /* Pods_Atlas_MessengerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7065CA5CE8702B6C05A7AF6B /* Pods_Atlas_MessengerTests.framework */; };
 		AA1DC2791E3C05060034CFD5 /* ATLMLocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1DC2781E3C05060034CFD5 /* ATLMLocationViewController.m */; };
 		AA441A931DD4D94D00F93295 /* ATLMUserCredentials.m in Sources */ = {isa = PBXBuildFile; fileRef = AA441A921DD4D94D00F93295 /* ATLMUserCredentials.m */; };
 		D016D0FC1D20D9D900D9AA4F /* ATLMApplicationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D016D0FB1D20D9D900D9AA4F /* ATLMApplicationViewController.m */; };
@@ -98,7 +98,6 @@
 		0AADB5D31947C88B0083732B /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		0AB05019196E24F00029BC1B /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		0ABEFFAE196B7686006FFFF3 /* logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo@2x.png"; sourceTree = "<group>"; };
-		1A980996FC77FF52B14FCB42 /* Pods-Atlas Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas Messenger.release.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger.release.xcconfig"; sourceTree = "<group>"; };
 		251D8D841A9688C40000BFA2 /* ATLMAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMAppDelegate.h; sourceTree = "<group>"; };
 		251D8D851A9688C40000BFA2 /* ATLMAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMAppDelegate.m; sourceTree = "<group>"; };
 		251D8D891A9688C40000BFA2 /* ATLMLayerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMLayerController.h; sourceTree = "<group>"; };
@@ -144,7 +143,7 @@
 		259A576F1950EB83000E27B0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		259A577B1950EB92000E27B0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		25BB93551D3D70A200F90484 /* Atlas Messenger.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Atlas Messenger.entitlements"; sourceTree = "<group>"; };
-		3C124C10D567303BE8476B5F /* Pods_Atlas_MessengerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Atlas_MessengerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BF98389BE7D99F0D64F5EB2 /* Pods-Atlas Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas Messenger.release.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger.release.xcconfig"; sourceTree = "<group>"; };
 		408588471E3C097700C7831C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		408588491E3C09B400C7831C /* ATLMAuthenticating.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLMAuthenticating.h; sourceTree = "<group>"; };
 		4085884A1E3C09F800C7831C /* ATLMAuthenticationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLMAuthenticationProvider.h; sourceTree = "<group>"; };
@@ -154,15 +153,15 @@
 		408588501E3C0B7800C7831C /* LayerConfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LayerConfiguration.json; sourceTree = "<group>"; };
 		409121171E4511E500CB0BBE /* ATLMConfigurationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMConfigurationTests.m; sourceTree = "<group>"; };
 		409121191E45127200CB0BBE /* TestLayerConfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestLayerConfiguration.json; sourceTree = "<group>"; };
-		4AA482CB1DF5A67BD50604F2 /* Pods-Atlas MessengerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas MessengerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests.release.xcconfig"; sourceTree = "<group>"; };
-		6CB8675E27A4241996DD5C53 /* Pods_Atlas_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Atlas_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		53B3A467AC41287962F5E968 /* Pods-Atlas MessengerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas MessengerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests.release.xcconfig"; sourceTree = "<group>"; };
+		570542A1D290A808CA991363 /* Pods_Atlas_Messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Atlas_Messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7065CA5CE8702B6C05A7AF6B /* Pods_Atlas_MessengerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Atlas_MessengerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA1DC2771E3C05060034CFD5 /* ATLMLocationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMLocationViewController.h; sourceTree = "<group>"; };
 		AA1DC2781E3C05060034CFD5 /* ATLMLocationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMLocationViewController.m; sourceTree = "<group>"; };
 		AA441A921DD4D94D00F93295 /* ATLMUserCredentials.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMUserCredentials.m; sourceTree = "<group>"; };
 		AA441A941DD4D96900F93295 /* ATLMUserCredentials.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLMUserCredentials.h; sourceTree = "<group>"; };
 		B53937831A24F6AF00DE60F9 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		CA1D93E68E9105BA0139B1C2 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CE5393AE6B2B3F019ABE5C99 /* Pods-Atlas MessengerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas MessengerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		D016D0FA1D20D9D900D9AA4F /* ATLMApplicationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMApplicationViewController.h; sourceTree = "<group>"; };
 		D016D0FB1D20D9D900D9AA4F /* ATLMApplicationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMApplicationViewController.m; sourceTree = "<group>"; };
 		D61B107B1A6F2D99009BFA9C /* ATLMAPIManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMAPIManagerTest.m; sourceTree = "<group>"; };
@@ -192,7 +191,8 @@
 		D633684B1A9D614900FBFCD3 /* atlas-splashscreen-1334.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "atlas-splashscreen-1334.png"; sourceTree = "<group>"; };
 		D633684C1A9D614900FBFCD3 /* atlas-splashscreen-1336.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "atlas-splashscreen-1336.png"; sourceTree = "<group>"; };
 		D633684D1A9D614900FBFCD3 /* atlas-splashscreen-2208.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "atlas-splashscreen-2208.png"; sourceTree = "<group>"; };
-		EDA6D2B612E89C0E7B643795 /* Pods-Atlas Messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas Messenger.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger.debug.xcconfig"; sourceTree = "<group>"; };
+		E8DF9E0A246861840B0D5043 /* Pods-Atlas MessengerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas MessengerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		EA2280CED0961C47860FBC35 /* Pods-Atlas Messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Atlas Messenger.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,7 +212,7 @@
 				0AADB5C41947C85A0083732B /* AudioToolbox.framework in Frameworks */,
 				0A0C242B19477D8F00401B74 /* UIKit.framework in Frameworks */,
 				0A0C242719477D8F00401B74 /* Foundation.framework in Frameworks */,
-				7925DBD62EDE367FF4BEEA9E /* Pods_Atlas_Messenger.framework in Frameworks */,
+				027EEF2681949B23ED57612F /* Pods_Atlas_Messenger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,7 +223,7 @@
 				0A0C244619477D8F00401B74 /* XCTest.framework in Frameworks */,
 				0A0C244819477D8F00401B74 /* UIKit.framework in Frameworks */,
 				0A0C244719477D8F00401B74 /* Foundation.framework in Frameworks */,
-				8D0DE4B5C52306FEB3743E1D /* Pods_Atlas_MessengerTests.framework in Frameworks */,
+				6FFD30AA46429D42BC135254 /* Pods_Atlas_MessengerTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,7 +241,7 @@
 				259A57781950EB92000E27B0 /* Tests */,
 				25BB93551D3D70A200F90484 /* Atlas Messenger.entitlements */,
 				408588501E3C0B7800C7831C /* LayerConfiguration.json */,
-				469837D1116755AB314AA18C /* Pods */,
+				EBD568ACB943D6575695AD6E /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -401,23 +401,12 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
-		469837D1116755AB314AA18C /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				EDA6D2B612E89C0E7B643795 /* Pods-Atlas Messenger.debug.xcconfig */,
-				1A980996FC77FF52B14FCB42 /* Pods-Atlas Messenger.release.xcconfig */,
-				CE5393AE6B2B3F019ABE5C99 /* Pods-Atlas MessengerTests.debug.xcconfig */,
-				4AA482CB1DF5A67BD50604F2 /* Pods-Atlas MessengerTests.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		A334F9884EFAF9CDD4FC26FE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				CA1D93E68E9105BA0139B1C2 /* Pods.framework */,
-				6CB8675E27A4241996DD5C53 /* Pods_Atlas_Messenger.framework */,
-				3C124C10D567303BE8476B5F /* Pods_Atlas_MessengerTests.framework */,
+				570542A1D290A808CA991363 /* Pods_Atlas_Messenger.framework */,
+				7065CA5CE8702B6C05A7AF6B /* Pods_Atlas_MessengerTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -484,6 +473,17 @@
 			path = Protocols;
 			sourceTree = "<group>";
 		};
+		EBD568ACB943D6575695AD6E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				EA2280CED0961C47860FBC35 /* Pods-Atlas Messenger.debug.xcconfig */,
+				2BF98389BE7D99F0D64F5EB2 /* Pods-Atlas Messenger.release.xcconfig */,
+				E8DF9E0A246861840B0D5043 /* Pods-Atlas MessengerTests.debug.xcconfig */,
+				53B3A467AC41287962F5E968 /* Pods-Atlas MessengerTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -491,12 +491,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0A0C245519477D8F00401B74 /* Build configuration list for PBXNativeTarget "Atlas Messenger" */;
 			buildPhases = (
-				3E9FC011CC1AE254269411C1 /* [CP] Check Pods Manifest.lock */,
+				A9ACA1DBC6BFD4D78405A0B0 /* [CP] Check Pods Manifest.lock */,
 				0A0C241F19477D8F00401B74 /* Sources */,
 				0A0C242019477D8F00401B74 /* Frameworks */,
 				0A0C242119477D8F00401B74 /* Resources */,
-				079E8CFADAE2226B8F70F6B4 /* [CP] Embed Pods Frameworks */,
-				2CBABCC54731683DA5EEB7F7 /* [CP] Copy Pods Resources */,
+				0D063489683E104D4DFE3113 /* [CP] Embed Pods Frameworks */,
+				06441DCEEDB06BF192BAB742 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -511,12 +511,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0A0C245819477D8F00401B74 /* Build configuration list for PBXNativeTarget "Atlas MessengerTests" */;
 			buildPhases = (
-				BF5119C6B8879F3521C16224 /* [CP] Check Pods Manifest.lock */,
+				F7B1134AC60A8AEE816F3C0C /* [CP] Check Pods Manifest.lock */,
 				0A0C244019477D8F00401B74 /* Sources */,
 				0A0C244119477D8F00401B74 /* Frameworks */,
 				0A0C244219477D8F00401B74 /* Resources */,
-				692804E84F8D948A6D1763FE /* [CP] Embed Pods Frameworks */,
-				3DE12D19541F488442DDCE8E /* [CP] Copy Pods Resources */,
+				1AD2129DD7A1313C49E14335 /* [CP] Embed Pods Frameworks */,
+				027AE2866E8C490210C91B62 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -616,37 +616,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		079E8CFADAE2226B8F70F6B4 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		2CBABCC54731683DA5EEB7F7 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		3DE12D19541F488442DDCE8E /* [CP] Copy Pods Resources */ = {
+		027AE2866E8C490210C91B62 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -661,22 +631,37 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3E9FC011CC1AE254269411C1 /* [CP] Check Pods Manifest.lock */ = {
+		06441DCEEDB06BF192BAB742 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		692804E84F8D948A6D1763FE /* [CP] Embed Pods Frameworks */ = {
+		0D063489683E104D4DFE3113 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Atlas Messenger/Pods-Atlas Messenger-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1AD2129DD7A1313C49E14335 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -691,7 +676,22 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Atlas MessengerTests/Pods-Atlas MessengerTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		BF5119C6B8879F3521C16224 /* [CP] Check Pods Manifest.lock */ = {
+		A9ACA1DBC6BFD4D78405A0B0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		F7B1134AC60A8AEE816F3C0C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -859,7 +859,7 @@
 		};
 		0A0C245619477D8F00401B74 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EDA6D2B612E89C0E7B643795 /* Pods-Atlas Messenger.debug.xcconfig */;
+			baseConfigurationReference = EA2280CED0961C47860FBC35 /* Pods-Atlas Messenger.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -896,7 +896,7 @@
 		};
 		0A0C245719477D8F00401B74 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1A980996FC77FF52B14FCB42 /* Pods-Atlas Messenger.release.xcconfig */;
+			baseConfigurationReference = 2BF98389BE7D99F0D64F5EB2 /* Pods-Atlas Messenger.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -933,7 +933,7 @@
 		};
 		0A0C245919477D8F00401B74 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CE5393AE6B2B3F019ABE5C99 /* Pods-Atlas MessengerTests.debug.xcconfig */;
+			baseConfigurationReference = E8DF9E0A246861840B0D5043 /* Pods-Atlas MessengerTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -959,7 +959,7 @@
 		};
 		0A0C245A19477D8F00401B74 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4AA482CB1DF5A67BD50604F2 /* Pods-Atlas MessengerTests.release.xcconfig */;
+			baseConfigurationReference = 53B3A467AC41287962F5E968 /* Pods-Atlas MessengerTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
