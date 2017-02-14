@@ -39,7 +39,7 @@ typedef NS_ENUM(NSUInteger, ATLMApplicationState) {
 static NSString *const ATLMPushNotificationSoundName = @"layerbell.caf";
 static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationViewControllerObservationContext;
 
-@interface ATLMApplicationViewController () <ATLMConversationListViewControllerPresentationDelegate>
+@interface ATLMApplicationViewController () <ATLMRegistrationViewControllerDelegate, ATLMConversationListViewControllerPresentationDelegate>
 
 @property (assign, nonatomic, readwrite) ATLMApplicationState state;
 @property (nullable, nonatomic) ATLMSplashView *splashView;
@@ -292,6 +292,20 @@ static void *ATLMApplicationViewControllerObservationContext = &ATLMApplicationV
 - (void)handleLayerClientDidDeauthenticateNotification:(NSNotification *)notification
 {
     self.state = ATLMApplicationStateCredentialsRequired;
+}
+
+#pragma mark - ATLMRegistrationViewControllerDelegate implementation
+
+- (void)registrationViewController:(ATLMRegistrationViewController *)registrationViewController didSubmitCredentials:(ATLMUserCredentials *)credentials
+{
+    [self.layerController authenticateWithCredentials:credentials completion:^(LYRSession *_Nonnull session, NSError *_Nullable error) {
+        if (session) {
+            self.state = ATLMApplicationStateAuthenticated;
+        } else {
+            NSLog(@"Failed to authenticate with credentials=%@. errors=%@", credentials, error);
+            ATLMAlertWithError(error);
+        }
+    }];
 }
 
 @end
