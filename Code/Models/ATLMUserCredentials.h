@@ -8,13 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 /**
  @abstract The `ATLMUserCredentials` class is a model for a user's credentials, including email and password.
  */
 @interface ATLMUserCredentials : NSObject
 
-@property (strong, nonatomic, nonnull) NSString *email;
-@property (strong, nonatomic, nonnull) NSString *password;
+@property (strong, nonatomic) NSString *email;
+@property (strong, nonatomic) NSString *password;
 
 /**
  @abstract Designated initializer for `ATLMUserCredentials`
@@ -29,3 +30,4 @@
 - (NSDictionary * _Nonnull)asDictionary;
 
 @end
+NS_ASSUME_NONNULL_END

@@ -23,7 +23,6 @@
 #import "ATLMConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
-static NSString *ATLMIdentityProviderRoot = @"https://di-messenger.herokuapp.com";
 
 /*
  @abstract A key whose value should be the email address of an authenticating user.
@@ -46,6 +45,8 @@ extern NSString * _Nonnull const ATLMPasswordKey;
  @abstract Initializes a `ATLMAuthenticationProvider` with a `ATLMConfiguration`
  */
 - (instancetype)initWithConfiguration:(ATLMConfiguration *)configuration;
+- (instancetype)initWithBaseURL:(nonnull NSURL *)baseURL layerAppID:(NSURL *)layerAppID NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
 
 /**
  @abstract The initializer for the `ATLMAuthenticationProvider`.

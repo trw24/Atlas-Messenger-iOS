@@ -20,11 +20,14 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 @interface ATLMConfiguration : NSObject
 
-@property (nonatomic, readonly, nonnull) NSURL *appID;
-@property (nonatomic, readonly, nonnull) NSURL *identityProviderURL;
+@property (nonatomic, readonly) NSURL *appID;
+@property (nonatomic, readonly) NSURL *identityProviderURL;
 
-- (nonnull instancetype)initWithFileURL: (nonnull NSURL *)fileURL;
+- (instancetype)initWithFileURL: (nonnull NSURL *)fileURL NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE; 
 
 @end
+NS_ASSUME_NONNULL_END

@@ -20,8 +20,8 @@
 
 #import <UIKit/UIKit.h>
 #import "ATLMLayerController.h"
-#import "ATLMUserCredentials.h"
 
+@class ATLMUserCredentials;
 @class ATLMRegistrationViewController;
 
 /**

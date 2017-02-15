@@ -22,7 +22,8 @@
 #import <Foundation/Foundation.h>
 #import <LayerKit/LYRClient.h>
 #import "ATLMAuthenticationProvider.h"
-#import "ATLMUserCredentials.h"
+
+@class ATLMUserCredentials;
 
 extern NSString * _Nonnull const ATLMConversationMetadataDidChangeNotification;
 extern NSString * _Nonnull const ATLMConversationParticipantsDidChangeNotification;

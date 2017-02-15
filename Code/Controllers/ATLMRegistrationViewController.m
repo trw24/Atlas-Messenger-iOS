@@ -14,6 +14,7 @@
 #import <SVProgressHUD/SVProgressHUD.h>
 #import "ATLMConstants.h"
 #import "ATLMErrors.h"
+#import "ATLMUserCredentials.h"
 
 @interface ATLMRegistrationViewController () <UITextFieldDelegate>
 
@@ -107,7 +108,7 @@ CGFloat const ATLMEmailTextFieldBottomPadding = 20;
 - (void)registerAndAuthenticateUserWithEmail:(NSString *)email withPassword:(NSString *)password
 {
     [self.view endEditing:YES];
-    
+
     // Gather and send the credentials to the delegate.
     ATLMUserCredentials *credentials = [[ATLMUserCredentials alloc] initWithEmail:email password:password];
     if ([self.delegate respondsToSelector:@selector(registrationViewController:didSubmitCredentials:)]) {

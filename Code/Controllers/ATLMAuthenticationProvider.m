@@ -31,6 +31,9 @@ NSString *const ATLMPasswordKey = @"ATLMPasswordKey";
 NSString *const ATLMCredentialsKey = @"DIMCredentialsKey";
 static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
 
+NSString *const ATLMAuthenticatedEndpoint = @"/authenticate";
+NSString *const ATLMListUsersEndpoint = @"/users.json";
+
 @interface ATLMAuthenticationProvider ();
 
 @property (nonatomic) NSURL *baseURL;
@@ -76,19 +79,9 @@ static NSString *const ATLMAtlasIdentityTokenKey = @"identity_token";
                                  userInfo:nil];
 }
 
-+ (NSString *)authenticateEndpoint
-{
-    return @"/authenticate";
-}
-
-+ (NSString *)listUsersEndpoint
-{
-    return @"/users.json";
-}
-
 - (void)authenticateWithCredentials:(NSDictionary *)credentials nonce:(NSString *)nonce completion:(void (^)(NSString *identityToken, NSError *error))completion
 {
-    NSURL *authenticateURL = [NSURL URLWithString:[self.class authenticateEndpoint] relativeToURL:self.baseURL];
+    NSURL *authenticateURL = [NSURL URLWithString:ATLMAuthenticatedEndpoint relativeToURL:self.baseURL];
     NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:credentials];
     [payload setObject:nonce forKey:@"nonce"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:authenticateURL];

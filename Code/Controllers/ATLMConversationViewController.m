@@ -128,8 +128,6 @@ static ATLMDateProximity ATLMProximityToDate(NSDate *date)
 
 @interface ATLMConversationViewController () <ATLMConversationDetailViewControllerDelegate, ATLParticipantTableViewControllerDelegate>
 
-@property (nonatomic) NSSet *users;
-
 @end
 
 @implementation ATLMConversationViewController

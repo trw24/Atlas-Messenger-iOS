@@ -23,6 +23,7 @@
 #import "ATLMErrors.h"
 #import "ATLMConstants.h"
 #import "ATLMessagingUtilities.h"
+#import "ATLMUserCredentials.h"
 
 NSString *const ATLMConversationMetadataDidChangeNotification = @"LSConversationMetadataDidChangeNotification";
 NSString *const ATLMConversationParticipantsDidChangeNotification = @"LSConversationParticipantsDidChangeNotification";

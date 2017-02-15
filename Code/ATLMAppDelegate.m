@@ -40,7 +40,7 @@
 
 @end
 
-@implementation ATLMAppDelegate 
+@implementation ATLMAppDelegate
 
 #pragma mark UIApplicationDelegate
 
@@ -65,8 +65,14 @@
     return YES;
 }
 
-- (void)configureClientWithAuthenticationProvider:(ATLMAuthenticationProvider *)authenticationProvider
+
+- (void)initializeLayer
 {
+    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"LayerConfiguration.json" withExtension:nil];
+    ATLMConfiguration *configuration = [[ATLMConfiguration alloc] initWithFileURL:fileURL];
+    
+    ATLMAuthenticationProvider *authenticationProvider = [[ATLMAuthenticationProvider alloc] initWithConfiguration:configuration];
+    
     NSURL *appID = authenticationProvider.layerAppID;
     
     // Configure the Layer Client options.
@@ -79,15 +85,6 @@
     self.layerController.delegate = self;
     
     self.applicationViewController.layerController = self.layerController;
-}
-
-- (void)initializeLayer
-{
-    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"LayerConfiguration.json" withExtension:nil];
-    ATLMConfiguration *configuration = [[ATLMConfiguration alloc] initWithFileURL:fileURL];
-    
-    ATLMAuthenticationProvider *authenticationProvider = [[ATLMAuthenticationProvider alloc] initWithConfiguration:configuration];
-    [self configureClientWithAuthenticationProvider:authenticationProvider];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
