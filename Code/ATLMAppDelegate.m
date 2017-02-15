@@ -87,11 +87,7 @@
     ATLMConfiguration *configuration = [[ATLMConfiguration alloc] initWithFileURL:fileURL];
     
     ATLMAuthenticationProvider *authenticationProvider = [[ATLMAuthenticationProvider alloc] initWithConfiguration:configuration];
-    
-    // Only initialize if there is a provider. Failing this lets us go to the QR code flow
-    if (authenticationProvider) {
-        [self configureClientWithAuthenticationProvider:authenticationProvider];
-    }
+    [self configureClientWithAuthenticationProvider:authenticationProvider];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
