@@ -24,7 +24,7 @@
 #import "ATLMConstants.h"
 #import "ATLMConfiguration.h"
 #import "ATLMUtilities.h"
-
+#import "ATLMErrors.h"
 
 NSString *const ATLMEmailKey = @"ATLMEmailKey";
 NSString *const ATLMPasswordKey = @"ATLMPasswordKey";
@@ -94,6 +94,10 @@ NSString *const ATLMListUsersEndpoint = @"/users.json";
                 completion(nil, error);
             });
             return;
+        }
+        
+        if (!data) {
+            NSError *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMAuthenticationErrorNoDataTransmitted userInfo:@{NSLocalizedDescriptionKey: @"Expected identity information in the response from the server, but none was received."}];
         }
         
         [[NSUserDefaults standardUserDefaults] setValue:credentials forKey:ATLMCredentialsKey];
