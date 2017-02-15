@@ -98,6 +98,10 @@ NSString *const ATLMListUsersEndpoint = @"/users.json";
         
         if (!data) {
             NSError *error = [NSError errorWithDomain:ATLMErrorDomain code:ATLMAuthenticationErrorNoDataTransmitted userInfo:@{NSLocalizedDescriptionKey: @"Expected identity information in the response from the server, but none was received."}];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion(nil, error);
+            });
+            return;
         }
         
         [[NSUserDefaults standardUserDefaults] setValue:credentials forKey:ATLMCredentialsKey];
