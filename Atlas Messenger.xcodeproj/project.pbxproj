@@ -55,6 +55,14 @@
 		AA1DC2791E3C05060034CFD5 /* ATLMLocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1DC2781E3C05060034CFD5 /* ATLMLocationViewController.m */; };
 		AA441A931DD4D94D00F93295 /* ATLMUserCredentials.m in Sources */ = {isa = PBXBuildFile; fileRef = AA441A921DD4D94D00F93295 /* ATLMUserCredentials.m */; };
 		D016D0FC1D20D9D900D9AA4F /* ATLMApplicationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D016D0FB1D20D9D900D9AA4F /* ATLMApplicationViewController.m */; };
+		D0C483D51E55334000DB02CF /* ATLMConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 4085884D1E3C0A1500C7831C /* ATLMConfiguration.m */; };
+		D0C483D81E553F8D00DB02CF /* TestLayerConfiguration-invalid.json in Resources */ = {isa = PBXBuildFile; fileRef = D0C483D61E553E5300DB02CF /* TestLayerConfiguration-invalid.json */; };
+		D0C483DA1E55408100DB02CF /* TestLayerConfiguration-appIDNotSet.json in Resources */ = {isa = PBXBuildFile; fileRef = D0C483D91E55408100DB02CF /* TestLayerConfiguration-appIDNotSet.json */; };
+		D0C483DC1E55413800DB02CF /* TestLayerConfiguration-identityProviderURLNotSet.json in Resources */ = {isa = PBXBuildFile; fileRef = D0C483DB1E55413800DB02CF /* TestLayerConfiguration-identityProviderURLNotSet.json */; };
+		D0C483E11E55428000DB02CF /* TestLayerConfiguration-appIDInvalid.json in Resources */ = {isa = PBXBuildFile; fileRef = D0C483DD1E55428000DB02CF /* TestLayerConfiguration-appIDInvalid.json */; };
+		D0C483E21E55428000DB02CF /* TestLayerConfiguration-identityProviderURLInvalid.json in Resources */ = {isa = PBXBuildFile; fileRef = D0C483DE1E55428000DB02CF /* TestLayerConfiguration-identityProviderURLInvalid.json */; };
+		D0C483E31E55428000DB02CF /* TestLayerConfiguration-identityProviderURLNull.json in Resources */ = {isa = PBXBuildFile; fileRef = D0C483DF1E55428000DB02CF /* TestLayerConfiguration-identityProviderURLNull.json */; };
+		D0C483E41E55428000DB02CF /* TestLayerConfiguration-appIDNull.json in Resources */ = {isa = PBXBuildFile; fileRef = D0C483E01E55428000DB02CF /* TestLayerConfiguration-appIDNull.json */; };
 		D1222F2A0879A25541AE1C8C /* Pods_Atlas_Messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDE95477196DD12FC7934517 /* Pods_Atlas_Messenger.framework */; };
 		D62611691A98091800F6E707 /* layer-logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D62611661A98091800F6E707 /* layer-logo@2x.png */; };
 		D626116A1A98091800F6E707 /* layer-logo.png in Resources */ = {isa = PBXBuildFile; fileRef = D62611671A98091800F6E707 /* layer-logo.png */; };
@@ -164,6 +172,13 @@
 		CA1D93E68E9105BA0139B1C2 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D016D0FA1D20D9D900D9AA4F /* ATLMApplicationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLMApplicationViewController.h; sourceTree = "<group>"; };
 		D016D0FB1D20D9D900D9AA4F /* ATLMApplicationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMApplicationViewController.m; sourceTree = "<group>"; };
+		D0C483D61E553E5300DB02CF /* TestLayerConfiguration-invalid.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "TestLayerConfiguration-invalid.json"; sourceTree = "<group>"; };
+		D0C483D91E55408100DB02CF /* TestLayerConfiguration-appIDNotSet.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "TestLayerConfiguration-appIDNotSet.json"; sourceTree = "<group>"; };
+		D0C483DB1E55413800DB02CF /* TestLayerConfiguration-identityProviderURLNotSet.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "TestLayerConfiguration-identityProviderURLNotSet.json"; sourceTree = "<group>"; };
+		D0C483DD1E55428000DB02CF /* TestLayerConfiguration-appIDInvalid.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "TestLayerConfiguration-appIDInvalid.json"; sourceTree = "<group>"; };
+		D0C483DE1E55428000DB02CF /* TestLayerConfiguration-identityProviderURLInvalid.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "TestLayerConfiguration-identityProviderURLInvalid.json"; sourceTree = "<group>"; };
+		D0C483DF1E55428000DB02CF /* TestLayerConfiguration-identityProviderURLNull.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "TestLayerConfiguration-identityProviderURLNull.json"; sourceTree = "<group>"; };
+		D0C483E01E55428000DB02CF /* TestLayerConfiguration-appIDNull.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "TestLayerConfiguration-appIDNull.json"; sourceTree = "<group>"; };
 		D61B107B1A6F2D99009BFA9C /* ATLMAPIManagerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMAPIManagerTest.m; sourceTree = "<group>"; };
 		D61B107C1A6F2D99009BFA9C /* ATLMLayerControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMLayerControllerTest.m; sourceTree = "<group>"; };
 		D61B107E1A6F2D99009BFA9C /* ATLMConversationDetailViewControllerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLMConversationDetailViewControllerTest.m; sourceTree = "<group>"; };
@@ -463,6 +478,13 @@
 				D61B10881A6F2D99009BFA9C /* ATLMTestInterface.m */,
 				D61B10891A6F2D99009BFA9C /* ATLMTestUser.h */,
 				D61B108A1A6F2D99009BFA9C /* ATLMTestUser.m */,
+				D0C483DD1E55428000DB02CF /* TestLayerConfiguration-appIDInvalid.json */,
+				D0C483D91E55408100DB02CF /* TestLayerConfiguration-appIDNotSet.json */,
+				D0C483E01E55428000DB02CF /* TestLayerConfiguration-appIDNull.json */,
+				D0C483DE1E55428000DB02CF /* TestLayerConfiguration-identityProviderURLInvalid.json */,
+				D0C483DB1E55413800DB02CF /* TestLayerConfiguration-identityProviderURLNotSet.json */,
+				D0C483DF1E55428000DB02CF /* TestLayerConfiguration-identityProviderURLNull.json */,
+				D0C483D61E553E5300DB02CF /* TestLayerConfiguration-invalid.json */,
 				409121191E45127200CB0BBE /* TestLayerConfiguration.json */,
 			);
 			path = Utilities;
@@ -559,7 +581,6 @@
 					};
 					0A0C244319477D8F00401B74 = {
 						DevelopmentTeam = U46UP347QQ;
-						TestTargetID = 0A0C242219477D8F00401B74;
 					};
 				};
 			};
@@ -609,6 +630,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0C483E41E55428000DB02CF /* TestLayerConfiguration-appIDNull.json in Resources */,
+				D0C483DC1E55413800DB02CF /* TestLayerConfiguration-identityProviderURLNotSet.json in Resources */,
+				D0C483DA1E55408100DB02CF /* TestLayerConfiguration-appIDNotSet.json in Resources */,
+				D0C483D81E553F8D00DB02CF /* TestLayerConfiguration-invalid.json in Resources */,
+				D0C483E31E55428000DB02CF /* TestLayerConfiguration-identityProviderURLNull.json in Resources */,
+				D0C483E21E55428000DB02CF /* TestLayerConfiguration-identityProviderURLInvalid.json in Resources */,
+				D0C483E11E55428000DB02CF /* TestLayerConfiguration-appIDInvalid.json in Resources */,
 				4091211A1E45127200CB0BBE /* TestLayerConfiguration.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -747,6 +775,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0C483D51E55334000DB02CF /* ATLMConfiguration.m in Sources */,
 				409121181E4511E500CB0BBE /* ATLMConfigurationTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -935,7 +964,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9F6E0263378540FD98CB9AC6 /* Pods-Atlas MessengerTests.debug.xcconfig */;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -952,7 +980,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.layer.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Atlas Messenger.app/Atlas Messenger";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -961,7 +988,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 65FCD7A52CE01ADCCBE0E151 /* Pods-Atlas MessengerTests.release.xcconfig */;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -974,7 +1000,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.layer.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Atlas Messenger.app/Atlas Messenger";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
