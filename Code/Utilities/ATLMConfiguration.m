@@ -62,7 +62,7 @@ NSString *const ATLMConfigurationIdentityProviderURLKey = @"identity_provider_ur
     }
     _appID = [NSURL URLWithString:appIDString];
     if (!_appID) {
-        [NSException raise:NSInternalInconsistencyException format:@"Failed to initialize `%@` because `app_id` key value in the input was not a valid URL. appID='%@'", self.class, appIDString];
+        [NSException raise:NSInternalInconsistencyException format:@"Failed to initialize `%@` because `app_id` key value in the input file was not a valid URL. appID='%@'", self.class, appIDString];
     }
     
     // Extract the identity provider URL.

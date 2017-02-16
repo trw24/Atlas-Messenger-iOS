@@ -84,7 +84,7 @@ NSURL *ATLMConfigurationTestsDefaultConfigurationPath(NSString *__nullable suffi
     // Pass a non-readable path as fileURL.
     expect(^{
         __unused id noresult = [[ATLMConfiguration alloc] initWithFileURL:ATLMConfigurationTestsDefaultConfigurationPath(@"appIDInvalid")];
-    }).to.raiseWithReason(NSInternalInconsistencyException, @"Failed to initialize `ATLMConfiguration` because `app_id` key value in the input was not a valid URL. appID=' '");
+    }).to.raiseWithReason(NSInternalInconsistencyException, @"Failed to initialize `ATLMConfiguration` because `app_id` key value in the input file was not a valid URL. appID=' '");
 }
 
 - (void)testInitFailingDueToIdentityProviderURLMissing
@@ -108,7 +108,7 @@ NSURL *ATLMConfigurationTestsDefaultConfigurationPath(NSString *__nullable suffi
     // Pass a non-readable path as fileURL.
     expect(^{
         __unused id noresult = [[ATLMConfiguration alloc] initWithFileURL:ATLMConfigurationTestsDefaultConfigurationPath(@"identityProviderURLInvalid")];
-    }).to.raiseWithReason(NSInternalInconsistencyException, @"Failed to initialize `ATLMConfiguration` because `identity_provider_url` key value in the input was not a valid URL. appID=' '");
+    }).to.raiseWithReason(NSInternalInconsistencyException, @"Failed to initialize `ATLMConfiguration` because `identity_provider_url` key value in the input file was not a valid URL. identityProviderURL=' '");
 }
 
 - (void)testInitSuccessfullyDeserializesValidConfigurationFile
