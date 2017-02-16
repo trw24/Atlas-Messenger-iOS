@@ -26,57 +26,56 @@ NSString *const ATLMConfigurationIdentityProviderURLKey = @"identity_provider_ur
 
 - (instancetype)initWithFileURL:(NSURL *)fileURL
 {
-    if (!fileURL) {
-        [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because fileURL was nil"];
+    if (fileURL == nil) {
+        [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `%@` because the `fileURL` argument was `nil`.", self.class];
     }
 
     self = [super init];
     if (self == nil) {
-        return nil;
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:[NSString stringWithFormat:@"Failed to initialize `%@`.", self.class] userInfo:nil];
+    }
+
+    // Load the content of the file in memory.
+    NSError *fileReadError;
+    NSString *configurationJSON = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:&fileReadError];
+    if (configurationJSON == nil) {
+        // File read failure.
+        [NSException raise:NSInternalInconsistencyException format:@"Failed to initialize `%@` because the input file could not be read; error=%@", self.class, fileReadError];
     }
     
-    if (fileURL == nil) {
-        [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because the fileURL was nil"];
-    }
-    
-    NSString *configurationJSON = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:nil];
-    
+    // Deserialize the content of the input file.
+    NSError *JSONDeserializationError;
     NSDictionary *configuration;
-    if (configurationJSON != nil) {
-        configuration = [NSJSONSerialization JSONObjectWithData:[configurationJSON dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
-    }
+    configuration = [NSJSONSerialization JSONObjectWithData:[configurationJSON dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:&JSONDeserializationError];
     if (!configuration) {
-        [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because the configuration was nil"];
+        // Deserialization failure.
+        [NSException raise:NSInternalInconsistencyException format:@"Failed to initialize `%@` because the input file could not be deserialized; error=%@", self.class, JSONDeserializationError];
     }
     
-    // App ID
+    // Extract the appID.
     NSString *appIDString = configuration[ATLMConfigurationAppIDKey];
     if (!appIDString) {
-        [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because app_id in the configuration was not set"];
+        [NSException raise:NSInternalInconsistencyException format:@"Failed to initialize `%@` because `app_id` key in the input file was not set.", self.class];
     }
-    
     if ((id)appIDString == [NSNull null]) {
-        [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because app_id in the configuration was null"];
+        [NSException raise:NSInternalInconsistencyException format:@"Failed to initialize `%@` because `app_id` key value in the input file was `null`.", self.class];
     }
-    
     _appID = [NSURL URLWithString:appIDString];
     if (!_appID) {
-        [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because app_id in the configuration was not a valid URL"];
+        [NSException raise:NSInternalInconsistencyException format:@"Failed to initialize `%@` because `app_id` key value in the input was not a valid URL. appID='%@'", self.class, appIDString];
     }
     
-    // Identity Provider
+    // Extract the identity provider URL.
     NSString *identityProviderURLString = configuration[ATLMConfigurationIdentityProviderURLKey];
     if (!identityProviderURLString) {
-        [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because identity_provider_url in the configuration was not set"];
+        [NSException raise:NSInternalInconsistencyException format:@"Failed to initialize `%@` because `identity_provider_url` key in the input file was not set.", self.class];
     }
-    
     if ((id)identityProviderURLString == [NSNull null]) {
-        [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because identity_provider_url in the configuration was null"];
+        [NSException raise:NSInternalInconsistencyException format:@"Failed to initialize `%@` because `identity_provider_url` key value in the input file was `null`.", self.class];
     }
-    
     _identityProviderURL = [NSURL URLWithString:identityProviderURLString];
     if (!_identityProviderURL) {
-        [NSException raise:NSInvalidArgumentException format:@"Failed to initialize `ATLMConfiguration` because identity_provider_url in the configuration was not a valid URL"];
+        [NSException raise:NSInternalInconsistencyException format:@"Failed to initialize `%@` because `identity_provider_url` key value in the input file was not a valid URL. identityProviderURL='%@'", self.class, identityProviderURLString];
     }
     
     return self;
@@ -85,7 +84,7 @@ NSString *const ATLMConfigurationIdentityProviderURLKey = @"identity_provider_ur
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                   reason:@"Failed to call designated initializer. Call the designated initializer on the subclass instead."
+                                   reason:[NSString stringWithFormat:@"Failed to call designated initializer. Call the designated initializer '%@' on the `%@` instead.", NSStringFromSelector(@selector(initWithFileURL:)), self.class]
                                  userInfo:nil];
 }
 
