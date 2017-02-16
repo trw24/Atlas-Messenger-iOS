@@ -14,7 +14,7 @@ static NSString *defaultsPasswordKey = @"DEFAULTS_PASSWORD";
 
 @implementation ATLMUserCredentials
 
-- (instancetype)initWithEmail:(NSString *_Nonnull)email password:(NSString *_Nonnull)password
+- (instancetype)initWithEmail:(NSString *)email password:(NSString *)password
 {
     self = [super init];
     self.email = email;

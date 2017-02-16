@@ -22,12 +22,12 @@ NS_ASSUME_NONNULL_BEGIN
  @param email The user's email
  @param email The user's password
  */
-- (instancetype _Nonnull)initWithEmail:(NSString *_Nonnull)email password:(NSString *_Nonnull)password;
+- (instancetype)initWithEmail:(NSString *)email password:(NSString *)password;
 
 /**
  @abstract Returns the credentials as an NSDictionary
  */
-- (NSDictionary * _Nonnull)asDictionary;
+- (NSDictionary *)asDictionary;
 
 @end
 NS_ASSUME_NONNULL_END

@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSURL *appID;
 @property (nonatomic, readonly) NSURL *identityProviderURL;
 
-- (instancetype)initWithFileURL: (nonnull NSURL *)fileURL NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithFileURL:(nonnull NSURL *)fileURL NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE; 
 
 @end

@@ -98,14 +98,14 @@ CGFloat const ATLMEmailTextFieldBottomPadding = 20;
     if (textField == self.passwordTextField) {
         NSString *email = self.emailTextField.text;
         NSString *password = self.passwordTextField.text;
-        [self registerAndAuthenticateUserWithEmail:email withPassword:password];
+        [self registerAndAuthenticateUserWithEmail:email password:password];
     } else {
         [self.passwordTextField becomeFirstResponder];
     }
     return YES;
 }
 
-- (void)registerAndAuthenticateUserWithEmail:(NSString *)email withPassword:(NSString *)password
+- (void)registerAndAuthenticateUserWithEmail:(NSString *)email password:(NSString *)password
 {
     [self.view endEditing:YES];
 
